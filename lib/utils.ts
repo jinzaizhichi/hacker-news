@@ -10,6 +10,6 @@ const ONE_DAY = 24 * 60 * 60 * 1000
 
 export function getPastDays(days: number) {
   return Array.from({ length: days }, (_, index) => {
-    return new Date(Date.now() - index * ONE_DAY).toISOString().split('T')[0]
+    return new Date(Date.now() - index * ONE_DAY).toISOString()?.split('T')[0]
   })
 }
