@@ -6,7 +6,7 @@ import { PodcastScaffold } from '@/components/podcast/scaffold'
 import { podcast, site } from '@/config'
 import { buildEpisodeFromArticle } from '@/lib/episodes'
 
-export const revalidate = 3600
+export const revalidate = 7200
 
 export async function generateMetadata({
   params,
@@ -23,7 +23,7 @@ export async function generateMetadata({
   }
 
   const episode = buildEpisodeFromArticle(post, env.NEXT_STATIC_HOST)
-  const title = `${episode.title} · ${site.seo.defaultTitle}`
+  const title = episode.title || site.seo.defaultTitle
   const description = episode.description || site.seo.defaultDescription
   const url = `${podcast.base.link}/post/${episode.id}`
 
