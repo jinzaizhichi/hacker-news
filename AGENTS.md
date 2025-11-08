@@ -11,12 +11,12 @@ Hacker News 每日播报 - 一个基于 AI 的中文播客生成器，自动抓�
 
 ## 技术栈
 
-- **框架：** Next.js 15.4.6 与 App Router
+- **框架：** Next.js 16 与 App Router
 - **运行时：** Cloudflare Workers（通过 OpenNext 适配器部署）
 - **AI/ML：** OpenAI API，Edge TTS（Minimax Audio）
 - **存储：** Cloudflare KV，R2 对象存储
 - **内容提取：** Jina AI，Firecrawl，Cheerio
-- **UI：** React 19，Tailwind CSS，shadcn/ui，Radix UI
+- **UI：** React 19，Tailwind CSS 4，shadcn/ui，Radix UI
 - **构建：** pnpm，wrangler
 
 ## 常用开发命令
@@ -38,7 +38,7 @@ pnpm preview               # 本地预览生产构建
 
 # 代码检查
 pnpm lint                  # 运行 ESLint
-pnpm lint:fix              # 自动修复 ESLint 问题
+pnpm lint:fix              # 自动修复 ESLint 问题, 优先使用此命令
 
 # 测试
 pnpm tests                 # 运行集成测试
