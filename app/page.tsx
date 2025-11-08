@@ -14,23 +14,27 @@ export default async function Home({
 }) {
   const { env } = await getCloudflareContext({ async: true })
   const runEnv = env.NEXTJS_ENV
-  const pastDays = getPastDays(keepDays)
   const query = await searchParams
   const requestedPage = Number.parseInt(query.page ?? '1', 10)
   const currentPage = Number.isNaN(requestedPage) ? 1 : Math.max(1, requestedPage)
+  const pastDays = getPastDays(keepDays)
+  const kvPrefix = `content:${runEnv}:hacker-news:`
+  const totalEpisodes = pastDays.length
+  const totalPages = Math.max(1, Math.ceil(totalEpisodes / site.pageSize))
+  const safePage = Math.min(currentPage, totalPages)
+  const startIndex = (safePage - 1) * site.pageSize
+  const pageDays = pastDays.slice(startIndex, startIndex + site.pageSize)
 
   const posts = (
     await Promise.all(
-      pastDays.map(async (day) => {
-        const post = await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${day}`, 'json')
+      pageDays.map(async (day) => {
+        const post = await env.HACKER_NEWS_KV.get(`${kvPrefix}${day}`, 'json')
         return post as unknown as Article
       }),
     )
   ).filter(Boolean)
 
   const episodes = buildEpisodesFromArticles(posts, env.NEXT_STATIC_HOST)
-  const totalPages = Math.max(1, Math.ceil(episodes.length / site.pageSize))
-  const safePage = Math.min(currentPage, totalPages)
 
   const podcastInfo: PodcastInfo = {
     title: podcast.base.title,
@@ -43,6 +47,7 @@ export default async function Home({
     <Podcast
       episodes={episodes}
       currentPage={safePage}
+      totalEpisodes={totalEpisodes}
       podcastInfo={podcastInfo}
     />
   )

@@ -74,9 +74,8 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
           className="h-full w-full rounded-2xl object-cover"
           src={cover}
           alt="cover"
-          width={600}
-          height={600}
-          sizes="600px"
+          width={640}
+          height={640}
           referrerPolicy="no-referrer"
           loading="lazy"
         />
@@ -176,9 +175,8 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
           className="h-40 w-40 rounded-2xl object-cover"
           src={cover}
           alt="cover"
-          width={160}
-          height={160}
-          sizes="160px"
+          width={320}
+          height={320}
           referrerPolicy="no-referrer"
           loading="lazy"
         />

@@ -1,7 +1,7 @@
 'use client'
 
 import type { Episode } from '@/types/podcast'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Waveform } from '@/components/common/waveform'
 import { EpisodeItem } from '@/components/episodes/episode-item'
@@ -12,35 +12,32 @@ import { getPageStore } from '@/stores/page-store'
 interface EpisodesProps {
   episodes: Episode[]
   currentPage: number
+  totalEpisodes: number
 }
 
-export function Episodes({ episodes, currentPage }: EpisodesProps) {
+export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps) {
   useEffect(() => {
     const pageStore = getPageStore()
     pageStore.setState(() => ({ currentPage }))
   }, [currentPage])
 
   const pageSize = site.pageSize
-  const totalPages = Math.max(1, Math.ceil(episodes.length / pageSize))
-
-  const currentEpisodes = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize
-    return episodes.slice(startIndex, startIndex + pageSize)
-  }, [episodes, currentPage, pageSize])
+  const totalPages = Math.max(1, Math.ceil(totalEpisodes / pageSize))
+  const hasEpisodes = episodes.length > 0
 
   return (
     <>
       <EpisodesDesktop
-        episodes={currentEpisodes}
+        episodes={episodes}
         totalPages={totalPages}
         currentPage={currentPage}
-        hasEpisodes={episodes.length > 0}
+        hasEpisodes={hasEpisodes}
       />
       <EpisodesMobile
-        episodes={currentEpisodes}
+        episodes={episodes}
         totalPages={totalPages}
         currentPage={currentPage}
-        hasEpisodes={episodes.length > 0}
+        hasEpisodes={hasEpisodes}
       />
     </>
   )
