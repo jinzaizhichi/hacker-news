@@ -111,6 +111,12 @@ pnpm deploy:worker
 pnpm deploy
 ```
 
+## 致谢
+
+特别感谢以下开源项目：
+
+- **[Podify](https://github.com/sun0225SUN/podify)** - 一个优雅的播客主题，为本项目提供了设计灵感和参考
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request!
