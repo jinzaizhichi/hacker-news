@@ -1,26 +1,31 @@
 import type { Metadata } from 'next'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { notFound } from 'next/navigation'
-import { ArticleCard } from '@/components/article-card'
-import { podcastTitle } from '@/config'
+import { EpisodeDetail } from '@/components/episodes/detail'
+import { PodcastScaffold } from '@/components/podcast/scaffold'
+import { podcast, site } from '@/config'
+import { buildEpisodeFromArticle } from '@/lib/episodes'
 
 export const revalidate = 3600
 
-// 生成页面的元数据
-export async function generateMetadata({ params }: { params: Promise<{ date: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ date: string }>
+}): Promise<Metadata> {
   const { env } = await getCloudflareContext({ async: true })
   const runEnv = env.NEXTJS_ENV
-  const date = (await params).date
-
-  const post = (await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${date}`, 'json')) as unknown as Article
+  const { date } = await params
+  const post = (await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${date}`, 'json')) as unknown as Article | null
 
   if (!post) {
     return notFound()
   }
 
-  const title = post.title
-  const description = post.introContent || post.podcastContent?.slice(0, 200) || title
-  const url = `${env.NEXT_STATIC_HOST}/post/${post.date}`
+  const episode = buildEpisodeFromArticle(post, env.NEXT_STATIC_HOST)
+  const title = `${episode.title} · ${site.seo.defaultTitle}`
+  const description = episode.description || site.seo.defaultDescription
+  const url = `${podcast.base.link}/post/${episode.id}`
 
   return {
     title,
@@ -30,35 +35,54 @@ export async function generateMetadata({ params }: { params: Promise<{ date: str
       description,
       url,
       type: 'article',
-      publishedTime: new Date(post.date).toISOString(),
-      authors: [podcastTitle],
+      publishedTime: new Date(episode.published).toISOString(),
+      images: [
+        {
+          url: site.seo.defaultImage,
+          alt: episode.title,
+        },
+      ],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title,
       description,
+      images: [site.seo.defaultImage],
     },
   }
 }
 
-export default async function PostPage({ params }: { params: Promise<{ date: string }> }) {
+export default async function PostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ date: string }>
+  searchParams: Promise<{ page?: string }>
+}) {
   const { env } = await getCloudflareContext({ async: true })
   const runEnv = env.NEXTJS_ENV
+  const { date } = await params
+  const pageQuery = await searchParams
+  const fallbackPage = Number.parseInt(pageQuery.page ?? '1', 10)
 
-  const date = (await params).date
-
-  const post = (await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${date}`, 'json')) as unknown as Article
+  const post = (await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${date}`, 'json')) as unknown as Article | null
 
   if (!post) {
     return notFound()
   }
 
+  const episode = buildEpisodeFromArticle(post, env.NEXT_STATIC_HOST)
+  const podcastInfo = {
+    title: podcast.base.title,
+    description: podcast.base.description,
+    link: podcast.base.link,
+    cover: podcast.base.cover,
+  }
+
+  const safePage = Number.isNaN(fallbackPage) ? 1 : Math.max(1, fallbackPage)
   return (
-    <ArticleCard
-      key={post.date}
-      article={post}
-      staticHost={env.NEXT_STATIC_HOST}
-      showFooter
-    />
+    <PodcastScaffold podcastInfo={podcastInfo}>
+      <EpisodeDetail episode={episode} initialPage={safePage} />
+    </PodcastScaffold>
   )
 }

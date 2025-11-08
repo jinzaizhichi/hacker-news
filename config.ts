@@ -1,5 +1,67 @@
-export const podcastTitle = 'Hacker News 每日播报'
+import type { Podcast, Site } from '@/types/podcast'
 
-export const podcastDescription = '一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。'
+const defaultTitle = 'Hacker News 每日播报'
+const defaultDescription
+  = '一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。'
+const defaultBaseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://hacker-news.agi.li'
 
 export const keepDays = 30
+
+export const podcast: Podcast = {
+  base: {
+    title: defaultTitle,
+    description: defaultDescription,
+    link: defaultBaseUrl,
+    cover: '/opengraph-image.png',
+  },
+  hosts: [
+    {
+      name: 'Gemini',
+      link: 'https://gemini.google',
+    },
+    {
+      name: 'MiniMax',
+      link: 'https://www.minimaxi.com/audio',
+    },
+  ],
+  platforms: [
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      link: 'https://www.youtube.com/@hacker-news-podcast',
+    },
+    {
+      id: 'apple',
+      name: 'Apple Podcasts',
+      link: 'https://podcasts.apple.com/us/podcast/hacker-news-每日播报/id1809638204',
+    },
+    {
+      id: 'rss',
+      name: 'RSS',
+      link: `${defaultBaseUrl}/rss.xml`,
+    },
+  ],
+}
+
+export const site: Site = {
+  themeColor: 'orange',
+  pageSize: 7,
+  defaultDescriptionLength: 200,
+  seo: {
+    siteName: defaultTitle,
+    defaultTitle,
+    defaultDescription,
+    defaultImage: '/opengraph-image.png',
+    twitterHandle: '',
+    locale: 'zh_CN',
+  },
+  favicon: '/favicon.ico',
+}
+
+export const externalLinks = {
+  github: 'https://github.com/ccbikai/hacker-news',
+  rss: '/rss.xml',
+}
+
+export const podcastTitle = podcast.base.title
+export const podcastDescription = podcast.base.description

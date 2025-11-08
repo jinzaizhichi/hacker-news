@@ -1,0 +1,59 @@
+{
+  "common": {
+    "home": "首页",
+    "toggleTheme": "切换主题",
+    "language": "语言",
+    "selectLanguage": "选择语言"
+  },
+  "aside": {
+    "hostedBy": "主 播"
+  },
+  "podcastInfo": {
+    "about": "关于",
+    "listen": "播放",
+    "showMore": "展开更多",
+    "showLess": "收起"
+  },
+  "episodes": {
+    "title": "节目列表",
+    "noEpisodes": "暂无节目",
+    "listen": "播放",
+    "pause": "暂停",
+    "showNotes": "查看详情",
+    "back": "返回",
+    "playEpisode": "播放节目",
+    "pauseEpisode": "暂停播放"
+  },
+  "pagination": {
+    "previous": "上一页",
+    "next": "下一页"
+  },
+  "cmdk": {
+    "searchPlaceholder": "搜索命令...",
+    "noResults": "未找到结果",
+    "suggestions": "建议",
+    "commands": "导航",
+    "toggle": "切换",
+    "light": "浅色",
+    "dark": "深色",
+    "mode": "模式",
+    "command": "命令",
+    "switchTo": "切换到",
+    "en": "英文",
+    "zh": "中文",
+    "episodes": "节目列表",
+    "application": "应用",
+    "openApplication": "打开",
+    "actions": "操作"
+  },
+  "player": {
+    "play": "播放",
+    "pause": "暂停",
+    "seekForward": "快进 15 秒",
+    "seekBackward": "快退 15 秒",
+    "speed": "倍速",
+    "volume": "音量",
+    "mute": "静音",
+    "unmute": "开启声音"
+  }
+}

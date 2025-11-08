@@ -1,71 +1,94 @@
 import type { Metadata } from 'next'
+import type { Locale } from '@/i18n/config'
 import process from 'node:process'
-import { Github, Rss } from 'lucide-react'
-import Link from 'next/link'
-import { podcastDescription, podcastTitle } from '@/config'
+import { headers } from 'next/headers'
+import { Providers } from '@/components/providers'
+import { podcast, site } from '@/config'
+import { defaultLocale, detectLocale } from '@/i18n/config'
 import './globals.css'
+import '@vidstack/react/player/styles/base.css'
+import '@vidstack/react/player/styles/default/theme.css'
+import '@vidstack/react/player/styles/default/layouts/audio.css'
+
+const metadataBase = process.env.NEXT_PUBLIC_BASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_BASE_URL)
+  : undefined
 
 export const metadata: Metadata = {
-  metadataBase: process.env.NEXT_PUBLIC_BASE_URL ? new URL(process.env.NEXT_PUBLIC_BASE_URL) : undefined,
-  title: podcastTitle,
-  description: podcastDescription,
+  metadataBase,
+  title: {
+    default: site.seo.defaultTitle,
+    template: `%s · ${site.seo.siteName}`,
+  },
+  description: site.seo.defaultDescription,
   alternates: {
     types: {
       'application/rss+xml': [
         {
           url: '/rss.xml',
-          title: podcastTitle,
+          title: site.seo.defaultTitle,
         },
       ],
     },
   },
+  openGraph: {
+    title: site.seo.defaultTitle,
+    description: site.seo.defaultDescription,
+    url: podcast.base.link,
+    type: 'website',
+    images: [
+      {
+        url: site.seo.defaultImage,
+        alt: site.seo.defaultTitle,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: site.seo.twitterHandle,
+    title: site.seo.defaultTitle,
+    description: site.seo.defaultDescription,
+    images: [site.seo.defaultImage],
+  },
+  icons: {
+    icon: site.favicon,
+  },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const headersList = await headers()
+  const acceptLanguage = headersList.get('accept-language')
+  const detectedLocale: Locale = acceptLanguage ? detectLocale(acceptLanguage) : defaultLocale
+
   return (
-    <html lang="en">
-      <body
-        className="antialiased"
-      >
-        <header className="max-w-3xl mx-auto p-4 py-8">
-          <div className="flex items-center justify-start">
-            <Link href="/" title="Home">
-              <h1 className="text-2xl font-bold text-zinc-800">{podcastTitle}</h1>
-            </Link>
-            <a
-              href="/rss.xml"
-              className="text-orange-500 hover:text-orange-700 transition-colors ml-2"
-              title="RSS Feed"
-            >
-              <Rss className="w-6 h-6 font-bold" />
-            </a>
-            <a
-              href="https://github.com/ccbikai/hacker-news"
-              className="text-zinc-700 hover:text-zinc-900 transition-colors ml-2"
-              title="GitHub"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="w-6 h-6 font-bold" />
-            </a>
-          </div>
-          <p className="text-md text-gray-500 my-4">{podcastDescription}</p>
-        </header>
-        <main className="max-w-3xl mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            {children}
-          </div>
-        </main>
-        <footer className="max-w-3xl mx-auto p-4 py-8">
-          <div className="text-sm text-gray-500">
-            Not affiliated with, endorsed by, or associated with Hacker News.
-            &quot;Hacker News&quot; is a registered trademark of Y Combinator.
-          </div>
-        </footer>
+    <html lang={detectedLocale} className={`theme-${site.themeColor}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('next-ui-theme') || 'dark';
+                  const root = document.documentElement;
+                  root.classList.remove('light', 'dark');
+                  if (theme === 'system') {
+                    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    root.classList.add(systemTheme);
+                  } else {
+                    root.classList.add(theme);
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body>
+        <Providers detectedLocale={detectedLocale}>{children}</Providers>
       </body>
     </html>
   )

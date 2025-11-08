@@ -11,6 +11,7 @@ export default antfu({
     'components/cute/**/*',
     'components/eldora/**/*',
     'cloudflare-env.d.ts',
+    '.codex/**/*',
   ],
   rules: {
     'no-console': ['error', { allow: ['info', 'table', 'warn', 'error'] }],
