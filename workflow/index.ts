@@ -58,7 +58,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         throw new Error('no stories found')
       }
 
-      topStories.length = Math.min(topStories.length, isDev ? 3 : 10)
+      topStories.length = Math.min(topStories.length, isDev ? 1 : 10)
 
       return topStories
     })
@@ -74,7 +74,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
       const text = await step.do(`summarize story ${story.id}: ${story.title}`, retryConfig, async () => {
         const { text, usage, finishReason } = await generateText({
-          model: openai(this.env.OPENAI_MODEL!),
+          model: openai.chat(this.env.OPENAI_MODEL!),
           system: summarizeStoryPrompt,
           prompt: storyResponse,
         })
@@ -106,7 +106,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const podcastContent = await step.do('create podcast content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
+        model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizePodcastPrompt,
         prompt: allStories.join('\n\n---\n\n'),
         maxTokens,
@@ -124,7 +124,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const blogContent = await step.do('create blog content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
+        model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
         prompt: `<stories>${JSON.stringify(stories)}</stories>\n\n---\n\n${allStories.join('\n\n---\n\n')}`,
         maxTokens,
@@ -142,7 +142,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const introContent = await step.do('create intro content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_MODEL!),
+        model: openai.chat(this.env.OPENAI_MODEL!),
         system: introPrompt,
         prompt: podcastContent,
         maxRetries: 3,

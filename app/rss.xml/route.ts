@@ -3,7 +3,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import markdownit from 'markdown-it'
 import { NextResponse } from 'next/server'
 import { Podcast } from 'podcast'
-import { podcastDescription, podcastTitle } from '@/config'
+import { podcast } from '@/config'
 import { getPastDays } from '@/lib/utils'
 
 const md = markdownit()
@@ -15,21 +15,21 @@ export async function GET() {
 
   // 如果没有缓存，生成新的响应
   const feed = new Podcast({
-    title: podcastTitle,
-    description: podcastDescription,
+    title: podcast.base.title,
+    description: podcast.base.description,
     feedUrl: `${baseUrl}/rss.xml`,
     siteUrl: baseUrl,
     imageUrl: `${baseUrl}/logo.png`,
     language: 'zh-CN',
     pubDate: new Date(),
     ttl: 60,
-    generator: podcastTitle,
-    author: podcastTitle,
+    generator: podcast.base.title,
+    author: podcast.base.title,
     categories: ['technology', 'news'],
     itunesImage: `${baseUrl}/logo.png`,
     itunesCategory: [{ text: 'Technology' }, { text: 'News' }],
     itunesOwner: {
-      name: podcastTitle,
+      name: podcast.base.title,
       email: 'hacker-news@agi.li',
     },
     managingEditor: 'hacker-news@agi.li',
