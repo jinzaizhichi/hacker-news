@@ -1,18 +1,19 @@
 'use client'
 
-import { useMediaPlayer, usePlaybackRateOptions } from '@vidstack/react'
+import { useMediaRemote, usePlaybackRateOptions } from '@vidstack/react'
 import { useEffect, useState } from 'react'
 
 export function Speed() {
   const options = usePlaybackRateOptions()
   const [speed, setSpeed] = useState(3)
-  const player = useMediaPlayer()
+  const remote = useMediaRemote()
 
   useEffect(() => {
-    if (player && options[speed]) {
-      player.playbackRate = Number.parseFloat(options[speed].value)
-    }
-  }, [speed, player, options])
+    const option = options[speed]
+    if (!option)
+      return
+    remote.changePlaybackRate(Number.parseFloat(option.value))
+  }, [options, remote, speed])
 
   return (
     <div

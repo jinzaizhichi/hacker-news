@@ -1,9 +1,10 @@
 'use client'
 
 import type { ComponentType, SVGProps } from 'react'
-import type { PodcastInfo } from '@/types/podcast'
+import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
 import { useStore } from '@tanstack/react-store'
 import { Podcast, Rss, Youtube } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,8 +16,28 @@ import { podcast, site } from '@/config'
 import { cn } from '@/lib/utils'
 import { getPodcastStore } from '@/stores/podcast-store'
 
+interface PlatformConfig {
+  icon: ComponentType<SVGProps<SVGSVGElement>>
+  colorClass: string
+}
+
+const platformIcons: Record<string, PlatformConfig> = {
+  youtube: {
+    icon: Youtube,
+    colorClass: 'text-red-500 hover:text-red-600',
+  },
+  apple: {
+    icon: Podcast,
+    colorClass: 'text-purple-500 hover:text-purple-600',
+  },
+  rss: {
+    icon: Rss,
+    colorClass: 'text-orange-500 hover:text-orange-600',
+  },
+}
+
 interface PodcastInfoContentProps {
-  podcastInfo: PodcastInfo
+  podcastInfo: PodcastInfoData
 }
 
 export function PodcastInfo() {
@@ -49,14 +70,15 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
   return (
     <div className={cn('hidden md:flex', 'h-full flex-col gap-12 p-12')}>
       <Link href="/" className="block aspect-square w-full">
-        <img
+        <Image
           className="h-full w-full rounded-2xl object-cover"
           src={cover}
-          referrerPolicy="no-referrer"
-          loading="lazy"
           alt="cover"
           width={320}
           height={320}
+          sizes="320px"
+          referrerPolicy="no-referrer"
+          loading="lazy"
         />
       </Link>
 
@@ -150,14 +172,15 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
     <div className="relative flex flex-col items-center gap-8 md:hidden">
       <Waveform className="absolute top-0 left-0 w-full" />
       <Link href="/" className="flex justify-center pt-20">
-        <img
-          className="size-40 rounded-2xl object-cover"
+        <Image
+          className="h-40 w-40 rounded-2xl object-cover"
           src={cover}
-          referrerPolicy="no-referrer"
-          loading="lazy"
           alt="cover"
           width={160}
           height={160}
+          sizes="160px"
+          referrerPolicy="no-referrer"
+          loading="lazy"
         />
       </Link>
 
@@ -197,24 +220,4 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
       </div>
     </div>
   )
-}
-
-interface PlatformConfig {
-  icon: ComponentType<SVGProps<SVGSVGElement>>
-  colorClass: string
-}
-
-const platformIcons: Record<string, PlatformConfig> = {
-  youtube: {
-    icon: Youtube,
-    colorClass: 'text-red-500 hover:text-red-600',
-  },
-  apple: {
-    icon: Podcast,
-    colorClass: 'text-purple-500 hover:text-purple-600',
-  },
-  rss: {
-    icon: Rss,
-    colorClass: 'text-orange-500 hover:text-orange-600',
-  },
 }

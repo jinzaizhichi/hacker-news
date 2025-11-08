@@ -14,10 +14,15 @@ export function useLightboxNavigation({ imagesLength, initialIndex, open, onView
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
 
   useEffect(() => {
-    if (open) {
+    if (!open)
+      return
+
+    const rafId = requestAnimationFrame(() => {
       setCurrentIndex(initialIndex)
       resetZoom()
-    }
+    })
+
+    return () => cancelAnimationFrame(rafId)
   }, [initialIndex, open, resetZoom])
 
   const handlePrevious = useCallback(() => {

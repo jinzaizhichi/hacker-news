@@ -2,7 +2,7 @@
 
 import type { Theme } from '@/stores/theme-store'
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from '@/components/theme/provider'
+import { useTheme } from '@/components/theme/use-theme'
 import { cn } from '@/lib/utils'
 
 interface ThemeToggleProps {

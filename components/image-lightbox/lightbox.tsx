@@ -1,6 +1,7 @@
 'use client'
 
 import type { ImageLightboxProps, ImageWithLightboxProps } from '@/components/image-lightbox/types'
+import Image from 'next/image'
 import { useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { LightboxControls } from '@/components/image-lightbox/components/lightbox-controls'
@@ -10,7 +11,7 @@ import { useLightboxAnimation } from '@/components/image-lightbox/hooks/use-ligh
 import { useLightboxGestures } from '@/components/image-lightbox/hooks/use-lightbox-gestures'
 import { useLightboxNavigation } from '@/components/image-lightbox/hooks/use-lightbox-navigation'
 import { useLightboxZoom } from '@/components/image-lightbox/hooks/use-lightbox-zoom'
-import { useTheme } from '@/components/theme/provider'
+import { useTheme } from '@/components/theme/use-theme'
 import { useIsClient } from '@/hooks/use-is-client'
 import { cn } from '@/lib/utils'
 
@@ -151,12 +152,16 @@ export function ImageWithLightbox({ src, alt, index, onOpen }: ImageWithLightbox
       className="border-none bg-transparent p-0 outline-none"
       style={{ border: 'none', outline: 'none' }}
     >
-      <img
-        src={src}
-        alt={alt || ''}
-        className="my-6 max-h-[500px] max-w-full rounded-lg object-contain shadow-md"
-        loading="lazy"
-      />
+      <div className="relative my-6 w-full max-w-full rounded-lg shadow-md">
+        <Image
+          src={src}
+          alt={alt || ''}
+          width={1200}
+          height={800}
+          sizes="(max-width: 768px) 100vw, 900px"
+          className="h-auto w-full rounded-lg object-contain"
+        />
+      </div>
     </button>
   )
 }

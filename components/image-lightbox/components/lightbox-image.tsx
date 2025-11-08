@@ -1,6 +1,7 @@
 'use client'
 
 import type { ZoomState } from '@/components/image-lightbox/types'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 interface LightboxImageProps {
@@ -32,28 +33,34 @@ export function LightboxImage({
 }: LightboxImageProps) {
   return (
     <div className="relative flex w-full flex-1 items-center justify-center px-4 py-20">
-      <img
-        src={src}
-        alt={alt}
-        className={cn(
-          'max-h-[70vh] max-w-[80vw] rounded-lg object-contain transition-transform duration-300',
-          zoom.scale !== 1 ? 'cursor-move' : 'cursor-zoom-in',
-        )}
-        style={{
-          transform: `scale(${zoom.scale}) translate(${zoom.translateX / zoom.scale}px, ${zoom.translateY / zoom.scale}px)`,
-          transformOrigin: 'center center',
-        }}
-        onDoubleClick={onDoubleClick}
-        onWheel={onWheel}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        draggable={false}
-      />
+      <div className="relative max-h-[70vh] max-w-[80vw] w-full">
+        <Image
+          src={src}
+          alt={alt}
+          width={1600}
+          height={900}
+          sizes="(max-width: 768px) 90vw, 80vw"
+          className={cn(
+            'rounded-lg object-contain transition-transform duration-300',
+            zoom.scale !== 1 ? 'cursor-move' : 'cursor-zoom-in',
+          )}
+          style={{
+            transform: `scale(${zoom.scale}) translate(${zoom.translateX / zoom.scale}px, ${zoom.translateY / zoom.scale}px)`,
+            transformOrigin: 'center center',
+          }}
+          onDoubleClick={onDoubleClick}
+          onWheel={onWheel}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          draggable={false}
+          priority
+        />
+      </div>
     </div>
   )
 }

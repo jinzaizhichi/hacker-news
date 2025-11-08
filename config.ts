@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/process */
 import type { Podcast, Site } from '@/types/podcast'
 
 const defaultTitle = 'Hacker News 每日播报'

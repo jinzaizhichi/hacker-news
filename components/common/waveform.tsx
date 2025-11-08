@@ -42,14 +42,15 @@ export function Waveform(props: React.SVGProps<SVGSVGElement>) {
   const id = useId()
   const playerStore = getPlayerStore()
   const isPlaying = useStore(playerStore, state => state.isPlaying)
-  const [barHeights, setBarHeights] = useState<number[]>(() =>
+  const [animatedHeights, setAnimatedHeights] = useState<number[]>(() =>
     generateStaticHeights(),
   )
   const timeRef = useRef(0)
+  const staticHeightsRef = useRef(generateStaticHeights())
 
   useEffect(() => {
     if (!isPlaying) {
-      setBarHeights(generateStaticHeights())
+      staticHeightsRef.current = generateStaticHeights()
       timeRef.current = 0
     }
   }, [isPlaying])
@@ -65,13 +66,15 @@ export function Waveform(props: React.SVGProps<SVGSVGElement>) {
       const delta = (timestamp - lastTime) / 1000
       lastTime = timestamp
       timeRef.current += delta * 2
-      setBarHeights(generateWaveHeights(timeRef.current))
+      setAnimatedHeights(generateWaveHeights(timeRef.current))
       animationFrame = requestAnimationFrame(animate)
     }
 
     animationFrame = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationFrame)
   }, [isPlaying])
+
+  const barHeights = isPlaying ? animatedHeights : staticHeightsRef.current
 
   return (
     <svg {...props} aria-hidden="true">

@@ -1,44 +1,59 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 export function useLightboxAnimation(open: boolean) {
   const [isVisible, setIsVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  useEffect(() => {
+  const clearPendingTimeout = useEffectEvent(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
       timeoutRef.current = null
     }
+  })
 
-    if (open) {
+  const handleOpen = useEffectEvent(() => {
+    let visibilityRaf: number | null = null
+    const mountRaf = requestAnimationFrame(() => {
       setMounted(true)
-      setIsVisible(false)
-      const rafId = requestAnimationFrame(() => {
+      visibilityRaf = requestAnimationFrame(() => {
         setIsVisible(true)
       })
-      return () => cancelAnimationFrame(rafId)
+    })
+
+    return () => {
+      cancelAnimationFrame(mountRaf)
+      if (visibilityRaf)
+        cancelAnimationFrame(visibilityRaf)
     }
-    else {
+  })
+
+  const handleClose = useEffectEvent(() => {
+    const hideRaf = requestAnimationFrame(() => {
       setIsVisible(false)
-      timeoutRef.current = setTimeout(() => {
-        setMounted(false)
-      }, 300)
-      return () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current)
-          timeoutRef.current = null
-        }
-      }
+    })
+
+    timeoutRef.current = setTimeout(() => {
+      setMounted(false)
+    }, 300)
+
+    return () => {
+      cancelAnimationFrame(hideRaf)
+      clearPendingTimeout()
     }
+  })
+
+  useEffect(() => {
+    clearPendingTimeout()
+    if (open)
+      return handleOpen()
+    return handleClose()
   }, [open])
 
   useEffect(() => () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
+    clearPendingTimeout()
   }, [])
 
   return { isVisible, mounted }

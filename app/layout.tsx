@@ -10,6 +10,27 @@ import '@vidstack/react/player/styles/base.css'
 import '@vidstack/react/player/styles/default/theme.css'
 import '@vidstack/react/player/styles/default/layouts/audio.css'
 
+const themeInitializer = `
+  (function() {
+    try {
+      const theme = localStorage.getItem('next-ui-theme') || 'system'
+      const root = document.documentElement
+      root.classList.remove('light', 'dark')
+
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        root.classList.add(systemTheme)
+      }
+      else {
+        root.classList.add(theme)
+      }
+    }
+    catch (error) {
+      console.error('Failed to initialize theme', error)
+    }
+  })()
+`
+
 const metadataBase = process.env.NEXT_PUBLIC_BASE_URL
   ? new URL(process.env.NEXT_PUBLIC_BASE_URL)
   : undefined
@@ -67,25 +88,7 @@ export default async function RootLayout({
   return (
     <html lang={detectedLocale} className={`theme-${site.themeColor}`} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('next-ui-theme') || 'system';
-                  const root = document.documentElement;
-                  root.classList.remove('light', 'dark');
-                  if (theme === 'system') {
-                    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    root.classList.add(systemTheme);
-                  } else {
-                    root.classList.add(theme);
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        <script id="theme-initializer">{themeInitializer}</script>
       </head>
       <body>
         <Providers detectedLocale={detectedLocale}>{children}</Providers>

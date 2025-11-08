@@ -1,6 +1,7 @@
 'use client'
 
 import type { ImageInfo } from '@/lib/markdown'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 interface LightboxThumbnailsProps {
@@ -24,7 +25,7 @@ export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailCl
     >
       {images.map((img, idx) => (
         <button
-          key={`${img.src}-${idx}`}
+          key={`${img.src}-${img.alt}`}
           type="button"
           onClick={() => onThumbnailClick(idx)}
           className={cn(
@@ -34,15 +35,18 @@ export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailCl
           style={{ width: '80px', height: '80px' }}
           aria-label={`View image ${idx + 1}`}
         >
-          <img
-            src={img.src}
-            alt={img.alt || ''}
-            className={cn(
-              'h-full w-full object-cover transition-transform duration-300',
-              idx === currentIndex && 'scale-105',
-            )}
-            loading="lazy"
-          />
+          <div className="relative h-full w-full">
+            <Image
+              src={img.src}
+              alt={img.alt || ''}
+              fill
+              sizes="80px"
+              className={cn(
+                'object-cover transition-transform duration-300',
+                idx === currentIndex && 'scale-105',
+              )}
+            />
+          </div>
         </button>
       ))}
     </div>
