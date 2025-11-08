@@ -72,7 +72,7 @@ export default async function RootLayout({
             __html: `
               (function() {
                 try {
-                  const theme = localStorage.getItem('next-ui-theme') || 'dark';
+                  const theme = localStorage.getItem('next-ui-theme') || 'system';
                   const root = document.documentElement;
                   root.classList.remove('light', 'dark');
                   if (theme === 'system') {
