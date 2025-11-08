@@ -32,7 +32,7 @@ async function minimaxTTS(text: string, gender: string, env: Env) {
     },
     timeout: 30000,
     body: JSON.stringify({
-      model: env.TTS_MODEL || 'speech-2.5-turbo-preview',
+      model: env.TTS_MODEL || 'speech-2.6-hd',
       text,
       timber_weights: [
         {
