@@ -1,7 +1,9 @@
 import process from 'node:process'
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 
-if (process.env.NODE_ENV === 'development') {
+const isProd = process.env.NODE_ENV === 'production'
+
+if (!isProd) {
   initOpenNextCloudflareForDev()
 }
 
@@ -11,6 +13,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: isProd
+    ? {
+        loader: 'custom',
+        loaderFile: './lib/weserv-image-loader.ts',
+      }
+    : undefined,
   rewrites: () => [
     {
       source: '/blog.xml',
