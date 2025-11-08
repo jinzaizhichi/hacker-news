@@ -1,60 +1,81 @@
 'use client'
 
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
+
+interface AnimationState {
+  mounted: boolean
+  isVisible: boolean
+}
+
+type AnimationAction
+  = | { type: 'mount' }
+    | { type: 'show' }
+    | { type: 'hide' }
+    | { type: 'unmount' }
+
+const initialState: AnimationState = {
+  mounted: false,
+  isVisible: false,
+}
+
+function animationReducer(state: AnimationState, action: AnimationAction): AnimationState {
+  switch (action.type) {
+    case 'mount':
+      return { ...state, mounted: true }
+    case 'show':
+      return { ...state, isVisible: true }
+    case 'hide':
+      return { ...state, isVisible: false }
+    case 'unmount':
+      return { mounted: false, isVisible: false }
+    default:
+      return state
+  }
+}
 
 export function useLightboxAnimation(open: boolean) {
-  const [isVisible, setIsVisible] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [{ isVisible, mounted }, dispatch] = useReducer(animationReducer, initialState)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const rafIdsRef = useRef<number[]>([])
 
-  const clearPendingTimeout = useEffectEvent(() => {
+  useEffect(() => {
+    rafIdsRef.current.forEach(id => cancelAnimationFrame(id))
+    rafIdsRef.current = []
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
       timeoutRef.current = null
     }
-  })
 
-  const handleOpen = useEffectEvent(() => {
-    let visibilityRaf: number | null = null
-    const mountRaf = requestAnimationFrame(() => {
-      setMounted(true)
-      visibilityRaf = requestAnimationFrame(() => {
-        setIsVisible(true)
+    if (open) {
+      const mountId = requestAnimationFrame(() => {
+        dispatch({ type: 'mount' })
+        const showId = requestAnimationFrame(() => {
+          dispatch({ type: 'show' })
+        })
+        rafIdsRef.current.push(showId)
       })
-    })
+      rafIdsRef.current.push(mountId)
+    }
+    else {
+      const hideId = requestAnimationFrame(() => {
+        dispatch({ type: 'hide' })
+      })
+      rafIdsRef.current.push(hideId)
+
+      timeoutRef.current = setTimeout(() => {
+        dispatch({ type: 'unmount' })
+      }, 300)
+    }
 
     return () => {
-      cancelAnimationFrame(mountRaf)
-      if (visibilityRaf)
-        cancelAnimationFrame(visibilityRaf)
+      rafIdsRef.current.forEach(id => cancelAnimationFrame(id))
+      rafIdsRef.current = []
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
     }
-  })
-
-  const handleClose = useEffectEvent(() => {
-    const hideRaf = requestAnimationFrame(() => {
-      setIsVisible(false)
-    })
-
-    timeoutRef.current = setTimeout(() => {
-      setMounted(false)
-    }, 300)
-
-    return () => {
-      cancelAnimationFrame(hideRaf)
-      clearPendingTimeout()
-    }
-  })
-
-  useEffect(() => {
-    clearPendingTimeout()
-    if (open)
-      return handleOpen()
-    return handleClose()
   }, [open])
-
-  useEffect(() => () => {
-    clearPendingTimeout()
-  }, [])
 
   return { isVisible, mounted }
 }

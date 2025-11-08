@@ -74,9 +74,9 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
           className="h-full w-full rounded-2xl object-cover"
           src={cover}
           alt="cover"
-          width={320}
-          height={320}
-          sizes="320px"
+          width={600}
+          height={600}
+          sizes="600px"
           referrerPolicy="no-referrer"
           loading="lazy"
         />
