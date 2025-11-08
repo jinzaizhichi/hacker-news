@@ -137,7 +137,12 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
       </div>
 
       <article className="px-10 py-16 lg:px-20">
-        <div className="flex items-center gap-6">
+        <header
+          className={cn(
+            'sticky top-24 z-20 -mx-10 flex items-center gap-6 border-b border-border/60 bg-background/95 px-10 py-8',
+            'backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:-mx-20 lg:px-20',
+          )}
+        >
           <button
             type="button"
             onClick={handlePlayPause}
@@ -167,7 +172,7 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
               })}
             </time>
           </div>
-        </div>
+        </header>
 
         <div className="episode-content">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
@@ -221,7 +226,12 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
       </div>
 
       <article className="p-8">
-        <div className="flex items-center gap-4">
+        <header
+          className={cn(
+            'sticky top-14 z-20 -mx-8 flex items-center gap-4 border-b border-border/60 bg-background/95 px-8 py-6',
+            'backdrop-blur supports-[backdrop-filter]:bg-background/80',
+          )}
+        >
           <button
             type="button"
             onClick={handlePlayPause}
@@ -251,7 +261,7 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
               })}
             </time>
           </div>
-        </div>
+        </header>
 
         <div className="episode-content">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
