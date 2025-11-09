@@ -19,10 +19,9 @@ import { getPageStore } from '@/stores/page-store'
 interface EpisodesPaginationProps {
   currentPage: number
   totalPages: number
-  paddingClassName?: string
 }
 
-export function EpisodesPagination({ currentPage, totalPages, paddingClassName }: EpisodesPaginationProps) {
+export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginationProps) {
   const { t } = useTranslation()
   const router = useRouter()
   const pathname = usePathname()
@@ -79,7 +78,7 @@ export function EpisodesPagination({ currentPage, totalPages, paddingClassName }
   }
 
   return (
-    <div className={cn(paddingClassName)}>
+    <div className="px-4 py-8 md:px-10 md:py-12 lg:px-20">
       <Pagination>
         <PaginationContent>
           <PaginationItem>

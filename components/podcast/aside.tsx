@@ -10,7 +10,7 @@ export function PodcastAside() {
   const { t } = useTranslation()
 
   return (
-    <aside className="flex h-full flex-col items-center justify-between py-8">
+    <aside className="flex h-full flex-col items-center justify-between px-4 py-8">
       <section className="sticky top-0 flex items-center gap-6 whitespace-nowrap py-4 [writing-mode:vertical-rl]">
         <span className="font-mono text-muted-foreground">{t('aside.hostedBy')}</span>
         <span className="flex gap-6 font-bold">

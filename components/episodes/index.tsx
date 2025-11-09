@@ -21,58 +21,36 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
     pageStore.setState(() => ({ currentPage }))
   }, [currentPage])
 
+  const { t } = useTranslation()
+  const headingId = useId()
+  const listHeadingId = useId()
   const pageSize = site.pageSize
   const totalPages = Math.max(1, Math.ceil(totalEpisodes / pageSize))
   const hasEpisodes = episodes.length > 0
 
   return (
-    <>
-      <EpisodesDesktop
-        episodes={episodes}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        hasEpisodes={hasEpisodes}
-      />
-      <EpisodesMobile
-        episodes={episodes}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        hasEpisodes={hasEpisodes}
-      />
-    </>
-  )
-}
-
-interface EpisodesSectionProps {
-  episodes: Episode[]
-  totalPages: number
-  currentPage: number
-  hasEpisodes: boolean
-}
-
-function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
-  const { t } = useTranslation()
-  const headingId = useId()
-  const listHeadingId = useId()
-
-  return (
-    <section className="hidden w-full flex-col md:flex" aria-labelledby={headingId}>
-      <header className="sticky top-0 z-10 border-border border-b bg-background">
-        <Waveform className="h-24 w-full" />
-        <h1 id={headingId} className="absolute inset-0 top-10 px-10 font-bold text-2xl lg:px-20">
-          {t('episodes.title')}
-        </h1>
+    <section className="flex w-full flex-col" aria-labelledby={headingId}>
+      <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-lg md:bg-background md:backdrop-blur-0">
+        <div className="relative flex items-center">
+          <Waveform className="hidden h-24 w-full md:block" aria-hidden="true" />
+          <h1
+            id={headingId}
+            className="px-4 py-6 text-xl font-bold md:absolute md:inset-0 md:top-10 md:px-10 md:py-0 md:text-2xl lg:px-20"
+          >
+            {t('episodes.title')}
+          </h1>
+        </div>
       </header>
 
-      <div className="px-10 pt-12 lg:px-20">
-        <h2 id={listHeadingId} className="font-semibold text-xl text-foreground">
+      <div className="px-4 pt-6 md:px-10 md:pt-12 lg:px-20">
+        <h2 id={listHeadingId} className="font-semibold text-lg text-foreground md:text-xl">
           {t('episodes.listHeading')}
         </h2>
       </div>
 
       {!hasEpisodes
         ? (
-            <p className="px-10 py-20 text-muted-foreground text-center lg:px-20" role="status">
+            <p className="px-4 py-8 text-center text-muted-foreground md:px-10 md:py-20 lg:px-20" role="status">
               {t('episodes.noEpisodes')}
             </p>
           )
@@ -80,53 +58,10 @@ function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: Epi
             <>
               <ul className="flex flex-col" aria-labelledby={listHeadingId}>
                 {episodes.map(episode => (
-                  <EpisodeItem key={episode.id} episode={episode} variant="desktop" />
+                  <EpisodeItem key={episode.id} episode={episode} />
                 ))}
               </ul>
-              <EpisodesPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                paddingClassName="px-10 lg:px-20 py-12"
-              />
-            </>
-          )}
-    </section>
-  )
-}
-
-function EpisodesMobile({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
-  const { t } = useTranslation()
-  const headingId = useId()
-  const listHeadingId = useId()
-
-  return (
-    <section className="flex w-full flex-col md:hidden" aria-labelledby={headingId}>
-      {!hasEpisodes
-        ? (
-            <p className="px-4 py-8 text-muted-foreground text-center" role="status">{t('episodes.noEpisodes')}</p>
-          )
-        : (
-            <>
-              <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-lg">
-                <h1 id={headingId} className="px-4 py-6 font-bold text-xl">
-                  {t('episodes.title')}
-                </h1>
-              </header>
-              <div className="px-4 pt-6">
-                <h2 id={listHeadingId} className="font-semibold text-lg text-foreground">
-                  {t('episodes.listHeading')}
-                </h2>
-              </div>
-              <ul className="flex flex-col" aria-labelledby={listHeadingId}>
-                {episodes.map(episode => (
-                  <EpisodeItem key={episode.id} episode={episode} variant="mobile" />
-                ))}
-              </ul>
-              <EpisodesPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                paddingClassName="px-4 py-8"
-              />
+              <EpisodesPagination currentPage={currentPage} totalPages={totalPages} />
             </>
           )}
     </section>

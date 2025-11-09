@@ -10,8 +10,7 @@ import {
   useMediaState,
 } from '@vidstack/react'
 import { useEffect, useRef } from 'react'
-import { PlayerLayoutDesktop } from '@/components/player/layout-desktop'
-import { PlayerLayoutMobile } from '@/components/player/layout-mobile'
+import { PlayerLayout } from '@/components/player/layout'
 import { cn } from '@/lib/utils'
 import { getPlayerStore, registerPlayerInstance, setIsPlaying } from '@/stores/player-store'
 
@@ -151,8 +150,7 @@ export function Player() {
       >
         <MediaProvider />
         <PlayerContent />
-        <PlayerLayoutDesktop />
-        <PlayerLayoutMobile />
+        <PlayerLayout />
       </MediaPlayer>
     </div>
   )

@@ -24,6 +24,13 @@ interface EpisodeDetailProps {
   initialPage?: number
 }
 
+interface EpisodeBackLinkProps {
+  href: string
+  ariaLabel: string
+  label: string
+  className?: string
+}
+
 export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
   const lightbox = useLightbox()
   const { t } = useTranslation()
@@ -74,12 +81,7 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
 
   return (
     <>
-      <EpisodeDetailDesktop
-        episode={episode}
-        initialPage={initialPage}
-        markdownComponents={markdownComponents}
-      />
-      <EpisodeDetailMobile
+      <EpisodeDetailContent
         episode={episode}
         initialPage={initialPage}
         markdownComponents={markdownComponents}
@@ -95,11 +97,11 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
   )
 }
 
-interface DetailVariantProps extends EpisodeDetailProps {
+interface EpisodeDetailContentProps extends EpisodeDetailProps {
   markdownComponents: Partial<Components>
 }
 
-function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: DetailVariantProps) {
+function EpisodeDetailContent({ episode, markdownComponents, initialPage }: EpisodeDetailContentProps) {
   const { t, i18n } = useTranslation()
   const publishedDate = new Date(episode.published)
   const isoPublishedDate = publishedDate.toISOString()
@@ -130,27 +132,31 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
   const backLinkTitle = t('episodes.backLinkTitle')
 
   return (
-    <section className="hidden w-full flex-col md:flex" aria-labelledby={headlineId}>
-      <header className="sticky top-0 z-10 border-border border-b bg-background">
-        <Waveform className="h-24 w-full" />
-        <nav aria-label={backLinkTitle} className="absolute inset-0">
-          <Link
+    <section className="flex w-full flex-col" aria-labelledby={headlineId}>
+      <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-md md:bg-background md:backdrop-blur-0">
+        <div className="flex h-14 w-full items-center justify-center px-4 md:hidden">
+          <EpisodeBackLink
             href={href}
-            className={cn(
-              'flex h-full items-center gap-2 px-10 lg:px-20',
-              'text-base transition-colors hover:text-muted-foreground',
-            )}
-            title={backLinkTitle}
-            aria-label={backLinkTitle}
-          >
-            <ChevronLeft className="size-4" />
-            <span className="font-bold">{t('episodes.back')}</span>
-          </Link>
-        </nav>
+            ariaLabel={backLinkTitle}
+            label={t('episodes.back')}
+            className="justify-center text-sm"
+          />
+        </div>
+        <div className="relative hidden h-24 w-full items-center md:flex">
+          <Waveform className="absolute inset-0 h-full w-full" aria-hidden="true" />
+          <nav aria-label={backLinkTitle} className="absolute inset-0 flex items-center">
+            <EpisodeBackLink
+              href={href}
+              ariaLabel={backLinkTitle}
+              label={t('episodes.back')}
+              className="px-10 text-base lg:px-20"
+            />
+          </nav>
+        </div>
       </header>
 
       <article
-        className="px-10 py-16 lg:px-20"
+        className="px-4 py-8 md:px-10 md:py-16 lg:px-20"
         itemScope
         itemType="https://schema.org/Article"
         aria-labelledby={headlineId}
@@ -159,35 +165,35 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
         <meta itemProp="inLanguage" content={i18n.language} />
         <header
           className={cn(
-            'sticky top-24 z-20 -mx-10 flex items-center gap-6 border-b border-border/60 bg-background/95 px-10 py-8',
-            'backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:-mx-20 lg:px-20',
+            'sticky top-14 z-20 -mx-4 flex items-center gap-4 border-b border-border/60 bg-background/95 px-4 py-6',
+            'backdrop-blur supports-[backdrop-filter]:bg-background/80 md:top-24 md:-mx-10 md:gap-6 md:px-10 md:py-8 lg:-mx-20 lg:px-20',
           )}
         >
           <button
             type="button"
             onClick={handlePlayPause}
             className={cn(
-              'group mt-2 flex h-18 w-18 flex-shrink-0 items-center justify-center rounded-full bg-theme',
+              'group mt-2 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-theme',
               'shadow-lg shadow-theme/20 transition-all hover:scale-105 hover:bg-theme-hover hover:shadow-theme/30 hover:shadow-xl',
-              'cursor-pointer focus:outline-none focus:ring-2 focus:ring-theme focus:ring-offset-2',
+              'cursor-pointer focus:outline-none focus:ring-2 focus:ring-theme focus:ring-offset-2 md:h-18 md:w-18',
             )}
             aria-label={isCurrentEpisodePlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
           >
             {isCurrentEpisodePlaying
               ? (
-                  <Pause className="h-8 w-8 fill-white text-white" />
+                  <Pause className="h-6 w-6 fill-white text-white md:h-8 md:w-8" />
                 )
               : (
-                  <Play className="h-8 w-8 fill-white text-white" />
+                  <Play className="h-6 w-6 fill-white text-white md:h-8 md:w-8" />
                 )}
           </button>
 
           <div className="flex flex-col">
-            <h1 id={headlineId} className="mt-2 font-bold text-4xl text-foreground" itemProp="headline">
+            <h1 id={headlineId} className="mt-2 font-bold text-2xl text-foreground md:text-4xl" itemProp="headline">
               {episode.title}
             </h1>
             <time
-              className="order-first font-mono text-muted-foreground text-sm leading-7"
+              className="order-first font-mono text-xs leading-7 text-muted-foreground md:text-sm"
               dateTime={isoPublishedDate}
               itemProp="datePublished"
             >
@@ -210,112 +216,19 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
   )
 }
 
-function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: DetailVariantProps) {
-  const { t, i18n } = useTranslation()
-  const publishedDate = new Date(episode.published)
-  const isoPublishedDate = publishedDate.toISOString()
-  const headlineId = useId()
-  const pageStore = getPageStore()
-  const currentPage = useStore(pageStore, state => state.currentPage)
-  const playerStore = getPlayerStore()
-  const currentEpisode = useStore(playerStore, state => state.currentEpisode)
-  const isPlaying = useStore(playerStore, state => state.isPlaying)
-
-  const isCurrentEpisodePlaying = currentEpisode?.id === episode.id && isPlaying
-
-  const handlePlayPause = () => {
-    if (isCurrentEpisodePlaying) {
-      pause()
-    }
-    else if (currentEpisode?.id === episode.id) {
-      play()
-    }
-    else {
-      setCurrentEpisode(episode)
-    }
-  }
-
-  const resolvedPage = initialPage ?? currentPage
-  const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
-  const articlePath = `/post/${episode.id}`
-  const backLinkTitle = t('episodes.backLinkTitle')
-
+function EpisodeBackLink({ href, ariaLabel, label, className }: EpisodeBackLinkProps) {
   return (
-    <section className="flex w-full flex-col md:hidden" aria-labelledby={headlineId}>
-      <header className="sticky top-0 z-10 h-14 w-full bg-background/95 backdrop-blur-md">
-        <nav aria-label={backLinkTitle} className="absolute inset-0">
-          <Link
-            href={href}
-            className={cn(
-              'flex h-full items-center justify-center gap-2',
-              'cursor-pointer text-foreground text-sm transition-colors hover:text-muted-foreground',
-            )}
-            title={backLinkTitle}
-            aria-label={backLinkTitle}
-          >
-            <ChevronLeft className="size-4 text-foreground" />
-            <span className="font-bold">{t('episodes.back')}</span>
-          </Link>
-        </nav>
-      </header>
-
-      <article
-        className="p-8"
-        itemScope
-        itemType="https://schema.org/Article"
-        aria-labelledby={headlineId}
-      >
-        <meta itemProp="url" content={articlePath} />
-        <meta itemProp="inLanguage" content={i18n.language} />
-        <header
-          className={cn(
-            'sticky top-14 z-20 -mx-8 flex items-center gap-4 border-b border-border/60 bg-background/95 px-8 py-6',
-            'backdrop-blur supports-[backdrop-filter]:bg-background/80',
-          )}
-        >
-          <button
-            type="button"
-            onClick={handlePlayPause}
-            className={cn(
-              'group mt-2 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-theme',
-              'shadow-lg shadow-theme/20 transition-all hover:scale-105 hover:bg-theme-hover hover:shadow-theme/30 hover:shadow-xl',
-              'cursor-pointer focus:outline-none focus:ring-2 focus:ring-theme focus:ring-offset-2',
-            )}
-            aria-label={isCurrentEpisodePlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
-          >
-            {isCurrentEpisodePlaying
-              ? (
-                  <Pause className="h-6 w-6 fill-white text-white" />
-                )
-              : (
-                  <Play className="h-6 w-6 fill-white text-white" />
-                )}
-          </button>
-
-          <div className="flex flex-col">
-            <h1 id={headlineId} className="mt-2 font-bold text-2xl text-foreground" itemProp="headline">
-              {episode.title}
-            </h1>
-            <time
-              className="order-first font-mono text-muted-foreground text-xs leading-7"
-              dateTime={isoPublishedDate}
-              itemProp="datePublished"
-            >
-              {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </time>
-          </div>
-        </header>
-
-        <div className="episode-content" itemProp="articleBody">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-            {episode.content ?? episode.description ?? ''}
-          </ReactMarkdown>
-        </div>
-      </article>
-    </section>
+    <Link
+      href={href}
+      className={cn(
+        'flex w-full items-center gap-2 text-foreground transition-colors hover:text-muted-foreground',
+        className,
+      )}
+      title={ariaLabel}
+      aria-label={ariaLabel}
+    >
+      <ChevronLeft className="size-4" />
+      <span className="font-bold">{label}</span>
+    </Link>
   )
 }

@@ -1,12 +1,12 @@
 'use client'
 
-import type { ComponentType, SVGProps } from 'react'
+import type { ComponentType, ReactNode, SVGProps } from 'react'
 import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
 import { useStore } from '@tanstack/react-store'
 import { Podcast, Rss, Youtube } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -48,15 +48,10 @@ export function PodcastInfo() {
     return null
   }
 
-  return (
-    <>
-      <PodcastInfoDesktop podcastInfo={podcastInfo} />
-      <PodcastInfoMobile podcastInfo={podcastInfo} />
-    </>
-  )
+  return <PodcastInfoContent podcastInfo={podcastInfo} />
 }
 
-function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
+function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
   const titleId = useId()
@@ -73,17 +68,44 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
     : shouldTruncate
       ? `${description.slice(0, site.defaultDescriptionLength)}...`
       : description
+  const markdownComponents = useMemo(() => ({
+    p: ({ children }: { children?: ReactNode }) => (
+      <p className="leading-relaxed">{children}</p>
+    ),
+    a: ({ href, children }: { href?: string, children?: ReactNode }) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+        title={externalLinkTitle}
+        aria-label={externalLinkTitle}
+      >
+        {children}
+      </a>
+    ),
+  }), [externalLinkTitle])
 
   return (
     <article
-      className={cn('hidden md:flex', 'h-full flex-col gap-12 p-12')}
+      className={cn(
+        'relative flex flex-col gap-8 px-4 pb-10 pt-16 sm:px-8',
+        'md:h-full md:gap-12 md:px-8 md:py-12 lg:px-12',
+      )}
       aria-labelledby={titleId}
       itemScope
       itemType="https://schema.org/PodcastSeries"
     >
       <meta itemProp="url" content={podcast.base.link} />
-      <figure className="block aspect-square w-full">
-        <Link href="/" aria-label={homeLinkTitle} title={homeLinkTitle}>
+      <Waveform className="absolute inset-x-0 top-0 w-full md:hidden" aria-hidden="true" />
+
+      <figure className="flex justify-center pt-4 md:pt-0">
+        <Link
+          href="/"
+          aria-label={homeLinkTitle}
+          title={homeLinkTitle}
+          className="block aspect-square w-40 md:w-full md:max-w-sm lg:max-w-md"
+        >
           <Image
             className="h-full w-full rounded-2xl object-cover"
             src={cover}
@@ -98,13 +120,16 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
         <figcaption className="sr-only">{title}</figcaption>
       </figure>
 
-      <h2 id={titleId} className="text-left font-bold text-xl" itemProp="name">
+      <h2 id={titleId} className="text-center font-bold text-2xl md:text-left md:text-xl" itemProp="name">
         {title}
       </h2>
 
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-5" aria-labelledby={aboutSectionId}>
-          <div className="flex items-center gap-2 font-medium font-mono text-sm" id={aboutSectionId}>
+          <div
+            className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground md:justify-start md:font-medium md:text-sm md:normal-case"
+            id={aboutSectionId}
+          >
             <TinyWaveFormIcon
               colors={['fill-violet-300', 'fill-pink-300']}
               className="h-2.5 w-2.5"
@@ -112,47 +137,40 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
             />
             <span>{t('podcastInfo.about')}</span>
           </div>
+
           <div className="flex flex-col gap-2" id={descriptionId} itemProp="description">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                p: ({ children }) => (
-                  <p className="leading-relaxed">{children}</p>
-                ),
-                a: ({ href, children }) => (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-theme underline transition-colors hover:text-theme-hover"
-                    title={externalLinkTitle}
-                    aria-label={externalLinkTitle}
-                  >
-                    {children}
-                  </a>
-                ),
-              }}
-            >
-              {displayDescription}
-            </ReactMarkdown>
-            {shouldTruncate && (
-              <button
-                type="button"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="cursor-pointer self-start font-medium text-theme transition-colors hover:text-theme-hover"
-                aria-expanded={isExpanded}
-                aria-controls={descriptionId}
-              >
-                {isExpanded ? t('podcastInfo.showLess') : t('podcastInfo.showMore')}
-              </button>
-            )}
+            <div className="line-clamp-6 md:hidden">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                {description}
+              </ReactMarkdown>
+            </div>
+
+            <div className="hidden md:flex md:flex-col md:gap-2">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                {displayDescription}
+              </ReactMarkdown>
+              {shouldTruncate && (
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="cursor-pointer self-start font-medium text-theme transition-colors hover:text-theme-hover"
+                  aria-expanded={isExpanded}
+                  aria-controls={descriptionId}
+                >
+                  {isExpanded ? t('podcastInfo.showLess') : t('podcastInfo.showMore')}
+                </button>
+              )}
+            </div>
           </div>
         </section>
 
         {podcast.platforms?.length
           ? (
               <section className="flex flex-col gap-5" aria-labelledby={listenSectionId}>
-                <div className="flex items-center gap-2 font-medium font-mono text-sm" id={listenSectionId}>
+                <div
+                  className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground md:justify-start md:font-medium md:text-sm md:normal-case"
+                  id={listenSectionId}
+                >
                   <TinyWaveFormIcon
                     colors={['fill-indigo-300', 'fill-blue-300']}
                     className="h-2.5 w-2.5"
@@ -161,7 +179,7 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
                   <span>{t('podcastInfo.listen')}</span>
                 </div>
 
-                <ul className="flex flex-col gap-6">
+                <ul className="flex items-center justify-center gap-6 md:flex-col md:items-start md:justify-start">
                   {podcast.platforms.map((platform) => {
                     const config = platformIcons[platform.id]
                     if (!config)
@@ -174,13 +192,13 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
                           href={platform.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex cursor-pointer items-center gap-2"
+                          className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
                           aria-label={platformLinkTitle}
                           title={platformLinkTitle}
                           itemProp="sameAs"
                         >
-                          <Icon className={cn('h-6 w-6', config.colorClass)} aria-hidden="true" />
-                          <span>{platform.name}</span>
+                          <Icon className={cn('h-8 w-8 md:h-6 md:w-6', config.colorClass)} aria-hidden="true" />
+                          <span className="hidden md:inline">{platform.name}</span>
                         </a>
                       </li>
                     )
@@ -190,112 +208,8 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
             )
           : null}
       </div>
-    </article>
-  )
-}
 
-function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
-  const { t } = useTranslation()
-  const titleId = useId()
-  const aboutSectionId = useId()
-  const listenSectionId = useId()
-  const { title, description, cover } = podcastInfo
-  const coverAlt = t('podcastInfo.coverAlt', { title })
-  const homeLinkTitle = t('podcastInfo.homeLinkTitle', { title })
-  const externalLinkTitle = t('common.externalLinkTitle')
-
-  return (
-    <article
-      className="relative flex flex-col items-center gap-8 md:hidden"
-      aria-labelledby={titleId}
-      itemScope
-      itemType="https://schema.org/PodcastSeries"
-    >
-      <meta itemProp="url" content={podcast.base.link} />
-      <Waveform className="absolute top-0 left-0 w-full" aria-hidden="true" />
-      <figure className="flex justify-center pt-20">
-        <Link href="/" aria-label={homeLinkTitle} title={homeLinkTitle}>
-          <Image
-            className="h-40 w-40 rounded-2xl object-cover"
-            src={cover}
-            alt={coverAlt}
-            width={320}
-            height={320}
-            referrerPolicy="no-referrer"
-            preload
-            itemProp="image"
-          />
-        </Link>
-        <figcaption className="sr-only">{title}</figcaption>
-      </figure>
-
-      <h2 id={titleId} className="text-left font-bold text-2xl" itemProp="name">
-        {title}
-      </h2>
-
-      <section className="w-full px-10" aria-labelledby={aboutSectionId} itemProp="description">
-        <h3 id={aboutSectionId} className="sr-only">
-          {t('podcastInfo.about')}
-        </h3>
-        <div className="line-clamp-6">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              p: ({ children }) => <p className="leading-relaxed">{children}</p>,
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-theme underline transition-colors hover:text-theme-hover"
-                  title={externalLinkTitle}
-                  aria-label={externalLinkTitle}
-                >
-                  {children}
-                </a>
-              ),
-            }}
-          >
-            {description}
-          </ReactMarkdown>
-        </div>
-      </section>
-
-      {podcast.platforms?.length
-        ? (
-            <section className="flex flex-col items-center gap-4" aria-labelledby={listenSectionId}>
-              <h3 id={listenSectionId} className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
-                {t('podcastInfo.listen')}
-              </h3>
-              <ul className="flex items-center gap-6">
-                {podcast.platforms.map((platform) => {
-                  const config = platformIcons[platform.id]
-                  if (!config)
-                    return null
-                  const Icon = config.icon
-                  const platformLinkTitle = t('podcastInfo.platformLinkTitle', { platform: platform.name })
-                  return (
-                    <li key={platform.id} className="list-none">
-                      <a
-                        href={platform.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-opacity hover:opacity-70"
-                        aria-label={platformLinkTitle}
-                        title={platformLinkTitle}
-                        itemProp="sameAs"
-                      >
-                        <Icon className={cn('h-8 w-8', config.colorClass)} aria-hidden="true" />
-                      </a>
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-          )
-        : null}
-
-      <div className="relative w-full py-2" aria-hidden="true">
+      <div className="relative w-full py-4 md:hidden" aria-hidden="true">
         <div className="absolute inset-0 flex items-center">
           <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
         </div>
