@@ -46,8 +46,12 @@ export async function GET() {
     }),
   )).filter(Boolean)
 
-  for (const post of posts) {
-    const audioInfo = await env.HACKER_NEWS_R2.head(post.audio)
+  const audioInfos = await Promise.all(
+    posts.map(post => env.HACKER_NEWS_R2.head(post.audio)),
+  )
+
+  posts.forEach((post, index) => {
+    const audioInfo = audioInfos[index]
 
     const links = post.stories
       .map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}" title="${s.title || ''}">${s.title || ''}</a></li>`)
@@ -69,7 +73,7 @@ export async function GET() {
         size: audioInfo?.size,
       },
     })
-  }
+  })
 
   const response = new NextResponse(feed.buildXml(), {
     headers: {
