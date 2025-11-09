@@ -16,7 +16,12 @@
     "directory": ".open-next/assets"
   },
   "observability": {
-    "enabled": true
+    "traces": {
+      "enabled": true
+    },
+    "logs": {
+      "enabled": true
+    }
   },
   "placement": {
     "mode": "smart"
