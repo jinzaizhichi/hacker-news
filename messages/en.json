@@ -12,7 +12,8 @@
     "about": "About",
     "listen": "Listen",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "coverAlt": "Cover image for {{title}}"
   },
   "episodes": {
     "title": "Episodes",
@@ -55,5 +56,14 @@
     "volume": "Volume",
     "mute": "Mute",
     "unmute": "Unmute"
+  },
+  "lightbox": {
+    "openImage": "Open image in lightbox",
+    "previous": "Previous image",
+    "next": "Next image",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "close": "Close lightbox",
+    "viewImage": "View image {{index}}"
   }
 }

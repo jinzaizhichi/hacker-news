@@ -2,6 +2,7 @@
 
 import type { Theme } from '@/stores/theme-store'
 import { Moon, Sun } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/components/theme/use-theme'
 import { cn } from '@/lib/utils'
 
@@ -11,6 +12,7 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
+  const { t } = useTranslation()
 
   const toggleTheme = () => {
     const resolveTheme = (): Theme => {
@@ -37,7 +39,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       onClick={toggleTheme}
       className="cursor-pointer"
-      aria-label="Toggle theme"
+      aria-label={t('common.toggleTheme')}
     >
       <Sun className={cn('size-6 dark:hidden', className)} />
       <Moon className={cn('hidden size-6 dark:block', className)} />

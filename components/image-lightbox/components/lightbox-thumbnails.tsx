@@ -2,6 +2,7 @@
 
 import type { ImageInfo } from '@/lib/markdown'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface LightboxThumbnailsProps {
@@ -12,6 +13,7 @@ interface LightboxThumbnailsProps {
 }
 
 export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailClick }: LightboxThumbnailsProps) {
+  const { t } = useTranslation()
   if (images.length <= 1)
     return null
 
@@ -33,7 +35,7 @@ export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailCl
             idx === currentIndex ? 'scale-110 opacity-100' : 'opacity-70 hover:scale-105 hover:opacity-100',
           )}
           style={{ width: '80px', height: '80px' }}
-          aria-label={`View image ${idx + 1}`}
+          aria-label={t('lightbox.viewImage', { index: idx + 1 })}
         >
           <div className="relative h-full w-full">
             <Image

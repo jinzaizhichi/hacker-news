@@ -39,63 +39,78 @@ export function EpisodeItem({ episode, variant }: EpisodeItemProps) {
     }
   }
 
-  const dateFormatter = new Date(episode.published).toLocaleDateString(
+  const publishedDate = new Date(episode.published)
+  const dateFormatter = publishedDate.toLocaleDateString(
     i18n.language === 'zh' ? 'zh-CN' : 'en-US',
     { year: 'numeric', month: 'long', day: 'numeric' },
   )
+  const isoPublishedDate = publishedDate.toISOString()
 
   const linkHref = currentPage > 1 ? `/post/${episode.id}?page=${currentPage}` : `/post/${episode.id}`
   const isDesktop = variant === 'desktop'
 
   return (
-    <li
-      className={cn(
-        'flex flex-col gap-3 border-border border-b',
-        isDesktop ? 'px-10 py-12 lg:px-20' : 'p-8',
-      )}
-    >
-      <time className={cn('text-muted-foreground', isDesktop ? 'text-sm' : 'text-xs')}>
-        {dateFormatter}
-      </time>
-      <Link
-        href={linkHref}
+    <li className="list-none">
+      <article
         className={cn(
-          'cursor-pointer font-bold transition-colors hover:text-theme',
-          isDesktop ? 'text-2xl' : 'text-xl',
+          'flex flex-col gap-3 border-border border-b',
+          isDesktop ? 'px-10 py-12 lg:px-20' : 'p-8',
         )}
+        itemScope
+        itemType="https://schema.org/PodcastEpisode"
       >
-        {episode.title}
-      </Link>
-      {episode.description && (
+        <meta itemProp="url" content={linkHref} />
+        <time
+          dateTime={isoPublishedDate}
+          className={cn('text-muted-foreground', isDesktop ? 'text-sm' : 'text-xs')}
+          itemProp="datePublished"
+        >
+          {dateFormatter}
+        </time>
         <Link
           href={linkHref}
           className={cn(
-            'line-clamp-2 cursor-pointer text-foreground/80 leading-relaxed transition-colors hover:text-theme',
-            !isDesktop && 'text-sm',
+            'cursor-pointer font-bold transition-colors hover:text-theme',
+            isDesktop ? 'text-2xl' : 'text-xl',
+          )}
+          itemProp="url"
+        >
+          <span itemProp="name">{episode.title}</span>
+        </Link>
+        {episode.description && (
+          <Link
+            href={linkHref}
+            className={cn(
+              'line-clamp-2 cursor-pointer text-foreground/80 leading-relaxed transition-colors hover:text-theme',
+              !isDesktop && 'text-sm',
+            )}
+          >
+            <div itemProp="description">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{episode.description}</ReactMarkdown>
+            </div>
+          </Link>
+        )}
+        <div
+          className={cn(
+            'mt-2 flex items-center font-medium text-theme hover:text-theme-hover',
+            isDesktop ? 'gap-4 text-sm' : 'flex-wrap gap-3 text-xs',
           )}
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{episode.description}</ReactMarkdown>
-        </Link>
-      )}
-      <div
-        className={cn(
-          'mt-2 flex items-center font-medium text-theme hover:text-theme-hover',
-          isDesktop ? 'gap-4 text-sm' : 'flex-wrap gap-3 text-xs',
-        )}
-      >
-        <button
-          type="button"
-          onClick={handlePlayPause}
-          className={cn('flex cursor-pointer items-center gap-2 font-medium text-theme hover:text-theme-hover', !isDesktop && 'gap-1.5')}
-        >
-          {isCurrentlyPlaying ? <Pause className={cn(isDesktop ? 'size-4' : 'size-3.5')} /> : <Play className={cn(isDesktop ? 'size-4' : 'size-3.5')} />}
-          <span>{isCurrentlyPlaying ? t('episodes.pause') : t('episodes.listen')}</span>
-        </button>
-        <span className="text-muted-foreground">/</span>
-        <Link href={linkHref} className="cursor-pointer font-medium text-theme hover:text-theme-hover">
-          {t('episodes.showNotes')}
-        </Link>
-      </div>
+          <button
+            type="button"
+            onClick={handlePlayPause}
+            className={cn('flex cursor-pointer items-center gap-2 font-medium text-theme hover:text-theme-hover', !isDesktop && 'gap-1.5')}
+            aria-label={isCurrentlyPlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
+          >
+            {isCurrentlyPlaying ? <Pause className={cn(isDesktop ? 'size-4' : 'size-3.5')} /> : <Play className={cn(isDesktop ? 'size-4' : 'size-3.5')} />}
+            <span>{isCurrentlyPlaying ? t('episodes.pause') : t('episodes.listen')}</span>
+          </button>
+          <span className="text-muted-foreground">/</span>
+          <Link href={linkHref} className="cursor-pointer font-medium text-theme hover:text-theme-hover">
+            {t('episodes.showNotes')}
+          </Link>
+        </div>
+      </article>
     </li>
   )
 }

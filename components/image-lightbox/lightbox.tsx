@@ -4,6 +4,7 @@ import type { ImageLightboxProps, ImageWithLightboxProps } from '@/components/im
 import Image from 'next/image'
 import { useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 import { LightboxControls } from '@/components/image-lightbox/components/lightbox-controls'
 import { LightboxImage } from '@/components/image-lightbox/components/lightbox-image'
 import { LightboxThumbnails } from '@/components/image-lightbox/components/lightbox-thumbnails'
@@ -141,6 +142,8 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
 }
 
 export function ImageWithLightbox({ src, alt, index, onOpen }: ImageWithLightboxProps) {
+  const { t } = useTranslation()
+
   if (!src)
     return null
 
@@ -148,7 +151,7 @@ export function ImageWithLightbox({ src, alt, index, onOpen }: ImageWithLightbox
     <button
       type="button"
       onClick={() => onOpen(index)}
-      aria-label={alt || 'Open image in lightbox'}
+      aria-label={alt || t('lightbox.openImage')}
       className="border-none bg-transparent p-0 outline-none"
       style={{ border: 'none', outline: 'none' }}
     >

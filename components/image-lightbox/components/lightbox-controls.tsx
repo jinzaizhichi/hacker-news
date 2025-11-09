@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface LightboxControlsProps {
@@ -26,6 +27,7 @@ export function LightboxControls({
   onZoomIn,
   onZoomOut,
 }: LightboxControlsProps) {
+  const { t } = useTranslation()
   const buttonClassName = cn(
     'z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95',
     isDark
@@ -44,7 +46,7 @@ export function LightboxControls({
           '-translate-y-1/2 absolute top-1/2 left-4',
           currentIndex <= 0 && 'cursor-not-allowed opacity-50',
         )}
-        aria-label="Previous image"
+        aria-label={t('lightbox.previous')}
       >
         <ChevronLeft className="size-6" />
       </button>
@@ -58,7 +60,7 @@ export function LightboxControls({
           '-translate-y-1/2 absolute top-1/2 right-4',
           currentIndex >= imagesLength - 1 && 'cursor-not-allowed opacity-50',
         )}
-        aria-label="Next image"
+        aria-label={t('lightbox.next')}
       >
         <ChevronRight className="size-6" />
       </button>
@@ -69,7 +71,7 @@ export function LightboxControls({
           onClick={onZoomOut}
           disabled={zoomScale <= 0.5}
           className={cn(buttonClassName, zoomScale <= 0.5 && 'cursor-not-allowed opacity-50')}
-          aria-label="Zoom out"
+          aria-label={t('lightbox.zoomOut')}
         >
           <ZoomOut className="size-5" />
         </button>
@@ -78,11 +80,11 @@ export function LightboxControls({
           onClick={onZoomIn}
           disabled={zoomScale >= 3}
           className={cn(buttonClassName, zoomScale >= 3 && 'cursor-not-allowed opacity-50')}
-          aria-label="Zoom in"
+          aria-label={t('lightbox.zoomIn')}
         >
           <ZoomIn className="size-5" />
         </button>
-        <button type="button" onClick={onClose} className={buttonClassName} aria-label="Close lightbox">
+        <button type="button" onClick={onClose} className={buttonClassName} aria-label={t('lightbox.close')}>
           <X className="size-5" />
         </button>
       </div>

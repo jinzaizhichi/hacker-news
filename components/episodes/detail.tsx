@@ -6,7 +6,7 @@ import type { Episode } from '@/types/podcast'
 import { useStore } from '@tanstack/react-store'
 import { ChevronLeft, Pause, Play } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useId, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -97,6 +97,8 @@ interface DetailVariantProps extends EpisodeDetailProps {
 function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: DetailVariantProps) {
   const { t, i18n } = useTranslation()
   const publishedDate = new Date(episode.published)
+  const isoPublishedDate = publishedDate.toISOString()
+  const headlineId = useId()
   const pageStore = getPageStore()
   const currentPage = useStore(pageStore, state => state.currentPage)
   const playerStore = getPlayerStore()
@@ -119,24 +121,34 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
 
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
+  const articlePath = `/post/${episode.id}`
 
   return (
-    <section className="hidden w-full flex-col md:flex">
-      <div className="sticky top-0 z-10 border-border border-b bg-background">
+    <section className="hidden w-full flex-col md:flex" aria-labelledby={headlineId}>
+      <header className="sticky top-0 z-10 border-border border-b bg-background">
         <Waveform className="h-24 w-full" />
-        <Link
-          href={href}
-          className={cn(
-            'absolute inset-0 flex items-center gap-2 px-10 lg:px-20',
-            'text-base transition-colors hover:text-muted-foreground',
-          )}
-        >
-          <ChevronLeft className="size-4" />
-          <span className="font-bold">{t('episodes.back')}</span>
-        </Link>
-      </div>
+        <nav aria-label={t('episodes.back')} className="absolute inset-0">
+          <Link
+            href={href}
+            className={cn(
+              'flex h-full items-center gap-2 px-10 lg:px-20',
+              'text-base transition-colors hover:text-muted-foreground',
+            )}
+          >
+            <ChevronLeft className="size-4" />
+            <span className="font-bold">{t('episodes.back')}</span>
+          </Link>
+        </nav>
+      </header>
 
-      <article className="px-10 py-16 lg:px-20">
+      <article
+        className="px-10 py-16 lg:px-20"
+        itemScope
+        itemType="https://schema.org/Article"
+        aria-labelledby={headlineId}
+      >
+        <meta itemProp="url" content={articlePath} />
+        <meta itemProp="inLanguage" content={i18n.language} />
         <header
           className={cn(
             'sticky top-24 z-20 -mx-10 flex items-center gap-6 border-b border-border/60 bg-background/95 px-10 py-8',
@@ -163,8 +175,14 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
           </button>
 
           <div className="flex flex-col">
-            <h1 className="mt-2 font-bold text-4xl text-foreground">{episode.title}</h1>
-            <time className="order-first font-mono text-muted-foreground text-sm leading-7">
+            <h1 id={headlineId} className="mt-2 font-bold text-4xl text-foreground" itemProp="headline">
+              {episode.title}
+            </h1>
+            <time
+              className="order-first font-mono text-muted-foreground text-sm leading-7"
+              dateTime={isoPublishedDate}
+              itemProp="datePublished"
+            >
               {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -174,9 +192,9 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
           </div>
         </header>
 
-        <div className="episode-content">
+        <div className="episode-content" itemProp="articleBody">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-            {episode.content ?? episode.description}
+            {episode.content ?? episode.description ?? ''}
           </ReactMarkdown>
         </div>
       </article>
@@ -187,6 +205,8 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
 function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: DetailVariantProps) {
   const { t, i18n } = useTranslation()
   const publishedDate = new Date(episode.published)
+  const isoPublishedDate = publishedDate.toISOString()
+  const headlineId = useId()
   const pageStore = getPageStore()
   const currentPage = useStore(pageStore, state => state.currentPage)
   const playerStore = getPlayerStore()
@@ -209,23 +229,33 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
 
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
+  const articlePath = `/post/${episode.id}`
 
   return (
-    <section className="flex w-full flex-col md:hidden">
-      <div className="sticky top-0 z-10 h-14 w-full bg-background/95 backdrop-blur-md">
-        <Link
-          href={href}
-          className={cn(
-            'absolute inset-0 flex items-center justify-center gap-2',
-            'cursor-pointer text-foreground text-sm transition-colors hover:text-muted-foreground',
-          )}
-        >
-          <ChevronLeft className="size-4 text-foreground" />
-          <span className="font-bold">{t('episodes.back')}</span>
-        </Link>
-      </div>
+    <section className="flex w-full flex-col md:hidden" aria-labelledby={headlineId}>
+      <header className="sticky top-0 z-10 h-14 w-full bg-background/95 backdrop-blur-md">
+        <nav aria-label={t('episodes.back')} className="absolute inset-0">
+          <Link
+            href={href}
+            className={cn(
+              'flex h-full items-center justify-center gap-2',
+              'cursor-pointer text-foreground text-sm transition-colors hover:text-muted-foreground',
+            )}
+          >
+            <ChevronLeft className="size-4 text-foreground" />
+            <span className="font-bold">{t('episodes.back')}</span>
+          </Link>
+        </nav>
+      </header>
 
-      <article className="p-8">
+      <article
+        className="p-8"
+        itemScope
+        itemType="https://schema.org/Article"
+        aria-labelledby={headlineId}
+      >
+        <meta itemProp="url" content={articlePath} />
+        <meta itemProp="inLanguage" content={i18n.language} />
         <header
           className={cn(
             'sticky top-14 z-20 -mx-8 flex items-center gap-4 border-b border-border/60 bg-background/95 px-8 py-6',
@@ -252,8 +282,14 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
           </button>
 
           <div className="flex flex-col">
-            <h1 className="mt-2 font-bold text-2xl text-foreground">{episode.title}</h1>
-            <time className="order-first font-mono text-muted-foreground text-xs leading-7">
+            <h1 id={headlineId} className="mt-2 font-bold text-2xl text-foreground" itemProp="headline">
+              {episode.title}
+            </h1>
+            <time
+              className="order-first font-mono text-muted-foreground text-xs leading-7"
+              dateTime={isoPublishedDate}
+              itemProp="datePublished"
+            >
               {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -263,9 +299,9 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
           </div>
         </header>
 
-        <div className="episode-content">
+        <div className="episode-content" itemProp="articleBody">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-            {episode.content ?? episode.description}
+            {episode.content ?? episode.description ?? ''}
           </ReactMarkdown>
         </div>
       </article>

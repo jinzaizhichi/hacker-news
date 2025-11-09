@@ -1,7 +1,7 @@
 'use client'
 
 import type { Episode } from '@/types/podcast'
-import { useEffect } from 'react'
+import { useEffect, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Waveform } from '@/components/common/waveform'
 import { EpisodeItem } from '@/components/episodes/episode-item'
@@ -52,25 +52,26 @@ interface EpisodesSectionProps {
 
 function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
   const { t } = useTranslation()
+  const headingId = useId()
 
   return (
-    <div className="hidden w-full flex-col md:flex">
-      <div className="sticky top-0 z-10 border-border border-b bg-background">
+    <section className="hidden w-full flex-col md:flex" aria-labelledby={headingId}>
+      <header className="sticky top-0 z-10 border-border border-b bg-background">
         <Waveform className="h-24 w-full" />
-        <h1 className="absolute inset-0 top-10 px-10 font-bold text-2xl lg:px-20">
+        <h1 id={headingId} className="absolute inset-0 top-10 px-10 font-bold text-2xl lg:px-20">
           {t('episodes.title')}
         </h1>
-      </div>
+      </header>
 
       {!hasEpisodes
         ? (
-            <p className="px-10 text-muted-foreground lg:px-20">
+            <p className="px-10 py-20 text-muted-foreground text-center lg:px-20" role="status">
               {t('episodes.noEpisodes')}
             </p>
           )
         : (
             <>
-              <ul className="flex flex-col">
+              <ul className="flex flex-col" aria-labelledby={headingId}>
                 {episodes.map(episode => (
                   <EpisodeItem key={episode.id} episode={episode} variant="desktop" />
                 ))}
@@ -82,22 +83,28 @@ function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: Epi
               />
             </>
           )}
-    </div>
+    </section>
   )
 }
 
 function EpisodesMobile({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
   const { t } = useTranslation()
+  const headingId = useId()
 
   return (
-    <div className="flex w-full flex-col md:hidden">
+    <section className="flex w-full flex-col md:hidden" aria-labelledby={headingId}>
       {!hasEpisodes
         ? (
-            <p className="px-4 py-8 text-muted-foreground">{t('episodes.noEpisodes')}</p>
+            <p className="px-4 py-8 text-muted-foreground text-center" role="status">{t('episodes.noEpisodes')}</p>
           )
         : (
             <>
-              <ul className="flex flex-col">
+              <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-lg">
+                <h1 id={headingId} className="px-4 py-6 font-bold text-xl">
+                  {t('episodes.title')}
+                </h1>
+              </header>
+              <ul className="flex flex-col" aria-labelledby={headingId}>
                 {episodes.map(episode => (
                   <EpisodeItem key={episode.id} episode={episode} variant="mobile" />
                 ))}
@@ -109,6 +116,6 @@ function EpisodesMobile({ episodes, totalPages, currentPage, hasEpisodes }: Epis
               />
             </>
           )}
-    </div>
+    </section>
   )
 }
