@@ -90,7 +90,7 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
     <article
       className={cn(
         'relative flex flex-col gap-8 px-4 pb-10 pt-16 sm:px-8',
-        'md:h-full md:gap-12 md:px-8 md:py-12 lg:px-12',
+        'md:gap-12 md:px-8 md:py-12 lg:px-12',
       )}
       aria-labelledby={titleId}
       itemScope
