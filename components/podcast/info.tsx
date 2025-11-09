@@ -89,7 +89,7 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
             width={640}
             height={640}
             referrerPolicy="no-referrer"
-            loading="lazy"
+            preload
             itemProp="image"
           />
         </Link>
@@ -214,7 +214,7 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
             width={320}
             height={320}
             referrerPolicy="no-referrer"
-            loading="lazy"
+            preload
             itemProp="image"
           />
         </Link>
