@@ -66,16 +66,10 @@ export async function getHackerNewsTopStories(today: string, { JINA_KEY, FIRECRA
   const url = `https://news.ycombinator.com/front?day=${today}`
 
   const html = await getContentFromJina(url, 'html', {}, JINA_KEY)
+    .catch(() => getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY))
 
-  let $ = cheerio.load(html)
-  let items = $('.athing.submission')
-
-  if (!items.length) {
-    const html = await getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY)
-
-    $ = cheerio.load(html)
-    items = $('.athing.submission')
-  }
+  const $ = cheerio.load(html)
+  const items = $('.athing.submission')
 
   const stories: Story[] = items.map((i, el) => ({
     id: $(el).attr('id'),

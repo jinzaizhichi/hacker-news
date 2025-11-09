@@ -84,7 +84,6 @@ export function EpisodesPagination({ currentPage, totalPages, paddingClassName }
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              asChild
               className={cn(currentPage === 1 && 'pointer-events-none opacity-50')}
             >
               <button
@@ -112,7 +111,6 @@ export function EpisodesPagination({ currentPage, totalPages, paddingClassName }
             return (
               <PaginationItem key={page}>
                 <PaginationLink
-                  asChild
                   isActive={page === currentPage}
                   className={cn(
                     page === currentPage && 'bg-theme text-white hover:bg-theme-hover hover:text-white',
@@ -126,7 +124,6 @@ export function EpisodesPagination({ currentPage, totalPages, paddingClassName }
 
           <PaginationItem>
             <PaginationNext
-              asChild
               className={cn(currentPage === totalPages && 'pointer-events-none opacity-50')}
             >
               <button

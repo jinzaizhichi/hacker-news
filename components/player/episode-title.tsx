@@ -1,7 +1,7 @@
 'use client'
 
 import { useStore } from '@tanstack/react-store'
-import { ScrollTextContainer, ScrollTextRow } from '@/components/ui/scroll-text'
+import { ScrollTextContainer, ScrollTextRow } from '@/components/player/scroll-text'
 import { getPlayerStore } from '@/stores/player-store'
 
 export function EpisodeTitle() {

@@ -1,8 +1,8 @@
 'use client'
 
 import type { HTMLAttributes, ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
 import { motion, useAnimationFrame, useMotionValue, useTransform } from 'motion/react'
+import { useCallback, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { cn } from '@/lib/utils'
 
 interface ScrollVelocityRowProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,7 +12,7 @@ interface ScrollVelocityRowProps extends HTMLAttributes<HTMLDivElement> {
   isPlaying?: boolean
 }
 
-export const wrap = (min: number, max: number, v: number) => {
+function wrapValue(min: number, max: number, v: number) {
   const rangeSize = max - min
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min
 }
@@ -28,7 +28,28 @@ export function ScrollTextContainer({ children, className, ...props }: HTMLAttri
 export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPlaying = true, className, ...props }: ScrollVelocityRowProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const blockRef = useRef<HTMLDivElement>(null)
-  const [numCopies, setNumCopies] = useState(1)
+  const copiesStoreRef = useRef<{ value: number, listeners: Set<() => void> }>({
+    value: 1,
+    listeners: new Set(),
+  })
+
+  const subscribe = useCallback((listener: () => void) => {
+    copiesStoreRef.current.listeners.add(listener)
+    return () => {
+      copiesStoreRef.current.listeners.delete(listener)
+    }
+  }, [])
+
+  const getSnapshot = useCallback(() => copiesStoreRef.current.value, [])
+  const getServerSnapshot = useCallback(() => 1, [])
+  const numCopies = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+
+  const updateNumCopies = useCallback((nextCopies: number) => {
+    if (copiesStoreRef.current.value === nextCopies)
+      return
+    copiesStoreRef.current.value = nextCopies
+    copiesStoreRef.current.listeners.forEach(listener => listener())
+  }, [])
 
   const baseX = useMotionValue(0)
   const directionRef = useRef<number>(direction >= 0 ? 1 : -1)
@@ -38,17 +59,18 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
   const isPageVisibleRef = useRef(true)
   const prefersReducedMotionRef = useRef(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current
     const block = blockRef.current
-    if (!container || !block) return
+    if (!container || !block)
+      return
 
     const updateSizes = () => {
       const cw = container.offsetWidth || 0
       const bw = block.scrollWidth || 0
       unitWidth.set(bw)
       const nextCopies = bw > 0 ? Math.max(3, Math.ceil(cw / bw) + 2) : 1
-      setNumCopies((prev) => (prev === nextCopies ? prev : nextCopies))
+      updateNumCopies(nextCopies)
     }
 
     updateSizes()
@@ -81,33 +103,40 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
       document.removeEventListener('visibilitychange', handleVisibility)
       mq.removeEventListener('change', handlePRM)
     }
-  }, [children, unitWidth])
+  }, [children, unitWidth, updateNumCopies])
 
   const x = useTransform([baseX, unitWidth], ([v, bw]) => {
     const width = Number(bw) || 1
     const offset = Number(v) || 0
-    return `${-wrap(0, width, offset)}px`
+    return `${-wrapValue(0, width, offset)}px`
   })
 
   useAnimationFrame((_, delta) => {
-    if (!isInViewRef.current || !isPageVisibleRef.current || !isPlaying) return
+    if (!isInViewRef.current || !isPageVisibleRef.current || !isPlaying)
+      return
     const dt = delta / 1000
 
     const bw = unitWidth.get() || 0
-    if (bw <= 0) return
+    if (bw <= 0)
+      return
     const pixelsPerSecond = (bw * baseVelocity) / 100
     const speedMultiplier = prefersReducedMotionRef.current ? 1 : 1
     const moveBy = directionRef.current * pixelsPerSecond * speedMultiplier * dt
     baseX.set(baseX.get() + moveBy)
   })
 
+  const copyIds = useMemo(
+    () => Array.from({ length: numCopies }, (_, idx) => `scroll-copy-${idx}`),
+    [numCopies],
+  )
+
   return (
     <div ref={containerRef} className={cn('w-full overflow-hidden whitespace-nowrap', className)} {...props}>
-      <motion.div className='inline-flex transform-gpu items-center will-change-transform select-none' style={{ x }}>
-        {Array.from({ length: numCopies }).map((_, i) => (
-          <div key={i} ref={i === 0 ? blockRef : null} aria-hidden={i !== 0} className='inline-flex shrink-0 items-center'>
+      <motion.div className="inline-flex transform-gpu items-center will-change-transform select-none" style={{ x }}>
+        {copyIds.map((id, idx) => (
+          <div key={id} ref={idx === 0 ? blockRef : null} aria-hidden={idx !== 0} className="inline-flex shrink-0 items-center">
             {children}
-            {i < numCopies - 1 && <div className='inline-flex shrink-0 w-8' aria-hidden='true' />}
+            {idx < numCopies - 1 && <div className="inline-flex shrink-0 w-8" aria-hidden="true" />}
           </div>
         ))}
       </motion.div>
