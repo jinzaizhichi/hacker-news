@@ -20,6 +20,7 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
   const isClient = useIsClient()
   const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation()
 
   const { isVisible, mounted } = useLightboxAnimation(open)
 
@@ -71,6 +72,8 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
     return null
   }
 
+  const resolvedAlt = currentImage.alt || t('lightbox.imageAltFallback', { index: currentIndex + 1 })
+
   const lightboxContent = (
     <div
       ref={containerRef}
@@ -106,7 +109,7 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
 
       <LightboxImage
         src={currentImage.src}
-        alt={currentImage.alt || ''}
+        alt={resolvedAlt}
         zoom={zoom}
         onDoubleClick={handleDoubleClick}
         onWheel={handleWheel}
@@ -125,7 +128,7 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
             isDark && 'bg-white/10 text-white',
           )}
         >
-          {currentImage.alt}
+          {resolvedAlt}
         </div>
       )}
 
@@ -147,18 +150,20 @@ export function ImageWithLightbox({ src, alt, index, onOpen }: ImageWithLightbox
   if (!src)
     return null
 
+  const resolvedAlt = alt || t('lightbox.imageAltFallback', { index: index + 1 })
+
   return (
     <button
       type="button"
       onClick={() => onOpen(index)}
-      aria-label={alt || t('lightbox.openImage')}
+      aria-label={resolvedAlt}
       className="border-none bg-transparent p-0 outline-none"
       style={{ border: 'none', outline: 'none' }}
     >
       <div className="relative my-6 w-full max-w-full rounded-lg shadow-md">
         <Image
           src={src}
-          alt={alt || ''}
+          alt={resolvedAlt}
           width={1200}
           height={800}
           sizes="(max-width: 768px) 100vw, 900px"

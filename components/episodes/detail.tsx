@@ -26,6 +26,7 @@ interface EpisodeDetailProps {
 
 export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
   const lightbox = useLightbox()
+  const { t } = useTranslation()
   const content = episode.content ?? episode.description ?? ''
 
   const images = useMemo(() => extractImagesFromMarkdown(content), [content])
@@ -41,6 +42,8 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
     }
   }, [initialPage])
 
+  const externalLinkTitle = t('common.externalLinkTitle')
+
   const markdownComponents: Partial<Components> = {
     a: ({ href, children }: { href?: string, children?: React.ReactNode }) => (
       <a
@@ -48,6 +51,8 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
         target="_blank"
         rel="noopener noreferrer"
         className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+        title={externalLinkTitle}
+        aria-label={externalLinkTitle}
       >
         {children}
       </a>
@@ -122,18 +127,21 @@ function EpisodeDetailDesktop({ episode, markdownComponents, initialPage }: Deta
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
   const articlePath = `/post/${episode.id}`
+  const backLinkTitle = t('episodes.backLinkTitle')
 
   return (
     <section className="hidden w-full flex-col md:flex" aria-labelledby={headlineId}>
       <header className="sticky top-0 z-10 border-border border-b bg-background">
         <Waveform className="h-24 w-full" />
-        <nav aria-label={t('episodes.back')} className="absolute inset-0">
+        <nav aria-label={backLinkTitle} className="absolute inset-0">
           <Link
             href={href}
             className={cn(
               'flex h-full items-center gap-2 px-10 lg:px-20',
               'text-base transition-colors hover:text-muted-foreground',
             )}
+            title={backLinkTitle}
+            aria-label={backLinkTitle}
           >
             <ChevronLeft className="size-4" />
             <span className="font-bold">{t('episodes.back')}</span>
@@ -230,17 +238,20 @@ function EpisodeDetailMobile({ episode, markdownComponents, initialPage }: Detai
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
   const articlePath = `/post/${episode.id}`
+  const backLinkTitle = t('episodes.backLinkTitle')
 
   return (
     <section className="flex w-full flex-col md:hidden" aria-labelledby={headlineId}>
       <header className="sticky top-0 z-10 h-14 w-full bg-background/95 backdrop-blur-md">
-        <nav aria-label={t('episodes.back')} className="absolute inset-0">
+        <nav aria-label={backLinkTitle} className="absolute inset-0">
           <Link
             href={href}
             className={cn(
               'flex h-full items-center justify-center gap-2',
               'cursor-pointer text-foreground text-sm transition-colors hover:text-muted-foreground',
             )}
+            title={backLinkTitle}
+            aria-label={backLinkTitle}
           >
             <ChevronLeft className="size-4 text-foreground" />
             <span className="font-bold">{t('episodes.back')}</span>

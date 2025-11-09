@@ -53,6 +53,7 @@ interface EpisodesSectionProps {
 function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
   const { t } = useTranslation()
   const headingId = useId()
+  const listHeadingId = useId()
 
   return (
     <section className="hidden w-full flex-col md:flex" aria-labelledby={headingId}>
@@ -63,6 +64,12 @@ function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: Epi
         </h1>
       </header>
 
+      <div className="px-10 pt-12 lg:px-20">
+        <h2 id={listHeadingId} className="font-semibold text-xl text-foreground">
+          {t('episodes.listHeading')}
+        </h2>
+      </div>
+
       {!hasEpisodes
         ? (
             <p className="px-10 py-20 text-muted-foreground text-center lg:px-20" role="status">
@@ -71,7 +78,7 @@ function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: Epi
           )
         : (
             <>
-              <ul className="flex flex-col" aria-labelledby={headingId}>
+              <ul className="flex flex-col" aria-labelledby={listHeadingId}>
                 {episodes.map(episode => (
                   <EpisodeItem key={episode.id} episode={episode} variant="desktop" />
                 ))}
@@ -90,6 +97,7 @@ function EpisodesDesktop({ episodes, totalPages, currentPage, hasEpisodes }: Epi
 function EpisodesMobile({ episodes, totalPages, currentPage, hasEpisodes }: EpisodesSectionProps) {
   const { t } = useTranslation()
   const headingId = useId()
+  const listHeadingId = useId()
 
   return (
     <section className="flex w-full flex-col md:hidden" aria-labelledby={headingId}>
@@ -104,7 +112,12 @@ function EpisodesMobile({ episodes, totalPages, currentPage, hasEpisodes }: Epis
                   {t('episodes.title')}
                 </h1>
               </header>
-              <ul className="flex flex-col" aria-labelledby={headingId}>
+              <div className="px-4 pt-6">
+                <h2 id={listHeadingId} className="font-semibold text-lg text-foreground">
+                  {t('episodes.listHeading')}
+                </h2>
+              </div>
+              <ul className="flex flex-col" aria-labelledby={listHeadingId}>
                 {episodes.map(episode => (
                   <EpisodeItem key={episode.id} episode={episode} variant="mobile" />
                 ))}

@@ -65,6 +65,8 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
   const descriptionId = useId()
   const { title, description, cover } = podcastInfo
   const coverAlt = t('podcastInfo.coverAlt', { title })
+  const homeLinkTitle = t('podcastInfo.homeLinkTitle', { title })
+  const externalLinkTitle = t('common.externalLinkTitle')
   const shouldTruncate = description.length > site.defaultDescriptionLength
   const displayDescription = isExpanded
     ? description
@@ -81,7 +83,7 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
     >
       <meta itemProp="url" content={podcast.base.link} />
       <figure className="block aspect-square w-full">
-        <Link href="/" aria-label={title}>
+        <Link href="/" aria-label={homeLinkTitle} title={homeLinkTitle}>
           <Image
             className="h-full w-full rounded-2xl object-cover"
             src={cover}
@@ -123,6 +125,8 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+                    title={externalLinkTitle}
+                    aria-label={externalLinkTitle}
                   >
                     {children}
                   </a>
@@ -163,6 +167,7 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
                     if (!config)
                       return null
                     const Icon = config.icon
+                    const platformLinkTitle = t('podcastInfo.platformLinkTitle', { platform: platform.name })
                     return (
                       <li key={platform.id} className="list-none">
                         <a
@@ -170,7 +175,8 @@ function PodcastInfoDesktop({ podcastInfo }: PodcastInfoContentProps) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex cursor-pointer items-center gap-2"
-                          aria-label={platform.name}
+                          aria-label={platformLinkTitle}
+                          title={platformLinkTitle}
                           itemProp="sameAs"
                         >
                           <Icon className={cn('h-6 w-6', config.colorClass)} aria-hidden="true" />
@@ -195,6 +201,8 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
   const listenSectionId = useId()
   const { title, description, cover } = podcastInfo
   const coverAlt = t('podcastInfo.coverAlt', { title })
+  const homeLinkTitle = t('podcastInfo.homeLinkTitle', { title })
+  const externalLinkTitle = t('common.externalLinkTitle')
 
   return (
     <article
@@ -206,7 +214,7 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
       <meta itemProp="url" content={podcast.base.link} />
       <Waveform className="absolute top-0 left-0 w-full" aria-hidden="true" />
       <figure className="flex justify-center pt-20">
-        <Link href="/" aria-label={title}>
+        <Link href="/" aria-label={homeLinkTitle} title={homeLinkTitle}>
           <Image
             className="h-40 w-40 rounded-2xl object-cover"
             src={cover}
@@ -234,6 +242,18 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+              a: ({ href, children }) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+                  title={externalLinkTitle}
+                  aria-label={externalLinkTitle}
+                >
+                  {children}
+                </a>
+              ),
             }}
           >
             {description}
@@ -253,6 +273,7 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
                   if (!config)
                     return null
                   const Icon = config.icon
+                  const platformLinkTitle = t('podcastInfo.platformLinkTitle', { platform: platform.name })
                   return (
                     <li key={platform.id} className="list-none">
                       <a
@@ -260,7 +281,8 @@ function PodcastInfoMobile({ podcastInfo }: PodcastInfoContentProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="transition-opacity hover:opacity-70"
-                        aria-label={platform.name}
+                        aria-label={platformLinkTitle}
+                        title={platformLinkTitle}
                         itemProp="sameAs"
                       >
                         <Icon className={cn('h-8 w-8', config.colorClass)} aria-hidden="true" />

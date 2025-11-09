@@ -6,10 +6,6 @@ export default antfu({
   nextjs: true,
   ignores: [
     'components/ui/**/*',
-    'components/magicui/**/*',
-    'components/animata/**/*',
-    'components/cute/**/*',
-    'components/eldora/**/*',
     'cloudflare-env.d.ts',
     '.codex/**/*',
   ],

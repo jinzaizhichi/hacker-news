@@ -3,17 +3,22 @@
     "home": "Home",
     "toggleTheme": "Toggle theme",
     "language": "Language",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "externalLinkTitle": "Open external link in a new tab"
   },
   "aside": {
-    "hostedBy": "Hosted by"
+    "hostedBy": "Hosted by",
+    "hostLinkTitle": "Visit {{name}}'s profile",
+    "githubLinkTitle": "Open GitHub repository"
   },
   "podcastInfo": {
     "about": "About",
     "listen": "Listen",
     "showMore": "Show more",
     "showLess": "Show less",
-    "coverAlt": "Cover image for {{title}}"
+    "coverAlt": "Cover image for {{title}}",
+    "homeLinkTitle": "Return to home: {{title}}",
+    "platformLinkTitle": "Listen on {{platform}}"
   },
   "episodes": {
     "title": "Episodes",
@@ -23,7 +28,12 @@
     "showNotes": "Details",
     "back": "Back",
     "playEpisode": "Play episode",
-    "pauseEpisode": "Pause episode"
+    "pauseEpisode": "Pause episode",
+    "listHeading": "Latest episodes",
+    "openEpisodeTitle": "View details for {{title}}",
+    "readEpisodeDescription": "Read the summary for {{title}}",
+    "showNotesLinkTitle": "Open the show notes for {{title}}",
+    "backLinkTitle": "Back to the episode list"
   },
   "pagination": {
     "previous": "Previous",
@@ -64,6 +74,7 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "close": "Close lightbox",
-    "viewImage": "View image {{index}}"
+    "viewImage": "View image {{index}}",
+    "imageAltFallback": "Image {{index}}"
   }
 }

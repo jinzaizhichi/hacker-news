@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { Episode } from '@/types/podcast'
 import { useStore } from '@tanstack/react-store'
 import { Pause, Play } from 'lucide-react'
@@ -48,6 +49,10 @@ export function EpisodeItem({ episode, variant }: EpisodeItemProps) {
 
   const linkHref = currentPage > 1 ? `/post/${episode.id}?page=${currentPage}` : `/post/${episode.id}`
   const isDesktop = variant === 'desktop'
+  const episodeLinkTitle = t('episodes.openEpisodeTitle', { title: episode.title })
+  const episodeDescriptionTitle = t('episodes.readEpisodeDescription', { title: episode.title })
+  const showNotesTitle = t('episodes.showNotesLinkTitle', { title: episode.title })
+  const externalLinkTitle = t('common.externalLinkTitle')
 
   return (
     <li className="list-none">
@@ -67,16 +72,17 @@ export function EpisodeItem({ episode, variant }: EpisodeItemProps) {
         >
           {dateFormatter}
         </time>
-        <Link
-          href={linkHref}
-          className={cn(
-            'cursor-pointer font-bold transition-colors hover:text-theme',
-            isDesktop ? 'text-2xl' : 'text-xl',
-          )}
-          itemProp="url"
-        >
-          <span itemProp="name">{episode.title}</span>
-        </Link>
+        <h3 className={cn('font-bold leading-tight text-foreground', isDesktop ? 'text-2xl' : 'text-xl')}>
+          <Link
+            href={linkHref}
+            className="cursor-pointer transition-colors hover:text-theme"
+            itemProp="url"
+            title={episodeLinkTitle}
+            aria-label={episodeLinkTitle}
+          >
+            <span itemProp="name">{episode.title}</span>
+          </Link>
+        </h3>
         {episode.description && (
           <Link
             href={linkHref}
@@ -84,9 +90,29 @@ export function EpisodeItem({ episode, variant }: EpisodeItemProps) {
               'line-clamp-2 cursor-pointer text-foreground/80 leading-relaxed transition-colors hover:text-theme',
               !isDesktop && 'text-sm',
             )}
+            title={episodeDescriptionTitle}
+            aria-label={episodeDescriptionTitle}
           >
             <div itemProp="description">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{episode.description}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ href, children }: { href?: string, children?: ReactNode }) => (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                      title={externalLinkTitle}
+                      aria-label={externalLinkTitle}
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                {episode.description}
+              </ReactMarkdown>
             </div>
           </Link>
         )}
@@ -106,7 +132,12 @@ export function EpisodeItem({ episode, variant }: EpisodeItemProps) {
             <span>{isCurrentlyPlaying ? t('episodes.pause') : t('episodes.listen')}</span>
           </button>
           <span className="text-muted-foreground">/</span>
-          <Link href={linkHref} className="cursor-pointer font-medium text-theme hover:text-theme-hover">
+          <Link
+            href={linkHref}
+            className="cursor-pointer font-medium text-theme hover:text-theme-hover"
+            title={showNotesTitle}
+            aria-label={showNotesTitle}
+          >
             {t('episodes.showNotes')}
           </Link>
         </div>

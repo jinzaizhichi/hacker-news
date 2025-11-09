@@ -49,7 +49,9 @@ export async function GET() {
   for (const post of posts) {
     const audioInfo = await env.HACKER_NEWS_R2.head(post.audio)
 
-    const links = post.stories.map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}">${s.title || ''}</a></li>`).join('')
+    const links = post.stories
+      .map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}" title="${s.title || ''}">${s.title || ''}</a></li>`)
+      .join('')
     const linkContent = `<p><b>相关链接：</b></p><ul>${links}</ul>`
     const blogContentHtml = md.render(post.blogContent || '')
     const finalContent = `<div>${blogContentHtml}<hr/>${linkContent}</div>`

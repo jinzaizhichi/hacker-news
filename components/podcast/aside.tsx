@@ -21,7 +21,14 @@ export function PodcastAside() {
                   /
                 </span>
               )}
-              <a href={host.link} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+              <a
+                href={host.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer"
+                title={t('aside.hostLinkTitle', { name: host.name })}
+                aria-label={t('aside.hostLinkTitle', { name: host.name })}
+              >
                 {host.name}
               </a>
             </Fragment>
@@ -29,7 +36,14 @@ export function PodcastAside() {
         </span>
       </section>
       <section className="flex flex-col items-center gap-5">
-        <a href={externalLinks.github} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+        <a
+          href={externalLinks.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer"
+          title={t('aside.githubLinkTitle')}
+          aria-label={t('aside.githubLinkTitle')}
+        >
           <Github className="size-6" />
         </a>
         <ThemeToggle />
