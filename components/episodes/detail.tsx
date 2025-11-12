@@ -11,7 +11,9 @@ import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Waveform } from '@/components/common/waveform'
+import { EpisodeFullscreenToggle } from '@/components/episodes/fullscreen-toggle'
 import { ImageLightbox, ImageWithLightbox } from '@/components/image-lightbox'
+import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { useLightbox } from '@/hooks/use-lightbox'
 import { extractImagesFromMarkdown } from '@/lib/markdown'
 import { cn } from '@/lib/utils'
@@ -111,6 +113,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
   const isPlaying = useStore(playerStore, state => state.isPlaying)
+  const { isFullscreen } = useEpisodeFullscreen({ manageBodyLock: true, resetOnMount: true })
 
   const isCurrentEpisodePlaying = currentEpisode?.id === episode.id && isPlaying
 
@@ -130,10 +133,23 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
   const articlePath = `/post/${episode.id}`
   const backLinkTitle = t('episodes.backLinkTitle')
+  const detailHeaderClass = cn(
+    '-mx-4 flex items-center gap-4 border-b border-border/60 px-4 py-6 md:-mx-10 md:gap-6 md:px-10 md:py-8 lg:-mx-20 lg:px-20',
+    isFullscreen
+      ? 'relative top-auto z-10 bg-background shadow-none md:top-auto'
+      : 'sticky top-14 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:top-24',
+  )
 
   return (
-    <section className="flex w-full flex-col" aria-labelledby={headlineId}>
-      <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-md md:bg-background md:backdrop-blur-0">
+    <section
+      className={cn(
+        'flex w-full flex-col',
+        isFullscreen && 'episode-fullscreen pb-[calc(env(safe-area-inset-bottom)+10rem)]',
+      )}
+      aria-labelledby={headlineId}
+      data-fullscreen={isFullscreen}
+    >
+      <header className="episode-page-header sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-md md:bg-background md:backdrop-blur-0">
         <div className="flex h-14 w-full items-center justify-center px-4 md:hidden">
           <EpisodeBackLink
             href={href}
@@ -156,19 +172,14 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
       </header>
 
       <article
-        className="px-4 py-8 md:px-10 md:py-16 lg:px-20"
+        className={cn('px-4 py-8 md:px-10 md:py-16 lg:px-20', isFullscreen && 'mx-auto w-full max-w-5xl')}
         itemScope
         itemType="https://schema.org/Article"
         aria-labelledby={headlineId}
       >
         <meta itemProp="url" content={articlePath} />
         <meta itemProp="inLanguage" content={i18n.language} />
-        <header
-          className={cn(
-            'sticky top-14 z-20 -mx-4 flex items-center gap-4 border-b border-border/60 bg-background/95 px-4 py-6',
-            'backdrop-blur supports-[backdrop-filter]:bg-background/80 md:top-24 md:-mx-10 md:gap-6 md:px-10 md:py-8 lg:-mx-20 lg:px-20',
-          )}
-        >
+        <header className={detailHeaderClass}>
           <button
             type="button"
             onClick={handlePlayPause}
@@ -188,25 +199,34 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
                 )}
           </button>
 
-          <div className="flex flex-col">
-            <h1 id={headlineId} className="mt-2 font-bold text-2xl text-foreground md:text-4xl" itemProp="headline">
-              {episode.title}
-            </h1>
-            <time
-              className="order-first font-mono text-xs leading-7 text-muted-foreground md:text-sm"
-              dateTime={isoPublishedDate}
-              itemProp="datePublished"
-            >
-              {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </time>
+          <div className="flex w-full items-start gap-4">
+            <div className="flex min-w-0 flex-1 flex-col">
+              <h1 id={headlineId} className="mt-2 break-words font-bold text-2xl text-foreground md:text-4xl" itemProp="headline">
+                {episode.title}
+              </h1>
+              <time
+                className="order-first font-mono text-xs leading-7 text-muted-foreground md:text-sm"
+                dateTime={isoPublishedDate}
+                itemProp="datePublished"
+              >
+                {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </div>
+            <EpisodeFullscreenToggle className="mt-2 flex-shrink-0" />
           </div>
         </header>
 
-        <div className="episode-content" itemProp="articleBody">
+        <div
+          className={cn(
+            'episode-content text-[1.05rem] leading-[1.85] md:text-[1.1rem] md:leading-[1.95]',
+            'tracking-wide',
+          )}
+          itemProp="articleBody"
+        >
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {episode.content ?? episode.description ?? ''}
           </ReactMarkdown>

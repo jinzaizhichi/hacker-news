@@ -33,7 +33,9 @@
     "openEpisodeTitle": "View details for {{title}}",
     "readEpisodeDescription": "Read the summary for {{title}}",
     "showNotesLinkTitle": "Open the show notes for {{title}}",
-    "backLinkTitle": "Back to the episode list"
+    "backLinkTitle": "Back to the episode list",
+    "enterFullscreen": "Enter fullscreen",
+    "exitFullscreen": "Exit fullscreen"
   },
   "pagination": {
     "previous": "Previous",

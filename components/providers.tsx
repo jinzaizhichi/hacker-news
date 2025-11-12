@@ -9,11 +9,13 @@ import { initPageStore } from '@/stores/page-store'
 import { initPlayerStore } from '@/stores/player-store'
 import { initPodcastStore } from '@/stores/podcast-store'
 import { initThemeStore } from '@/stores/theme-store'
+import { initUIStore } from '@/stores/ui-store'
 
 initThemeStore()
 initPlayerStore()
 initPodcastStore()
 initPageStore()
+initUIStore()
 
 interface ProvidersProps {
   children: React.ReactNode

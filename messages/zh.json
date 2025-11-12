@@ -33,7 +33,9 @@
     "openEpisodeTitle": "查看《{{title}}》详情",
     "readEpisodeDescription": "阅读《{{title}}》简介",
     "showNotesLinkTitle": "打开《{{title}}》的节目详情页",
-    "backLinkTitle": "返回节目列表"
+    "backLinkTitle": "返回节目列表",
+    "enterFullscreen": "进入全屏阅读",
+    "exitFullscreen": "退出全屏阅读"
   },
   "pagination": {
     "previous": "上一页",

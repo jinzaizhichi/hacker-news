@@ -6,8 +6,6 @@
 
 .episode-content p {
   margin: 1rem 0;
-  line-height: 1.75;
-  font-size: 1rem;
 }
 
 .episode-content h1,
@@ -68,7 +66,6 @@
 
 .episode-content li {
   margin: 0.5rem 0;
-  line-height: 1.75;
 }
 
 .episode-content ul {
@@ -139,6 +136,23 @@
 .episode-content th {
   font-weight: 600;
   background: rgba(0, 0, 0, 0.03);
+}
+
+body.episode-fullscreen-locked {
+  overflow: hidden;
+}
+
+.episode-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: var(--background);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.episode-fullscreen .episode-page-header {
+  display: none;
 }
 
 @media (prefers-color-scheme: dark) {

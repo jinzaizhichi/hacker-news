@@ -11,6 +11,7 @@ import {
 } from '@vidstack/react'
 import { useEffect, useRef } from 'react'
 import { PlayerLayout } from '@/components/player/layout'
+import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { cn } from '@/lib/utils'
 import { getPlayerStore, registerPlayerInstance, setIsPlaying } from '@/stores/player-store'
 
@@ -126,12 +127,14 @@ export function Player() {
   const playerRef = useRef<MediaPlayerInstance>(null)
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
+  const { isFullscreen: isEpisodeFullscreen } = useEpisodeFullscreen()
   const hasPlayer = currentEpisode !== null
 
   return (
     <div
       className={cn(
-        'fixed right-0 bottom-0 left-0 z-50 md:left-[24rem] lg:left-[28rem]',
+        'episode-player fixed right-0 bottom-0 left-0 z-50',
+        isEpisodeFullscreen ? 'md:left-0 lg:left-0' : 'md:left-[24rem] lg:left-[28rem]',
         'border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
         'transition-opacity duration-300',
         hasPlayer
