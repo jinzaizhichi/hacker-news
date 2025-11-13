@@ -32,8 +32,11 @@ export function LightboxImage({
   onTouchEnd,
 }: LightboxImageProps) {
   return (
-    <div className="relative flex w-full flex-1 items-center justify-center px-4 py-20">
-      <div className="relative max-h-[70vh] max-w-[80vw] w-full">
+    <div className={`
+      relative flex w-full flex-1 items-center justify-center px-4 py-20
+    `}
+    >
+      <div className="relative max-h-[70vh] w-full max-w-[80vw]">
         <Image
           src={src}
           alt={alt}

@@ -9,18 +9,36 @@ interface PodcastLayoutProps {
 
 export function PodcastLayout({ children }: PodcastLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col md:fixed md:inset-0 md:flex-row md:overflow-hidden md:bg-background">
-      <aside className="hidden h-full w-16 shrink-0 flex-col overflow-y-auto overscroll-y-contain border-border border-r md:flex">
+    <div className={`
+      flex min-h-screen flex-col
+      md:fixed md:inset-0 md:flex-row md:overflow-hidden md:bg-background
+    `}
+    >
+      <aside className={`
+        hidden h-full w-16 shrink-0 flex-col overflow-y-auto
+        overscroll-y-contain border-r border-border
+        md:flex
+      `}
+      >
         <PodcastAside />
       </aside>
 
-      <section className="flex flex-col border-border border-b md:h-full md:w-80 md:shrink-0 md:border-b-0 md:border-r md:overflow-y-auto md:overscroll-y-contain lg:w-96">
+      <section className={`
+        flex flex-col border-b border-border
+        md:h-full md:w-80 md:shrink-0 md:overflow-y-auto md:overscroll-y-contain
+        md:border-r md:border-b-0
+        lg:w-96
+      `}
+      >
         <PodcastInfo />
       </section>
 
       <main
         id="main-scroll-container"
-        className="flex flex-1 flex-col pb-28 md:overflow-y-auto md:overscroll-y-contain"
+        className={`
+          flex flex-1 flex-col pb-28
+          md:overflow-y-auto md:overscroll-y-contain
+        `}
       >
         {children}
       </main>

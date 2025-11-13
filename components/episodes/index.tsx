@@ -30,27 +30,60 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
 
   return (
     <section className="flex w-full flex-col" aria-labelledby={headingId}>
-      <header className="sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-lg md:bg-background md:backdrop-blur-0">
+      <header className={`
+        md:backdrop-blur-0 md:bg-background
+        sticky top-0 z-10 border-b border-border bg-background/95
+        backdrop-blur-lg
+      `}
+      >
         <div className="relative flex items-center">
-          <Waveform className="hidden h-24 w-full md:block" aria-hidden="true" />
+          <Waveform
+            className={`
+              hidden h-24 w-full
+              md:block
+            `}
+            aria-hidden="true"
+          />
           <h1
             id={headingId}
-            className="px-4 py-6 text-xl font-bold md:absolute md:inset-0 md:top-10 md:px-10 md:py-0 md:text-2xl lg:px-20"
+            className={`
+              px-4 py-6 text-xl font-bold
+              md:absolute md:inset-0 md:top-10 md:px-10 md:py-0 md:text-2xl
+              lg:px-20
+            `}
           >
             {t('episodes.title')}
           </h1>
         </div>
       </header>
 
-      <div className="px-4 pt-6 md:px-10 md:pt-12 lg:px-20">
-        <h2 id={listHeadingId} className="font-semibold text-lg text-foreground md:text-xl">
+      <div className={`
+        px-4 pt-6
+        md:px-10 md:pt-12
+        lg:px-20
+      `}
+      >
+        <h2
+          id={listHeadingId}
+          className={`
+            text-lg font-semibold text-foreground
+            md:text-xl
+          `}
+        >
           {t('episodes.listHeading')}
         </h2>
       </div>
 
       {!hasEpisodes
         ? (
-            <p className="px-4 py-8 text-center text-muted-foreground md:px-10 md:py-20 lg:px-20" role="status">
+            <p
+              className={`
+                px-4 py-8 text-center text-muted-foreground
+                md:px-10 md:py-20
+                lg:px-20
+              `}
+              role="status"
+            >
               {t('episodes.noEpisodes')}
             </p>
           )

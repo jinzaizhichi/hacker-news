@@ -129,15 +129,27 @@ export function Player() {
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
   const { isFullscreen: isEpisodeFullscreen } = useEpisodeFullscreen()
   const hasPlayer = currentEpisode !== null
+  const shouldShowPlayer = hasPlayer && !isEpisodeFullscreen
 
   return (
     <div
       className={cn(
         'episode-player fixed right-0 bottom-0 left-0 z-50',
-        isEpisodeFullscreen ? 'md:left-0 lg:left-0' : 'md:left-[24rem] lg:left-[28rem]',
-        'border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        isEpisodeFullscreen
+          ? `
+            md:left-0
+            lg:left-0
+          `
+          : `
+            md:left-[24rem]
+            lg:left-[28rem]
+          `,
+        `
+          border-t bg-background/95 backdrop-blur
+          supports-[backdrop-filter]:bg-background/60
+        `,
         'transition-opacity duration-300',
-        hasPlayer
+        shouldShowPlayer
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0',
       )}

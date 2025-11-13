@@ -17,7 +17,11 @@ export function Speed() {
 
   return (
     <div
-      className="cursor-pointer rounded-md border px-2 py-1 text-xs transition-colors hover:bg-gray-100 dark:hover:bg-white/10"
+      className={`
+        cursor-pointer rounded-md border px-2 py-1 text-xs transition-colors
+        hover:bg-gray-100
+        dark:hover:bg-white/10
+      `}
       onClick={() => setSpeed(current => (current + 1) % options.length)}
     >
       {speed === 3 ? '1.0x' : options[speed]?.label}

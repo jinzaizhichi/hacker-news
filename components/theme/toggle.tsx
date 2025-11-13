@@ -41,8 +41,16 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       className="cursor-pointer"
       aria-label={t('common.toggleTheme')}
     >
-      <Sun className={cn('size-6 dark:hidden', className)} />
-      <Moon className={cn('hidden size-6 dark:block', className)} />
+      <Sun className={cn(`
+        size-6
+        dark:hidden
+      `, className)}
+      />
+      <Moon className={cn(`
+        hidden size-6
+        dark:block
+      `, className)}
+      />
     </button>
   )
 }

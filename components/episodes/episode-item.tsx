@@ -56,8 +56,14 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
     <li className="list-none">
       <article
         className={cn(
-          'flex flex-col gap-3 border-border border-b px-4 py-8 sm:px-6',
-          'md:px-10 md:py-12 lg:px-20',
+          `
+            flex flex-col gap-3 border-b border-border px-4 py-8
+            sm:px-6
+          `,
+          `
+            md:px-10 md:py-12
+            lg:px-20
+          `,
         )}
         itemScope
         itemType="https://schema.org/PodcastEpisode"
@@ -65,15 +71,25 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
         <meta itemProp="url" content={linkHref} />
         <time
           dateTime={isoPublishedDate}
-          className="text-xs text-muted-foreground md:text-sm"
+          className={`
+            text-xs text-muted-foreground
+            md:text-sm
+          `}
           itemProp="datePublished"
         >
           {dateFormatter}
         </time>
-        <h3 className="text-xl font-bold leading-tight text-foreground md:text-2xl">
+        <h3 className={`
+          text-xl leading-tight font-bold text-foreground
+          md:text-2xl
+        `}
+        >
           <Link
             href={linkHref}
-            className="cursor-pointer transition-colors hover:text-theme"
+            className={`
+              cursor-pointer transition-colors
+              hover:text-theme
+            `}
             itemProp="url"
             title={episodeLinkTitle}
             aria-label={episodeLinkTitle}
@@ -85,8 +101,15 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           <Link
             href={linkHref}
             className={cn(
-              'line-clamp-2 cursor-pointer text-foreground/80 leading-relaxed transition-colors hover:text-theme',
-              'text-sm md:text-base',
+              `
+                line-clamp-2 cursor-pointer leading-relaxed text-foreground/80
+                transition-colors
+                hover:text-theme
+              `,
+              `
+                text-sm
+                md:text-base
+              `,
             )}
             title={episodeDescriptionTitle}
             aria-label={episodeDescriptionTitle}
@@ -116,25 +139,51 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
         )}
         <div
           className={cn(
-            'mt-2 flex flex-wrap items-center font-medium text-theme hover:text-theme-hover',
-            'gap-3 text-xs md:gap-4 md:text-sm',
+            `
+              mt-2 flex flex-wrap items-center font-medium text-theme
+              hover:text-theme-hover
+            `,
+            `
+              gap-3 text-xs
+              md:gap-4 md:text-sm
+            `,
           )}
         >
           <button
             type="button"
             onClick={handlePlayPause}
-            className="flex cursor-pointer items-center gap-1.5 font-medium text-theme transition-colors hover:text-theme-hover md:gap-2"
+            className={`
+              flex cursor-pointer items-center gap-1.5 font-medium text-theme
+              transition-colors
+              hover:text-theme-hover
+              md:gap-2
+            `}
             aria-label={isCurrentlyPlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
           >
             {isCurrentlyPlaying
-              ? <Pause className="size-3.5 md:size-4" />
-              : <Play className="size-3.5 md:size-4" />}
+              ? (
+                  <Pause className={`
+                    size-3.5
+                    md:size-4
+                  `}
+                  />
+                )
+              : (
+                  <Play className={`
+                    size-3.5
+                    md:size-4
+                  `}
+                  />
+                )}
             <span>{isCurrentlyPlaying ? t('episodes.pause') : t('episodes.listen')}</span>
           </button>
           <span className="text-muted-foreground">/</span>
           <Link
             href={linkHref}
-            className="cursor-pointer font-medium text-theme hover:text-theme-hover"
+            className={`
+              cursor-pointer font-medium text-theme
+              hover:text-theme-hover
+            `}
             title={showNotesTitle}
             aria-label={showNotesTitle}
           >

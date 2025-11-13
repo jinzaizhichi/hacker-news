@@ -24,12 +24,33 @@ export function EpisodeFullscreenToggle({ className }: EpisodeFullscreenTogglePr
       aria-label={label}
       title={label}
       className={cn(
-        'h-10 w-10 rounded-full border border-border/80 text-muted-foreground hover:border-theme hover:text-theme md:h-12 md:w-12',
-        isFullscreen && 'border-theme text-theme hover:text-theme-hover',
+        `
+          h-10 w-10 rounded-full border border-border/80 text-muted-foreground
+          hover:border-theme hover:text-theme
+          md:h-12 md:w-12
+        `,
+        isFullscreen && `
+          border-theme text-theme
+          hover:text-theme-hover
+        `,
         className,
       )}
     >
-      {isFullscreen ? <Minimize2 className="size-4 md:size-5" /> : <Maximize2 className="size-4 md:size-5" />}
+      {isFullscreen
+        ? (
+            <Minimize2 className={`
+              size-4
+              md:size-5
+            `}
+            />
+          )
+        : (
+            <Maximize2 className={`
+              size-4
+              md:size-5
+            `}
+            />
+          )}
     </Button>
   )
 }

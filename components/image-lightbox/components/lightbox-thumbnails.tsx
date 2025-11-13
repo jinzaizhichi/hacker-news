@@ -19,7 +19,10 @@ export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailCl
 
   return (
     <div
-      className="absolute right-0 bottom-0 left-0 flex items-center justify-center gap-5 overflow-x-auto px-4 py-4"
+      className={`
+        absolute right-0 bottom-0 left-0 flex items-center justify-center gap-5
+        overflow-x-auto px-4 py-4
+      `}
       style={{
         scrollbarWidth: 'thin',
         scrollbarColor: isDark ? 'rgba(255, 255, 255, 0.3) transparent' : 'rgba(0, 0, 0, 0.3) transparent',
@@ -33,8 +36,16 @@ export function LightboxThumbnails({ images, currentIndex, isDark, onThumbnailCl
             type="button"
             onClick={() => onThumbnailClick(idx)}
             className={cn(
-              'group relative flex-shrink-0 overflow-hidden rounded-lg transition-all duration-300',
-              idx === currentIndex ? 'scale-110 opacity-100' : 'opacity-70 hover:scale-105 hover:opacity-100',
+              `
+                group relative flex-shrink-0 overflow-hidden rounded-lg
+                transition-all duration-300
+              `,
+              idx === currentIndex
+                ? 'scale-110 opacity-100'
+                : `
+                  opacity-70
+                  hover:scale-105 hover:opacity-100
+                `,
             )}
             style={{ width: '80px', height: '80px' }}
             aria-label={t('lightbox.viewImage', { index: idx + 1 })}

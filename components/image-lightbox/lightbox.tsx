@@ -124,7 +124,11 @@ export function ImageLightbox({ images, open, index, onClose, onViewChange }: Im
       {currentImage.alt && (
         <div
           className={cn(
-            '-translate-x-1/2 absolute bottom-20 left-1/2 max-w-[80vw] rounded-lg bg-black/70 px-4 py-2 text-center text-sm backdrop-blur-md',
+            `
+              absolute bottom-20 left-1/2 max-w-[80vw] -translate-x-1/2
+              rounded-lg bg-black/70 px-4 py-2 text-center text-sm
+              backdrop-blur-md
+            `,
             isDark && 'bg-white/10 text-white',
           )}
         >

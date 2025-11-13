@@ -29,10 +29,21 @@ export function LightboxControls({
 }: LightboxControlsProps) {
   const { t } = useTranslation()
   const buttonClassName = cn(
-    'z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95',
+    `
+      z-50 flex h-10 w-10 cursor-pointer items-center justify-center
+      rounded-full border backdrop-blur-md transition-all duration-200
+      hover:scale-110
+      active:scale-95
+    `,
     isDark
-      ? 'border-white/20 bg-black/30 text-white hover:bg-black/50'
-      : 'border-black/20 bg-white/30 text-black hover:bg-white/50',
+      ? `
+        border-white/20 bg-black/30 text-white
+        hover:bg-black/50
+      `
+      : `
+        border-black/20 bg-white/30 text-black
+        hover:bg-white/50
+      `,
   )
 
   return (
@@ -43,7 +54,7 @@ export function LightboxControls({
         disabled={currentIndex <= 0}
         className={cn(
           buttonClassName,
-          '-translate-y-1/2 absolute top-1/2 left-4',
+          'absolute top-1/2 left-4 -translate-y-1/2',
           currentIndex <= 0 && 'cursor-not-allowed opacity-50',
         )}
         aria-label={t('lightbox.previous')}
@@ -57,7 +68,7 @@ export function LightboxControls({
         disabled={currentIndex >= imagesLength - 1}
         className={cn(
           buttonClassName,
-          '-translate-y-1/2 absolute top-1/2 right-4',
+          'absolute top-1/2 right-4 -translate-y-1/2',
           currentIndex >= imagesLength - 1 && 'cursor-not-allowed opacity-50',
         )}
         aria-label={t('lightbox.next')}
@@ -70,7 +81,9 @@ export function LightboxControls({
           type="button"
           onClick={onZoomOut}
           disabled={zoomScale <= 0.5}
-          className={cn(buttonClassName, zoomScale <= 0.5 && 'cursor-not-allowed opacity-50')}
+          className={cn(buttonClassName, zoomScale <= 0.5 && `
+            cursor-not-allowed opacity-50
+          `)}
           aria-label={t('lightbox.zoomOut')}
         >
           <ZoomOut className="size-5" />
@@ -79,7 +92,9 @@ export function LightboxControls({
           type="button"
           onClick={onZoomIn}
           disabled={zoomScale >= 3}
-          className={cn(buttonClassName, zoomScale >= 3 && 'cursor-not-allowed opacity-50')}
+          className={cn(buttonClassName, zoomScale >= 3 && `
+            cursor-not-allowed opacity-50
+          `)}
           aria-label={t('lightbox.zoomIn')}
         >
           <ZoomIn className="size-5" />

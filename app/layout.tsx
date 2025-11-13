@@ -86,7 +86,13 @@ export default async function RootLayout({
   const detectedLocale: Locale = acceptLanguage ? detectLocale(acceptLanguage) : defaultLocale
 
   return (
-    <html lang={detectedLocale} className={`theme-${site.themeColor}`} suppressHydrationWarning>
+    <html
+      lang={detectedLocale}
+      className={`
+        theme-${site.themeColor}
+      `}
+      suppressHydrationWarning
+    >
       <head>
         <script id="theme-initializer">{themeInitializer}</script>
       </head>

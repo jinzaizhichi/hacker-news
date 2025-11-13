@@ -131,12 +131,27 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
   )
 
   return (
-    <div ref={containerRef} className={cn('w-full overflow-hidden whitespace-nowrap', className)} {...props}>
-      <motion.div className="inline-flex transform-gpu items-center will-change-transform select-none" style={{ x }}>
+    <div
+      ref={containerRef}
+      className={cn(`w-full overflow-hidden whitespace-nowrap`, className)}
+      {...props}
+    >
+      <motion.div
+        className={`
+          inline-flex transform-gpu items-center will-change-transform
+          select-none
+        `}
+        style={{ x }}
+      >
         {copyIds.map((id, idx) => (
-          <div key={id} ref={idx === 0 ? blockRef : null} aria-hidden={idx !== 0} className="inline-flex shrink-0 items-center">
+          <div
+            key={id}
+            ref={idx === 0 ? blockRef : null}
+            aria-hidden={idx !== 0}
+            className="inline-flex shrink-0 items-center"
+          >
             {children}
-            {idx < numCopies - 1 && <div className="inline-flex shrink-0 w-8" aria-hidden="true" />}
+            {idx < numCopies - 1 && <div className="inline-flex w-8 shrink-0" aria-hidden="true" />}
           </div>
         ))}
       </motion.div>

@@ -59,7 +59,10 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+        className={`
+          font-medium text-theme underline transition-colors
+          hover:text-theme-hover
+        `}
         title={externalLinkTitle}
         aria-label={externalLinkTitle}
       >
@@ -134,23 +137,43 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
   const articlePath = `/post/${episode.id}`
   const backLinkTitle = t('episodes.backLinkTitle')
   const detailHeaderClass = cn(
-    '-mx-4 flex items-center gap-4 border-b border-border/60 px-4 py-6 md:-mx-10 md:gap-6 md:px-10 md:py-8 lg:-mx-20 lg:px-20',
+    `
+      -mx-4 flex items-center gap-4 border-b border-border/60 px-4 py-6
+      md:-mx-10 md:gap-6 md:px-10 md:py-8
+      lg:-mx-20 lg:px-20
+    `,
     isFullscreen
-      ? 'relative top-auto z-10 bg-background shadow-none md:top-auto'
-      : 'sticky top-14 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:top-24',
+      ? `
+        relative top-auto z-10 bg-background pt-0 shadow-none
+        md:top-auto md:pt-0
+      `
+      : `
+        sticky top-14 z-20 bg-background/95 backdrop-blur
+        supports-[backdrop-filter]:bg-background/80
+        md:top-24
+      `,
   )
 
   return (
     <section
       className={cn(
         'flex w-full flex-col',
-        isFullscreen && 'episode-fullscreen pb-[calc(env(safe-area-inset-bottom)+10rem)]',
+        isFullscreen && 'episode-fullscreen',
       )}
       aria-labelledby={headlineId}
       data-fullscreen={isFullscreen}
     >
-      <header className="episode-page-header sticky top-0 z-10 border-border border-b bg-background/95 backdrop-blur-md md:bg-background md:backdrop-blur-0">
-        <div className="flex h-14 w-full items-center justify-center px-4 md:hidden">
+      <header className={`
+        episode-page-header sticky top-0 z-10 border-b border-border
+        bg-background/95 backdrop-blur-md
+        md:backdrop-blur-0 md:bg-background
+      `}
+      >
+        <div className={`
+          flex h-14 w-full items-center justify-center px-4
+          md:hidden
+        `}
+        >
           <EpisodeBackLink
             href={href}
             ariaLabel={backLinkTitle}
@@ -158,21 +181,35 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
             className="justify-center text-sm"
           />
         </div>
-        <div className="relative hidden h-24 w-full items-center md:flex">
+        <div className={`
+          relative hidden h-24 w-full items-center
+          md:flex
+        `}
+        >
           <Waveform className="absolute inset-0 h-full w-full" aria-hidden="true" />
-          <nav aria-label={backLinkTitle} className="absolute inset-0 flex items-center">
+          <nav
+            aria-label={backLinkTitle}
+            className="absolute inset-0 flex items-center"
+          >
             <EpisodeBackLink
               href={href}
               ariaLabel={backLinkTitle}
               label={t('episodes.back')}
-              className="px-10 text-base lg:px-20"
+              className={`
+                px-10 text-base
+                lg:px-20
+              `}
             />
           </nav>
         </div>
       </header>
 
       <article
-        className={cn('px-4 py-8 md:px-10 md:py-16 lg:px-20', isFullscreen && 'mx-auto w-full max-w-5xl')}
+        className={cn(`
+          px-4 py-8
+          md:px-10 md:py-16
+          lg:px-20
+        `, isFullscreen && `mx-auto w-full max-w-5xl`)}
         itemScope
         itemType="https://schema.org/Article"
         aria-labelledby={headlineId}
@@ -184,28 +221,58 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
             type="button"
             onClick={handlePlayPause}
             className={cn(
-              'group mt-2 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-theme',
-              'shadow-lg shadow-theme/20 transition-all hover:scale-105 hover:bg-theme-hover hover:shadow-theme/30 hover:shadow-xl',
-              'cursor-pointer focus:outline-none focus:ring-2 focus:ring-theme focus:ring-offset-2 md:h-18 md:w-18',
+              `
+                group mt-2 flex h-14 w-14 flex-shrink-0 items-center
+                justify-center rounded-full bg-theme
+              `,
+              `
+                shadow-lg shadow-theme/20 transition-all
+                hover:scale-105 hover:bg-theme-hover hover:shadow-xl
+                hover:shadow-theme/30
+              `,
+              `
+                cursor-pointer
+                focus:ring-2 focus:ring-theme focus:ring-offset-2
+                focus:outline-none
+                md:h-18 md:w-18
+              `,
             )}
             aria-label={isCurrentEpisodePlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
           >
             {isCurrentEpisodePlaying
               ? (
-                  <Pause className="h-6 w-6 fill-white text-white md:h-8 md:w-8" />
+                  <Pause className={`
+                    h-6 w-6 fill-white text-white
+                    md:h-8 md:w-8
+                  `}
+                  />
                 )
               : (
-                  <Play className="h-6 w-6 fill-white text-white md:h-8 md:w-8" />
+                  <Play className={`
+                    h-6 w-6 fill-white text-white
+                    md:h-8 md:w-8
+                  `}
+                  />
                 )}
           </button>
 
           <div className="flex w-full items-start gap-4">
             <div className="flex min-w-0 flex-1 flex-col">
-              <h1 id={headlineId} className="mt-2 break-words font-bold text-2xl text-foreground md:text-4xl" itemProp="headline">
+              <h1
+                id={headlineId}
+                className={`
+                  mt-2 text-2xl font-bold break-words text-foreground
+                  md:text-4xl
+                `}
+                itemProp="headline"
+              >
                 {episode.title}
               </h1>
               <time
-                className="order-first font-mono text-xs leading-7 text-muted-foreground md:text-sm"
+                className={`
+                  order-first font-mono text-xs leading-7 text-muted-foreground
+                  md:text-sm
+                `}
                 dateTime={isoPublishedDate}
                 itemProp="datePublished"
               >
@@ -222,7 +289,10 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
 
         <div
           className={cn(
-            'episode-content text-[1.05rem] leading-[1.85] md:text-[1.1rem] md:leading-[1.95]',
+            `
+              episode-content text-[1.05rem] leading-[1.85]
+              md:text-[1.1rem] md:leading-[1.95]
+            `,
             'tracking-wide',
           )}
           itemProp="articleBody"
@@ -241,7 +311,10 @@ function EpisodeBackLink({ href, ariaLabel, label, className }: EpisodeBackLinkP
     <Link
       href={href}
       className={cn(
-        'flex w-full items-center gap-2 text-foreground transition-colors hover:text-muted-foreground',
+        `
+          flex w-full items-center gap-2 text-foreground transition-colors
+          hover:text-muted-foreground
+        `,
         className,
       )}
       title={ariaLabel}

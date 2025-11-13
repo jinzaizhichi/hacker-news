@@ -78,12 +78,19 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
   }
 
   return (
-    <div className="px-4 py-8 md:px-10 md:py-12 lg:px-20">
+    <div className={`
+      px-4 py-8
+      md:px-10 md:py-12
+      lg:px-20
+    `}
+    >
       <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              className={cn(currentPage === 1 && 'pointer-events-none opacity-50')}
+              className={cn(currentPage === 1 && `
+                pointer-events-none opacity-50
+              `)}
             >
               <button
                 type="button"
@@ -92,7 +99,13 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
                 className="inline-flex w-full items-center justify-center gap-1"
               >
                 <ChevronLeftIcon />
-                <span className="hidden sm:block">{t('pagination.previous')}</span>
+                <span className={`
+                  hidden
+                  sm:block
+                `}
+                >
+                  {t('pagination.previous')}
+                </span>
               </button>
             </PaginationPrevious>
           </PaginationItem>
@@ -112,7 +125,10 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
                 <PaginationLink
                   isActive={page === currentPage}
                   className={cn(
-                    page === currentPage && 'bg-theme text-white hover:bg-theme-hover hover:text-white',
+                    page === currentPage && `
+                      bg-theme text-white
+                      hover:bg-theme-hover hover:text-white
+                    `,
                   )}
                 >
                   <button type="button" onClick={() => setPage(page)}>{page}</button>
@@ -123,7 +139,9 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
 
           <PaginationItem>
             <PaginationNext
-              className={cn(currentPage === totalPages && 'pointer-events-none opacity-50')}
+              className={cn(currentPage === totalPages && `
+                pointer-events-none opacity-50
+              `)}
             >
               <button
                 type="button"
@@ -131,7 +149,13 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
                 disabled={currentPage === totalPages}
                 className="inline-flex w-full items-center justify-center gap-1"
               >
-                <span className="hidden sm:block">{t('pagination.next')}</span>
+                <span className={`
+                  hidden
+                  sm:block
+                `}
+                >
+                  {t('pagination.next')}
+                </span>
                 <ChevronRightIcon />
               </button>
             </PaginationNext>

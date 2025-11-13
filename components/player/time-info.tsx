@@ -8,13 +8,13 @@ interface TimeProps {
 }
 
 export function CurrentTime({ className }: TimeProps = {}) {
-  return <Time className={cn('font-medium text-sm tabular-nums', className)} type="current" />
+  return <Time className={cn('text-sm font-medium tabular-nums', className)} type="current" />
 }
 
 export function Duration({ className }: TimeProps = {}) {
   return (
     <Time
-      className={cn('font-medium text-muted-foreground text-sm tabular-nums', className)}
+      className={cn('text-sm font-medium text-muted-foreground tabular-nums', className)}
       type="duration"
     />
   )

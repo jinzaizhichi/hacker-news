@@ -77,7 +77,10 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-medium text-theme underline transition-colors hover:text-theme-hover"
+        className={`
+          font-medium text-theme underline transition-colors
+          hover:text-theme-hover
+        `}
         title={externalLinkTitle}
         aria-label={externalLinkTitle}
       >
@@ -89,22 +92,42 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
   return (
     <article
       className={cn(
-        'relative flex flex-col gap-8 px-4 pb-10 pt-16 sm:px-8',
-        'md:gap-12 md:px-8 md:py-12 lg:px-12',
+        `
+          relative flex flex-col gap-8 px-4 pt-16 pb-10
+          sm:px-8
+        `,
+        `
+          md:gap-12 md:px-8 md:py-12
+          lg:px-12
+        `,
       )}
       aria-labelledby={titleId}
       itemScope
       itemType="https://schema.org/PodcastSeries"
     >
       <meta itemProp="url" content={podcast.base.link} />
-      <Waveform className="absolute inset-x-0 top-0 w-full md:hidden" aria-hidden="true" />
+      <Waveform
+        className={`
+          absolute inset-x-0 top-0 w-full
+          md:hidden
+        `}
+        aria-hidden="true"
+      />
 
-      <figure className="flex justify-center pt-4 md:pt-0">
+      <figure className={`
+        flex justify-center pt-4
+        md:pt-0
+      `}
+      >
         <Link
           href="/"
           aria-label={homeLinkTitle}
           title={homeLinkTitle}
-          className="block aspect-square w-40 md:w-full md:max-w-sm lg:max-w-md"
+          className={`
+            block aspect-square w-40
+            md:w-full md:max-w-sm
+            lg:max-w-md
+          `}
         >
           <Image
             className="h-full w-full rounded-2xl object-cover"
@@ -120,14 +143,25 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
         <figcaption className="sr-only">{title}</figcaption>
       </figure>
 
-      <h2 id={titleId} className="text-center font-bold text-2xl md:text-left md:text-xl" itemProp="name">
+      <h2
+        id={titleId}
+        className={`
+          text-center text-2xl font-bold
+          md:text-left md:text-xl
+        `}
+        itemProp="name"
+      >
         {title}
       </h2>
 
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-5" aria-labelledby={aboutSectionId}>
           <div
-            className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground md:justify-start md:font-medium md:text-sm md:normal-case"
+            className={`
+              flex items-center justify-center gap-2 font-mono text-xs
+              tracking-wide text-muted-foreground uppercase
+              md:justify-start md:text-sm md:font-medium md:normal-case
+            `}
             id={aboutSectionId}
           >
             <TinyWaveFormIcon
@@ -139,13 +173,21 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
           </div>
 
           <div className="flex flex-col gap-2" id={descriptionId} itemProp="description">
-            <div className="line-clamp-6 md:hidden">
+            <div className={`
+              line-clamp-6
+              md:hidden
+            `}
+            >
               <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                 {description}
               </ReactMarkdown>
             </div>
 
-            <div className="hidden md:flex md:flex-col md:gap-2">
+            <div className={`
+              hidden
+              md:flex md:flex-col md:gap-2
+            `}
+            >
               <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                 {displayDescription}
               </ReactMarkdown>
@@ -153,7 +195,11 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                 <button
                   type="button"
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="cursor-pointer self-start font-medium text-theme transition-colors hover:text-theme-hover"
+                  className={`
+                    cursor-pointer self-start font-medium text-theme
+                    transition-colors
+                    hover:text-theme-hover
+                  `}
                   aria-expanded={isExpanded}
                   aria-controls={descriptionId}
                 >
@@ -168,7 +214,11 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
           ? (
               <section className="flex flex-col gap-5" aria-labelledby={listenSectionId}>
                 <div
-                  className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground md:justify-start md:font-medium md:text-sm md:normal-case"
+                  className={`
+                    flex items-center justify-center gap-2 font-mono text-xs
+                    tracking-wide text-muted-foreground uppercase
+                    md:justify-start md:text-sm md:font-medium md:normal-case
+                  `}
                   id={listenSectionId}
                 >
                   <TinyWaveFormIcon
@@ -179,7 +229,11 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                   <span>{t('podcastInfo.listen')}</span>
                 </div>
 
-                <ul className="flex items-center justify-center gap-6 md:flex-col md:items-start md:justify-start">
+                <ul className={`
+                  flex items-center justify-center gap-6
+                  md:flex-col md:items-start md:justify-start
+                `}
+                >
                   {podcast.platforms.map((platform) => {
                     const config = platformIcons[platform.id]
                     if (!config)
@@ -192,13 +246,29 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                           href={platform.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
+                          className={`
+                            flex cursor-pointer items-center gap-2
+                            transition-opacity
+                            hover:opacity-80
+                          `}
                           aria-label={platformLinkTitle}
                           title={platformLinkTitle}
                           itemProp="sameAs"
                         >
-                          <Icon className={cn('h-8 w-8 md:h-6 md:w-6', config.colorClass)} aria-hidden="true" />
-                          <span className="hidden md:inline">{platform.name}</span>
+                          <Icon
+                            className={cn(`
+                              h-8 w-8
+                              md:h-6 md:w-6
+                            `, config.colorClass)}
+                            aria-hidden="true"
+                          />
+                          <span className={`
+                            hidden
+                            md:inline
+                          `}
+                          >
+                            {platform.name}
+                          </span>
                         </a>
                       </li>
                     )
@@ -209,9 +279,19 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
           : null}
       </div>
 
-      <div className="relative w-full py-4 md:hidden" aria-hidden="true">
+      <div
+        className={`
+          relative w-full py-4
+          md:hidden
+        `}
+        aria-hidden="true"
+      >
         <div className="absolute inset-0 flex items-center">
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
+          <div className={`
+            h-px w-full bg-gradient-to-r from-transparent via-border
+            to-transparent
+          `}
+          />
         </div>
       </div>
     </article>

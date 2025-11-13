@@ -20,28 +20,58 @@ export function PlayerLayout() {
   return (
     <Controls.Root
       className={cn(
-        'flex w-full flex-col gap-3 px-4 py-3 md:gap-5 md:px-10 md:py-4',
+        `
+          flex w-full flex-col gap-3 px-4 py-3
+          md:gap-5 md:px-10 md:py-4
+        `,
         styles.controls,
       )}
     >
       {currentEpisode && (
-        <div className="line-clamp-1 text-center font-medium text-sm md:hidden">
+        <div className={`
+          line-clamp-1 text-center text-sm font-medium
+          md:hidden
+        `}
+        >
           {currentEpisode.title}
         </div>
       )}
 
-      <Controls.Group className="relative flex w-full items-center justify-center md:min-h-14 md:justify-between">
-        <div className="hidden xl:block">
+      <Controls.Group className={`
+        relative flex w-full items-center justify-center
+        md:min-h-14 md:justify-between
+      `}
+      >
+        <div className={`
+          hidden
+          xl:block
+        `}
+        >
           <EpisodeTitle />
         </div>
 
-        <div className="flex items-center gap-3 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:gap-4">
+        <div className={`
+          flex items-center gap-3
+          md:absolute md:top-1/2 md:left-1/2 md:-translate-x-1/2
+          md:-translate-y-1/2 md:gap-4
+        `}
+        >
           <SeekBackward />
-          <Play tooltipPlacement="top" className="size-10 md:size-12" />
+          <Play
+            tooltipPlacement="top"
+            className={`
+              size-10
+              md:size-12
+            `}
+          />
           <SeekForward />
         </div>
 
-        <div className="hidden xl:block">
+        <div className={`
+          hidden
+          xl:block
+        `}
+        >
           <div className="flex items-center gap-4">
             <Speed />
             <div className="flex items-center">
@@ -52,10 +82,22 @@ export function PlayerLayout() {
         </div>
       </Controls.Group>
 
-      <Controls.Group className="flex h-full w-full items-center gap-2 md:gap-3">
-        <CurrentTime className="text-xs md:text-sm" />
+      <Controls.Group className={`
+        flex h-full w-full items-center gap-2
+        md:gap-3
+      `}
+      >
+        <CurrentTime className={`
+          text-xs
+          md:text-sm
+        `}
+        />
         <TimeSliders />
-        <Duration className="text-xs md:text-sm" />
+        <Duration className={`
+          text-xs
+          md:text-sm
+        `}
+        />
       </Controls.Group>
     </Controls.Root>
   )
