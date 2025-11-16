@@ -58,7 +58,10 @@ export async function GET() {
       .join('')
     const linkContent = `<p><b>相关链接：</b></p><ul>${links}</ul>`
     const blogContentHtml = md.render(post.blogContent || '')
-    const finalContent = `<div>${blogContentHtml}<hr/>${linkContent}</div>`
+    const finalContent = `
+      <div>${blogContentHtml}<hr/>${linkContent}</div>
+      ${env.NEXT_TRACKING_IMAGE ? `<img src="${env.NEXT_TRACKING_IMAGE}/${post.date}" alt="${post.title}" width="1" height="1" />` : ''}
+    `
 
     feed.addItem({
       title: post.title || '',
