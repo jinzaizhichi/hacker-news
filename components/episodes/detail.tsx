@@ -283,7 +283,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
                 })}
               </time>
             </div>
-            <EpisodeFullscreenToggle className="mt-2 flex-shrink-0" />
+            <EpisodeFullscreenToggle className="flex-shrink-0 self-center" />
           </div>
         </header>
 
