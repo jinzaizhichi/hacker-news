@@ -37,7 +37,7 @@ export async function GET() {
   })
 
   const { env } = await getCloudflareContext({ async: true })
-  const runEnv = env.NODE_ENV
+  const runEnv = env.NODE_ENV || 'production'
   const pastDays = getPastDays(10)
   const posts = (await Promise.all(
     pastDays.map(async (day) => {

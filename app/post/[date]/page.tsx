@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ date: string }>
 }): Promise<Metadata> {
   const { env } = await getCloudflareContext({ async: true })
-  const runEnv = env.NODE_ENV
+  const runEnv = env.NODE_ENV || 'production'
   const { date } = await params
   const post = (await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${date}`, 'json')) as unknown as Article | null
 
@@ -60,7 +60,7 @@ export default async function PostPage({
   searchParams: Promise<{ page?: string }>
 }) {
   const { env } = await getCloudflareContext({ async: true })
-  const runEnv = env.NODE_ENV
+  const runEnv = env.NODE_ENV || 'production'
   const { date } = await params
   const pageQuery = await searchParams
   const fallbackPage = Number.parseInt(pageQuery.page ?? '1', 10)

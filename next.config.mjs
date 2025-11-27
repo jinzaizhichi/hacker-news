@@ -9,7 +9,7 @@ if (!isProd) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  expireTime: 3600,
+  expireTime: 86400,
   typescript: {
     ignoreBuildErrors: true,
   },
