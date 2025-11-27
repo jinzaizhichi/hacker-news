@@ -6,16 +6,22 @@
   "$schema": "../node_modules/wrangler/config-schema.json",
   "name": "hacker-news-worker",
   "main": "./index.ts",
-  "compatibility_date": "2025-04-12",
+  "minify": true,
+  "upload_source_maps": true,
+  "compatibility_date": "2025-11-15",
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "minify": true,
   "assets": {
     "directory": "./static"
   },
   "observability": {
-    "enabled": true
+    "traces": {
+      "enabled": true
+    },
+    "logs": {
+      "enabled": true
+    }
   },
   "triggers": {
     "crons": [

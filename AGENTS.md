@@ -59,14 +59,14 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 
 2. **配置环境变量：**
 
-   `.dev.vars`（根目录）：
+   `.env.locall`（根目录）：
 
    ```
    NEXTJS_ENV=development
    NEXT_STATIC_HOST=http://localhost:3000/static
    ```
 
-   `worker/.dev.vars`：
+   `worker/.env.locall`：
 
    ```
    WORKER_ENV=development

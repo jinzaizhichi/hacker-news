@@ -60,7 +60,7 @@ export async function GET() {
     const blogContentHtml = md.render(post.blogContent || '')
     const finalContent = `
       <div>${blogContentHtml}<hr/>${linkContent}</div>
-      ${env.NEXT_TRACKING_IMAGE ? `<img src="${env.NEXT_TRACKING_IMAGE}/${post.date}" alt="${post.title}" width="1" height="1" />` : ''}
+      ${env.NEXT_TRACKING_IMAGE ? `<img src="${env.NEXT_TRACKING_IMAGE}/${post.date}" alt="${post.title}" width="1" height="1" loading="lazy" aria-hidden="true" style="opacity: 0;pointer-events: none;" />` : ''}
     `
 
     feed.addItem({

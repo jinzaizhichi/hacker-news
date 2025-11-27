@@ -52,11 +52,11 @@ pnpm install
 2. 配置环境变量:
 
 ```bash
-# .dev.vars
+# .env.local
 NEXTJS_ENV=development
 NEXT_STATIC_HOST=http://localhost:3000/static
 
-# worker/.dev.vars
+# worker/.env.local
 WORKER_ENV=development
 HACKER_NEWS_WORKER_URL=https://you-worker-url
 HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
