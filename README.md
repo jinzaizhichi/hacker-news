@@ -53,11 +53,11 @@ pnpm install
 
 ```bash
 # .env.local
-NEXTJS_ENV=development
+NODE_ENV=development
 NEXT_STATIC_HOST=http://localhost:3000/static
 
 # worker/.env.local
-WORKER_ENV=development
+NODE_ENV=development
 HACKER_NEWS_WORKER_URL=https://you-worker-url
 HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
 OPENAI_API_KEY=your_api_key
@@ -100,7 +100,7 @@ pnpx wrangler secret put --cwd worker OPENAI_BASE_URL
 pnpx wrangler secret put --cwd worker OPENAI_MODEL
 
 # 更新 Web 程序的私有变量
-pnpx wrangler secret put NEXTJS_ENV # Next.JS 环境，建议 production
+pnpx wrangler secret put NODE_ENV # Next.JS 环境，建议 production
 pnpx wrangler secret put NEXT_PUBLIC_BASE_URL # Web 服务地址
 pnpx wrangler secret put NEXT_STATIC_HOST # 绑定域名后，修改为绑定域名
 ```

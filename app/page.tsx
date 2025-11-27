@@ -13,7 +13,7 @@ export default async function Home({
   searchParams: Promise<{ page?: string }>
 }) {
   const { env } = await getCloudflareContext({ async: true })
-  const runEnv = env.NEXTJS_ENV
+  const runEnv = env.NODE_ENV
   const query = await searchParams
   const requestedPage = Number.parseInt(query.page ?? '1', 10)
   const currentPage = Number.isNaN(requestedPage) ? 1 : Math.max(1, requestedPage)

@@ -8,7 +8,7 @@ declare namespace Cloudflare {
 	}
 	interface Env {
 		HACKER_NEWS_KV: KVNamespace;
-		NEXTJS_ENV: string;
+		NODE_ENV: string;
 		NEXT_STATIC_HOST: string;
 		NEXT_PUBLIC_BASE_URL: string;
 		NEXT_TRACKING_IMAGE: string;
@@ -26,7 +26,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "NEXTJS_ENV" | "NEXT_STATIC_HOST" | "NEXT_PUBLIC_BASE_URL" | "NEXT_TRACKING_IMAGE">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "NODE_ENV" | "NEXT_STATIC_HOST" | "NEXT_PUBLIC_BASE_URL" | "NEXT_TRACKING_IMAGE">> {}
 }
 
 // Begin runtime types

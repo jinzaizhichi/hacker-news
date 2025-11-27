@@ -62,14 +62,14 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
    `.env.locall`（根目录）：
 
    ```
-   NEXTJS_ENV=development
+   NODE_ENV=development
    NEXT_STATIC_HOST=http://localhost:3000/static
    ```
 
    `worker/.env.locall`：
 
    ```
-   WORKER_ENV=development
+   NODE_ENV=development
    HACKER_NEWS_WORKER_URL=https://your-worker-url
    HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
    OPENAI_API_KEY=your_api_key
@@ -178,7 +178,7 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 
 **Next.js（生产环境）：**
 
-- `NEXTJS_ENV` - 环境（production/development）
+- `NODE_ENV` - 环境（production/development）
 - `NEXT_PUBLIC_BASE_URL` - Web 服务地址
 - `NEXT_STATIC_HOST` - 静态资源主机（R2 存储桶 URL）
 
@@ -198,7 +198,7 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
    pnpm wrangler secret put --cwd worker OPENAI_BASE_URL
    pnpm wrangler secret put --cwd worker OPENAI_MODEL
 
-   pnpm wrangler secret put NEXTJS_ENV
+   pnpm wrangler secret put NODE_ENV
    pnpm wrangler secret put NEXT_PUBLIC_BASE_URL
    pnpm wrangler secret put NEXT_STATIC_HOST
    ```

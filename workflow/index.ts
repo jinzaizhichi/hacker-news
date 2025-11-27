@@ -18,7 +18,7 @@ interface Env extends CloudflareEnv {
   OPENAI_THINKING_MODEL?: string
   OPENAI_MAX_TOKENS?: string
   JINA_KEY?: string
-  WORKER_ENV?: string
+  NODE_ENV?: string
   HACKER_NEWS_WORKER_URL: string
   HACKER_NEWS_R2_BUCKET_URL: string
   HACKER_NEWS_WORKFLOW: Workflow
@@ -38,7 +38,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
     console.info('trigged event: HackerNewsWorkflow', event)
 
-    const runEnv = this.env.WORKER_ENV || 'production'
+    const runEnv = this.env.NODE_ENV || 'production'
     const isDev = runEnv !== 'production'
     const breakTime = isDev ? '2 seconds' : '5 seconds'
     const today = event.payload?.today || new Date().toISOString().split('T')[0]
