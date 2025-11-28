@@ -109,7 +109,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizePodcastPrompt,
         prompt: allStories.join('\n\n---\n\n'),
-        maxTokens,
+        maxOutputTokens: maxTokens,
         maxRetries: 3,
       })
 
@@ -127,7 +127,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
         prompt: `<stories>${JSON.stringify(stories)}</stories>\n\n---\n\n${allStories.join('\n\n---\n\n')}`,
-        maxTokens,
+        maxOutputTokens: maxTokens,
         maxRetries: 3,
       })
 
