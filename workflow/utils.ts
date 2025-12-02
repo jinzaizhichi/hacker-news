@@ -66,7 +66,10 @@ export async function getHackerNewsTopStories(today: string, { JINA_KEY, FIRECRA
   const url = `https://news.ycombinator.com/front?day=${today}`
 
   const html = await getContentFromJina(url, 'html', {}, JINA_KEY)
-    .catch(() => getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY))
+    .catch((error) => {
+      console.error('getHackerNewsTopStories from Jina failed', error)
+      return getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY)
+    })
 
   const $ = cheerio.load(html)
   const items = $('.athing.submission')
@@ -92,9 +95,15 @@ export async function getHackerNewsStory(story: Story, maxTokens: number, { JINA
 
   const [article, comments] = await Promise.all([
     getContentFromJina(story.url!, 'markdown', {}, JINA_KEY)
-      .catch(() => getContentFromFirecrawl(story.url!, 'markdown', {}, FIRECRAWL_KEY)),
+      .catch((error) => {
+        console.error('getHackerNewsStory from Jina failed', error)
+        return getContentFromFirecrawl(story.url!, 'markdown', {}, FIRECRAWL_KEY)
+      }),
     getContentFromJina(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, JINA_KEY)
-      .catch(() => getContentFromFirecrawl(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, FIRECRAWL_KEY)),
+      .catch((error) => {
+        console.error('getHackerNewsStory from Jina failed', error)
+        return getContentFromFirecrawl(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, FIRECRAWL_KEY)
+      }),
   ])
   return [
     story.title
