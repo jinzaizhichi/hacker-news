@@ -13,7 +13,7 @@ export const podcast: Podcast = {
     title: defaultTitle,
     description: defaultDescription,
     link: defaultBaseUrl,
-    cover: '/opengraph-image.png',
+    cover: '/logo.png',
   },
   hosts: [
     {
@@ -29,12 +29,12 @@ export const podcast: Podcast = {
     {
       id: 'youtube',
       name: 'YouTube',
-      link: 'https://www.youtube.com/@hacker-podcast-podcast',
+      link: 'https://www.youtube.com/@hacker-podcast-daily',
     },
     {
       id: 'apple',
       name: 'Apple Podcasts',
-      link: 'https://podcasts.apple.com/us/podcast/hacker-podcast-每日播报/id1809638204',
+      link: 'https://podcasts.apple.com/us/podcast/Hacker-Podcast/id1809638204',
     },
     {
       id: 'rss',
