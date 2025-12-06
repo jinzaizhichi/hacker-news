@@ -18,7 +18,7 @@ export default async function Home({
   const requestedPage = Number.parseInt(query.page ?? '1', 10)
   const currentPage = Number.isNaN(requestedPage) ? 1 : Math.max(1, requestedPage)
   const pastDays = getPastDays(keepDays)
-  const kvPrefix = `content:${runEnv}:hacker-news:`
+  const kvPrefix = `content:${runEnv}:hacker-podcast:`
   const totalEpisodes = pastDays.length
   const totalPages = Math.max(1, Math.ceil(totalEpisodes / site.pageSize))
   const safePage = Math.min(currentPage, totalPages)
@@ -28,7 +28,7 @@ export default async function Home({
   const posts = (
     await Promise.all(
       pageDays.map(async (day) => {
-        const post = await env.HACKER_NEWS_KV.get(`${kvPrefix}${day}`, 'json')
+        const post = await env.HACKER_PODCAST_KV.get(`${kvPrefix}${day}`, 'json')
         return post as unknown as Article
       }),
     )

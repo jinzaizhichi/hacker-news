@@ -30,10 +30,10 @@ export async function GET() {
     itunesCategory: [{ text: 'Technology' }, { text: 'News' }],
     itunesOwner: {
       name: podcast.base.title,
-      email: 'hacker-news@agi.li',
+      email: 'hacker-podcast@agi.li',
     },
-    managingEditor: 'hacker-news@agi.li',
-    webMaster: 'hacker-news@agi.li',
+    managingEditor: 'hacker-podcast@agi.li',
+    webMaster: 'hacker-podcast@agi.li',
   })
 
   const { env } = await getCloudflareContext({ async: true })
@@ -41,13 +41,13 @@ export async function GET() {
   const pastDays = getPastDays(10)
   const posts = (await Promise.all(
     pastDays.map(async (day) => {
-      const post = await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${day}`, 'json')
+      const post = await env.HACKER_PODCAST_KV.get(`content:${runEnv}:hacker-podcast:${day}`, 'json')
       return post as unknown as Article
     }),
   )).filter(Boolean)
 
   const audioInfos = await Promise.all(
-    posts.map(post => env.HACKER_NEWS_R2.head(post.audio)),
+    posts.map(post => env.HACKER_PODCAST_R2.head(post.audio)),
   )
 
   posts.forEach((post, index) => {

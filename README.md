@@ -1,14 +1,14 @@
-# Hacker News 每日播报
+# Agili 的 Hacker Podcast
 
 一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。
 
-[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://deepwiki.com/ccbikai/hacker-news)
+[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://deepwiki.com/ccbikai/hacker-podcast)
 
-预览地址: <https://hacker-news.agi.li>
+预览地址: <https://hacker-podcast.agi.li>
 
-订阅地址: <https://hacker-news.agi.li/rss.xml>
+订阅地址: <https://hacker-podcast.agi.li/rss.xml>
 
-![hacker-news](https://socialify.git.ci/ccbikai/hacker-news/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
+![hacker-podcast](https://socialify.git.ci/ccbikai/hacker-podcast/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
 
 ---
 
@@ -58,8 +58,8 @@ NEXT_STATIC_HOST=http://localhost:3000/static
 
 # worker/.env.local
 NODE_ENV=development
-HACKER_NEWS_WORKER_URL=https://you-worker-url
-HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
+HACKER_PODCAST_WORKER_URL=https://you-worker-url
+HACKER_PODCAST_R2_BUCKET_URL=https://your-bucket-url
 OPENAI_API_KEY=your_api_key
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4.1
@@ -86,15 +86,15 @@ pnpm dev
 
 项目使用 Cloudflare Workers 部署:
 
-1. 创建 R2 文件存储桶, 绑定域名后，修改 `NEXT_STATIC_HOST` 和 `HACKER_NEWS_R2_BUCKET_URL` 变量。
+1. 创建 R2 文件存储桶, 绑定域名后，修改 `NEXT_STATIC_HOST` 和 `HACKER_PODCAST_R2_BUCKET_URL` 变量。
 2. 创建 KV 存储空间
 3. 修改 `wrangler.json` 中 KV 和 R2 的值
 4. 使用 `wrangler` 脚手架配置线上环境的环境变量:
 
 ```bash
 # 更新 Worker 的私有变量
-pnpx wrangler secret put --cwd worker HACKER_NEWS_WORKER_URL # 绑定域名后，修改为绑定域名
-pnpx wrangler secret put --cwd worker HACKER_NEWS_R2_BUCKET_URL
+pnpx wrangler secret put --cwd worker HACKER_PODCAST_WORKER_URL # 绑定域名后，修改为绑定域名
+pnpx wrangler secret put --cwd worker HACKER_PODCAST_R2_BUCKET_URL
 pnpx wrangler secret put --cwd worker OPENAI_API_KEY
 pnpx wrangler secret put --cwd worker OPENAI_BASE_URL
 pnpx wrangler secret put --cwd worker OPENAI_MODEL

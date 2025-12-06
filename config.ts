@@ -1,10 +1,10 @@
 /* eslint-disable node/prefer-global/process */
 import type { Podcast, Site } from '@/types/podcast'
 
-const defaultTitle = 'Hacker News 每日播报'
+const defaultTitle = 'Agili 的 Hacker Podcast'
 const defaultDescription
   = '一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。'
-const defaultBaseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://hacker-news.agi.li'
+const defaultBaseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://hacker-podcast.agi.li'
 
 export const keepDays = 30
 
@@ -29,12 +29,12 @@ export const podcast: Podcast = {
     {
       id: 'youtube',
       name: 'YouTube',
-      link: 'https://www.youtube.com/@hacker-news-podcast',
+      link: 'https://www.youtube.com/@hacker-podcast-podcast',
     },
     {
       id: 'apple',
       name: 'Apple Podcasts',
-      link: 'https://podcasts.apple.com/us/podcast/hacker-news-每日播报/id1809638204',
+      link: 'https://podcasts.apple.com/us/podcast/hacker-podcast-每日播报/id1809638204',
     },
     {
       id: 'rss',
@@ -60,7 +60,7 @@ export const site: Site = {
 }
 
 export const externalLinks = {
-  github: 'https://github.com/ccbikai/hacker-news',
+  github: 'https://github.com/ccbikai/hacker-podcast',
   rss: '/rss.xml',
 }
 

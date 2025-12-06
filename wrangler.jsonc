@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hacker-news",
+  "name": "hacker-podcast",
   "main": ".open-next/worker.js",
   "minify": true,
   "upload_source_maps": true,
@@ -30,24 +30,24 @@
   "keep_vars": true,
   "kv_namespaces": [
     {
-      "binding": "HACKER_NEWS_KV",
+      "binding": "HACKER_PODCAST_KV",
       "id": "4d458dadadea42f8b8198fe3e29f858d"
     }
   ],
   "r2_buckets": [
     {
-      "binding": "HACKER_NEWS_R2",
-      "bucket_name": "hacker-news"
+      "binding": "HACKER_PODCAST_R2",
+      "bucket_name": "hacker-podcast"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "hacker-news"
+      "bucket_name": "hacker-podcast"
     }
   ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "hacker-news"
+      "service": "hacker-podcast"
     }
   ],
   "durable_objects": {

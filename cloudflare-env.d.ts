@@ -7,7 +7,7 @@ declare namespace Cloudflare {
 		durableNamespaces: "DOQueueHandler" | "DOShardedTagCache" | "BucketCachePurge";
 	}
 	interface Env {
-		HACKER_NEWS_KV: KVNamespace;
+		HACKER_PODCAST_KV: KVNamespace;
 		NODE_ENV: string;
 		NEXT_STATIC_HOST: string;
 		NEXT_TRACKING_IMAGE: string;
@@ -15,7 +15,7 @@ declare namespace Cloudflare {
 		NEXT_CACHE_DO_QUEUE: DurableObjectNamespace<import("./.open-next/worker").DOQueueHandler>;
 		NEXT_TAG_CACHE_DO_SHARDED: DurableObjectNamespace<import("./.open-next/worker").DOShardedTagCache>;
 		NEXT_CACHE_DO_PURGE: DurableObjectNamespace<import("./.open-next/worker").BucketCachePurge>;
-		HACKER_NEWS_R2: R2Bucket;
+		HACKER_PODCAST_R2: R2Bucket;
 		NEXT_INC_CACHE_R2_BUCKET: R2Bucket;
 		WORKER_SELF_REFERENCE: Service<typeof import("./.open-next/worker").default>;
 		ASSETS: Fetcher;

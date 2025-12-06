@@ -4,10 +4,10 @@
 
 ## 项目概述
 
-Hacker News 每日播报 - 一个基于 AI 的中文播客生成器，自动抓取 Hacker News 每日热门文章，通过 AI 生成中文摘要并使用 Edge TTS 转换为音频播客。
+Agili 的 Hacker Podcast - 一个基于 AI 的中文播客生成器，自动抓取 Hacker News 每日热门文章，通过 AI 生成中文摘要并使用 Edge TTS 转换为音频播客。
 
-**在线演示：** https://hacker-news.agi.li
-**RSS 订阅：** https://hacker-news.agi.li/rss.xml
+**在线演示：** https://hacker-podcast.agi.li
+**RSS 订阅：** https://hacker-podcast.agi.li/rss.xml
 
 ## 技术栈
 
@@ -70,8 +70,8 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 
    ```
    NODE_ENV=development
-   HACKER_NEWS_WORKER_URL=https://your-worker-url
-   HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
+   HACKER_PODCAST_WORKER_URL=https://your-worker-url
+   HACKER_PODCAST_R2_BUCKET_URL=https://your-bucket-url
    OPENAI_API_KEY=your_api_key
    OPENAI_BASE_URL=https://api.openai.com/v1
    OPENAI_MODEL=gpt-4.1
@@ -125,7 +125,7 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 ## 项目结构
 
 ```
-/Users/ccbikai/code/hacker-news
+/Users/ccbikai/code/hacker-podcast
 ├── app/                    # Next.js 应用路由页面
 │   ├── post/[date]/        # 动态文章页面
 │   ├── rss.xml/            # RSS 订阅端点
@@ -157,11 +157,11 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 
 ### Cloudflare 资源（wrangler.jsonc）
 
-- **KV 命名空间：** `HACKER_NEWS_KV` - 存储处理后的内容
+- **KV 命名空间：** `HACKER_PODCAST_KV` - 存储处理后的内容
 - **R2 存储桶：**
-  - `HACKER_NEWS_R2` - 存储音频文件
+  - `HACKER_PODCAST_R2` - 存储音频文件
   - `NEXT_INC_CACHE_R2_BUCKET` - 存储增量缓存
-- **工作流：** `HACKER_NEWS_WORKFLOW` - 运行每日内容生成
+- **工作流：** `HACKER_PODCAST_WORKFLOW` - 运行每日内容生成
 - **Durable Objects：** 缓存优化（DOQueueHandler、DOShardedTagCache、BucketCachePurge）
 
 ### 环境变量
@@ -171,8 +171,8 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 - `OPENAI_API_KEY` - OpenAI API 密钥
 - `OPENAI_BASE_URL` - OpenAI API 基础 URL
 - `OPENAI_MODEL` - OpenAI 模型名称（默认：gpt-4.1）
-- `HACKER_NEWS_WORKER_URL` - Worker 自引用 URL
-- `HACKER_NEWS_R2_BUCKET_URL` - 音频文件的 R2 存储桶 URL
+- `HACKER_PODCAST_WORKER_URL` - Worker 自引用 URL
+- `HACKER_PODCAST_R2_BUCKET_URL` - 音频文件的 R2 存储桶 URL
 - `JINA_KEY`（可选）- Jina AI API 密钥
 - `FIRECRAWL_KEY`（可选）- Firecrawl API 密钥
 
@@ -192,8 +192,8 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 2. **设置密钥：**
 
    ```bash
-   pnpm wrangler secret put --cwd worker HACKER_NEWS_WORKER_URL
-   pnpm wrangler secret put --cwd worker HACKER_NEWS_R2_BUCKET_URL
+   pnpm wrangler secret put --cwd worker HACKER_PODCAST_WORKER_URL
+   pnpm wrangler secret put --cwd worker HACKER_PODCAST_R2_BUCKET_URL
    pnpm wrangler secret put --cwd worker OPENAI_API_KEY
    pnpm wrangler secret put --cwd worker OPENAI_BASE_URL
    pnpm wrangler secret put --cwd worker OPENAI_MODEL
