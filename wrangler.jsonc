@@ -31,7 +31,7 @@
   "kv_namespaces": [
     {
       "binding": "HACKER_PODCAST_KV",
-      "id": "4d458dadadea42f8b8198fe3e29f858d"
+      "id": "bfc65509c1634589a29b90f956ab0d1a"
     }
   ],
   "r2_buckets": [
@@ -68,12 +68,8 @@
   },
   "migrations": [
     {
-      "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
-    },
-    {
-      "tag": "v2",
-      "new_sqlite_classes": ["BucketCachePurge"]
+      "tag": "open-next",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]
     }
   ]
 }
