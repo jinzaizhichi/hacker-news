@@ -25,7 +25,7 @@ export async function generateMetadata({
   const episode = buildEpisodeFromArticle(post, env.NEXT_STATIC_HOST)
   const title = episode.title || site.seo.defaultTitle
   const description = episode.description || site.seo.defaultDescription
-  const url = `${podcast.base.link}/post/${episode.id}`
+  const url = `${podcast.base.link}/episode/${episode.id}`
 
   return {
     title,

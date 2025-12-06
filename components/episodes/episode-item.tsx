@@ -46,7 +46,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
   )
   const isoPublishedDate = publishedDate.toISOString()
 
-  const linkHref = currentPage > 1 ? `/post/${episode.id}?page=${currentPage}` : `/post/${episode.id}`
+  const linkHref = currentPage > 1 ? `/episode/${episode.id}?page=${currentPage}` : `/episode/${episode.id}`
   const episodeLinkTitle = t('episodes.openEpisodeTitle', { title: episode.title })
   const episodeDescriptionTitle = t('episodes.readEpisodeDescription', { title: episode.title })
   const showNotesTitle = t('episodes.showNotesLinkTitle', { title: episode.title })

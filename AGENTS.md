@@ -107,7 +107,7 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 - 提供文章页面、首页和 RSS 订阅
 - 关键路由：
   - `app/page.tsx` - 首页显示最近文章
-  - `app/post/[date]/page.tsx` - 单个文章页面
+  - `app/episode/[date]/page.tsx` - 单个文章页面
   - `app/rss.xml/route.ts` - RSS 订阅生成
   - `app/static/[...path]/route.ts` - 静态资源代理
 

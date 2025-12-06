@@ -67,8 +67,8 @@ export async function GET() {
       title: post.title || '',
       description: post.introContent || post.podcastContent || '',
       content: finalContent,
-      url: `${baseUrl}/post/${post.date}`,
-      guid: `${baseUrl}/post/${post.date}`,
+      url: `${baseUrl}/episode/${post.date}`,
+      guid: `/episode/${post.date}`,
       date: new Date(post.updatedAt || post.date),
       enclosure: {
         url: `${env.NEXT_STATIC_HOST}/${post.audio}?t=${post.updatedAt}`,
