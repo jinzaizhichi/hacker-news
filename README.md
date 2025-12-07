@@ -2,13 +2,13 @@
 
 一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。
 
-[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://deepwiki.com/ccbikai/hacker-podcast)
+[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://deepwiki.com/miantiao-me/hacker-podcast)
 
 预览地址: <https://hacker-podcast.agi.li>
 
 订阅地址: <https://hacker-podcast.agi.li/rss.xml>
 
-![hacker-podcast](https://socialify.git.ci/ccbikai/hacker-podcast/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
+![hacker-podcast](https://socialify.git.ci/miantiao-me/hacker-podcast/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
 
 ---
 
@@ -127,7 +127,7 @@ pnpm deploy
 
 1. [在 Telegram 关注我](https://t.me/miantiao_me)
 2. [在 𝕏 上关注我](https://404.li/x)
-3. [在 GitHub 赞助我](https://github.com/sponsors/ccbikai)
+3. [在 GitHub 赞助我](https://github.com/sponsors/miantiao-me)
 
 ## 免责声明
 

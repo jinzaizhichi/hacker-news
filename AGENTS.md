@@ -125,7 +125,7 @@ pnpm cf-typegen           # 生成 Cloudflare 类型定义
 ## 项目结构
 
 ```
-/Users/ccbikai/code/hacker-podcast
+/Users/miantiao-me/code/hacker-podcast
 ├── app/                    # Next.js 应用路由页面
 │   ├── post/[date]/        # 动态文章页面
 │   ├── rss.xml/            # RSS 订阅端点

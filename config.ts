@@ -60,7 +60,7 @@ export const site: Site = {
 }
 
 export const externalLinks = {
-  github: 'https://github.com/ccbikai/hacker-podcast',
+  github: 'https://github.com/miantiao-me/hacker-podcast',
   rss: '/rss.xml',
 }
 
