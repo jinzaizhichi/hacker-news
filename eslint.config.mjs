@@ -5,6 +5,7 @@ export default antfu({
   formatters: true,
   react: true,
   nextjs: true,
+  pnpm: false,
   ignores: [
     'components/ui/**/*',
     'cloudflare-env.d.ts',

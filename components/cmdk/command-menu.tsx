@@ -1,13 +1,11 @@
 'use client'
 
-import type { Locale } from '@/i18n/config'
 import { Command } from 'cmdk'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/components/theme/use-theme'
 import { useIsClient } from '@/hooks/use-is-client'
-import i18n from '@/i18n'
 import '@/styles/cmdk.css'
 
 export function CommandMenu() {
@@ -59,19 +57,12 @@ export function CommandMenu() {
     setTheme(nextTheme)
   }
 
-  const toggleLanguage = () => {
-    const current = (i18n.language as Locale) || 'zh'
-    const nextLang: Locale = current === 'zh' ? 'en' : 'zh'
-    i18n.changeLanguage(nextLang)
-    setOpen(false)
-  }
-
   const navigateHome = () => {
     router.push('/', { scroll: true })
     setOpen(false)
   }
 
-  const currentLocale = (i18n.language as Locale) || 'zh'
+  // const currentLocale = (i18n.language as Locale) || 'zh'
   const currentTheme = resolveTheme()
 
   if (!open) {
@@ -107,13 +98,6 @@ export function CommandMenu() {
                   {' '}
                   {t('cmdk.mode')}
                   <span className="raycast-meta">⌘K</span>
-                </Command.Item>
-                <Command.Item onSelect={toggleLanguage}>
-                  <span>🌐</span>
-                  {t('cmdk.switchTo')}
-                  {' '}
-                  {currentLocale === 'zh' ? t('cmdk.en') : t('cmdk.zh')}
-                  <span className="raycast-meta">⌘L</span>
                 </Command.Item>
               </Command.Group>
 

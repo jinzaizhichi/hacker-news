@@ -24,7 +24,7 @@ async function edgeTTS(text: string, gender: string, env: Env) {
 }
 
 async function minimaxTTS(text: string, gender: string, env: Env) {
-  const result = await $fetch<{ data: { audio: string }, base_resp: { status_msg: string } }>(`${env.TTS_API_URL || 'https://api.minimax.chat/v1/t2a_v2'}?GroupId=${env.TTS_API_ID}`, {
+  const result = await $fetch<{ data: { audio: string }, base_resp: { status_msg: string } }>(`${env.TTS_API_URL || 'https://api.minimaxi.com/v1/t2a_v2'}?GroupId=${env.TTS_API_ID}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

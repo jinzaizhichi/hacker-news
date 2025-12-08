@@ -134,7 +134,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
 
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
-  const articlePath = `/post/${episode.id}`
+  const articlePath = `/episode/${episode.id}`
   const backLinkTitle = t('episodes.backLinkTitle')
   const detailHeaderClass = cn(
     `

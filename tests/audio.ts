@@ -1,7 +1,7 @@
 import { concatAudioFiles } from '@/workflow/utils'
 
 interface Env {
-  HACKER_NEWS_WORKER_URL: string
+  HACKER_PODCAST_WORKER_URL: string
   BROWSER: Fetcher
 }
 
@@ -12,9 +12,9 @@ export default {
     }
     const audioFiles = Array.from(
       { length: 169 },
-      (_, i) => `https://hacker-news-static.agi.li/debug/2025/04/17/production/hacker-news-2025-04-17.mp3-${i}.mp3`,
+      (_, i) => `https://hacker-podcast-static.agi.li/debug/2025/04/17/production/hacker-podcast-2025-04-17.mp3-${i}.mp3`,
     )
-    const audio = await concatAudioFiles(audioFiles, env.BROWSER, { workerUrl: env.HACKER_NEWS_WORKER_URL })
+    const audio = await concatAudioFiles(audioFiles, env.BROWSER, { workerUrl: env.HACKER_PODCAST_WORKER_URL })
     return new Response(audio)
   },
 }

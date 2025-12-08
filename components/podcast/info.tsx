@@ -136,7 +136,6 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
             width={640}
             height={640}
             referrerPolicy="no-referrer"
-            preload
             itemProp="image"
           />
         </Link>

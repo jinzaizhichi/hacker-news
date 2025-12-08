@@ -5,13 +5,9 @@ import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 import { defaultLocale, locales } from '@/i18n/config'
-import enTranslations from '@/messages/en.json'
 import zhTranslations from '@/messages/zh.json'
 
 const resources = {
-  en: {
-    translation: enTranslations,
-  },
   zh: {
     translation: zhTranslations,
   },
@@ -22,14 +18,8 @@ const languageDetectorOptions = {
   lookupLocalStorage: 'i18nextLng',
   caches: ['localStorage'],
   excludeCacheFor: ['cimode'],
-  convertDetectedLanguage: (lng: string): Locale => {
-    const normalized = lng.toLowerCase().split('-')[0]
-    if (normalized === 'zh')
-      return 'zh'
-    if (locales.includes(normalized as Locale)) {
-      return normalized as Locale
-    }
-    return defaultLocale
+  convertDetectedLanguage: (_lng: string): Locale => {
+    return 'zh'
   },
 }
 
