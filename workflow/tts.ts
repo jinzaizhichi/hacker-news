@@ -77,12 +77,13 @@ async function minimaxTTS(text: string, gender: string, env: Env) {
  * @getKeyUrl https://murf.ai/api/api-keys
  */
 async function murfTTS(text: string, gender: string, env: Env) {
-  const res = await fetch(`${env.TTS_API_URL || 'https://api.murf.ai/v1/speech/stream'}`, {
+  const result = await $fetch(`${env.TTS_API_URL || 'https://api.murf.ai/v1/speech/stream'}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'api-key': `${env.TTS_API_KEY}`,
     },
+    timeout: 30000,
     // en-UK-ruby 女声1
     // zh-CN-wei 女声2
     // en-US-ken 男声1
@@ -100,12 +101,12 @@ async function murfTTS(text: string, gender: string, env: Env) {
     }),
   })
 
-  if (res.ok) {
-    const body = await res.arrayBuffer()
+  if (result.ok) {
+    const body = await result.arrayBuffer()
     const buffer = Buffer.from(body)
     return new Blob([buffer.buffer], { type: 'audio/mpeg' })
   }
-  throw new Error(`Failed to fetch audio: ${res.statusText}`)
+  throw new Error(`Failed to fetch audio: ${result.statusText}`)
 }
 
 export default function (text: string, gender: string, env: Env) {
