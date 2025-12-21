@@ -1,5 +1,5 @@
 import type { WorkflowEvent, WorkflowStep, WorkflowStepConfig } from 'cloudflare:workers'
-import { createOpenAI } from '@ai-sdk/openai'
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 import { generateText } from 'ai'
 import { WorkflowEntrypoint } from 'cloudflare:workers'
 import { podcastTitle } from '@/config'
@@ -42,7 +42,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
     const isDev = runEnv !== 'production'
     const breakTime = isDev ? '2 seconds' : '5 seconds'
     const today = event.payload?.today || new Date().toISOString().split('T')[0]
-    const openai = createOpenAI({
+    const openai = createOpenAICompatible({
       name: 'openai',
       baseURL: this.env.OPENAI_BASE_URL!,
       headers: {
@@ -74,7 +74,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
       const text = await step.do(`summarize story ${story.id}: ${story.title}`, retryConfig, async () => {
         const { text, usage, finishReason } = await generateText({
-          model: openai.chat(this.env.OPENAI_MODEL!),
+          model: openai(this.env.OPENAI_MODEL!),
           system: summarizeStoryPrompt,
           prompt: storyResponse,
         })
@@ -106,7 +106,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const podcastContent = await step.do('create podcast content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizePodcastPrompt,
         prompt: allStories.join('\n\n---\n\n'),
         maxOutputTokens: maxTokens,
@@ -124,7 +124,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const blogContent = await step.do('create blog content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai.chat(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
         prompt: `<stories>${JSON.stringify(stories)}</stories>\n\n---\n\n${allStories.join('\n\n---\n\n')}`,
         maxOutputTokens: maxTokens,
@@ -142,7 +142,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const introContent = await step.do('create intro content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai.chat(this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_MODEL!),
         system: introPrompt,
         prompt: podcastContent,
         maxRetries: 3,
