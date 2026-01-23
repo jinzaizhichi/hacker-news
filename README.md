@@ -6,7 +6,7 @@
 
 预览地址: <https://hacker-podcast.agi.li>
 
-订阅地址: <https://hacker-podcast.agi.li/rss.xml>
+订阅地址: [RSS](https://hacker-podcast.agi.li/rss.xml) | [Apple Podcasts](https://podcasts.apple.com/us/podcast/Hacker-Podcast/id1809638204) | [YouTube](https://www.youtube.com/@hacker-podcast-daily) | [小宇宙](https://www.xiaoyuzhoufm.com/podcast/67b06023606e5c59409cd9ba) | [Spotify](https://open.spotify.com/show/63cre75hc25H7McAY5bzyo)
 
 ![hacker-podcast](https://socialify.git.ci/miantiao-me/hacker-podcast/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
 

@@ -12,6 +12,8 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Waveform } from '@/components/common/waveform'
 import { TinyWaveFormIcon } from '@/components/common/waveform-icon'
+import { SpotifyIcon } from '@/components/icons/spotify'
+import { XYZIcon } from '@/components/icons/xyz'
 import { podcast, site } from '@/config'
 import { cn } from '@/lib/utils'
 import { getPodcastStore } from '@/stores/podcast-store'
@@ -33,6 +35,14 @@ const platformIcons: Record<string, PlatformConfig> = {
   rss: {
     icon: Rss,
     colorClass: 'text-orange-500 hover:text-orange-600',
+  },
+  xiaoyuzhou: {
+    icon: XYZIcon,
+    colorClass: 'text-[#25b4e1] hover:text-[#25b4e1]',
+  },
+  spotify: {
+    icon: SpotifyIcon,
+    colorClass: 'text-green-500 hover:text-green-600',
   },
 }
 

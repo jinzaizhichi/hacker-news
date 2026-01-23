@@ -37,6 +37,16 @@ export const podcast: Podcast = {
       link: 'https://podcasts.apple.com/us/podcast/Hacker-Podcast/id1809638204',
     },
     {
+      id: 'spotify',
+      name: 'Spotify',
+      link: 'https://open.spotify.com/show/63cre75hc25H7McAY5bzyo',
+    },
+    {
+      id: 'xiaoyuzhou',
+      name: '小宇宙',
+      link: 'https://www.xiaoyuzhoufm.com/podcast/67b06023606e5c59409cd9ba',
+    },
+    {
       id: 'rss',
       name: 'RSS',
       link: `${defaultBaseUrl}/rss.xml`,
