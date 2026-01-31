@@ -124,7 +124,8 @@ pnpm deploy
 ## 赞助
 
 > [!TIP]
-> MiniMax-M2.1 是开源的业界顶尖编程模型，在多语言代码编写、界面设计理解与美学表达、长文本处理及多步骤复杂开发任务上表现卓越。让我们向通用生产力的长期愿景迈出了坚实一步，让人人都能轻松用上前沿的 AI 能力。[点击领取 MiniMax CodingPlan 专属 88 折优惠](http://404.li/mm)。
+> ![MiniMax](https://static.miantiao.me/share/2026/eFwhMy/7360.png)
+> MiniMax-M2.1 是开源的业界顶尖编程模型，在多语言代码编写、界面设计理解与美学表达、长文本处理及多步骤复杂开发任务上表现卓越。让我们向通用生产力的长期愿景迈出了坚实一步，让人人都能轻松用上前沿的 AI 能力。[**点击领取 MiniMax CodingPlan 专属 88 折优惠**](http://404.li/mm)。
 
 1. [在 Telegram 关注我](https://t.me/miantiao_me)
 2. [在 𝕏 上关注我](https://404.li/x)
