@@ -1,19 +1,19 @@
-import type { MediaPlayerInstance } from '@vidstack/react'
 import type { Episode } from '@/types/podcast'
 import { Store } from '@tanstack/store'
 
 export interface PlayerStoreState {
   currentEpisode: Episode | null
   isPlaying: boolean
+  isSourceChanging: boolean
 }
 
 let playerStore: Store<PlayerStoreState> | null = null
-let playerInstance: MediaPlayerInstance | null = null
 
 function createPlayerStore() {
   return new Store<PlayerStoreState>({
     currentEpisode: null,
     isPlaying: false,
+    isSourceChanging: false,
   })
 }
 
@@ -31,18 +31,22 @@ export function getPlayerStore(): Store<PlayerStoreState> {
   return playerStore
 }
 
-export function registerPlayerInstance(instance: MediaPlayerInstance) {
-  playerInstance = instance
-}
-
 export function setCurrentEpisode(episode: Episode) {
   const store = getPlayerStore()
-  store.setState(() => ({ currentEpisode: episode, isPlaying: true }))
+  store.setState(state => ({
+    currentEpisode: episode,
+    isPlaying: true,
+    isSourceChanging: state.currentEpisode?.id !== episode.id,
+  }))
 }
 
 export function clearPlayerEpisode() {
   const store = getPlayerStore()
-  store.setState(() => ({ currentEpisode: null, isPlaying: false }))
+  store.setState(() => ({
+    currentEpisode: null,
+    isPlaying: false,
+    isSourceChanging: false,
+  }))
 }
 
 export function setIsPlaying(isPlaying: boolean) {
@@ -50,19 +54,17 @@ export function setIsPlaying(isPlaying: boolean) {
   store.setState(state => ({ ...state, isPlaying }))
 }
 
+export function setIsSourceChanging(isSourceChanging: boolean) {
+  const store = getPlayerStore()
+  store.setState(state => ({ ...state, isSourceChanging }))
+}
+
 export function play() {
   const store = getPlayerStore()
   store.setState(state => ({ ...state, isPlaying: true }))
-  playerInstance?.play().catch((error) => {
-    console.error('Failed to play:', error)
-    setIsPlaying(false)
-  })
 }
 
 export function pause() {
   const store = getPlayerStore()
-  store.setState(state => ({ ...state, isPlaying: false }))
-  playerInstance?.pause().catch((error) => {
-    console.error('Failed to pause:', error)
-  })
+  store.setState(state => ({ ...state, isPlaying: false, isSourceChanging: false }))
 }

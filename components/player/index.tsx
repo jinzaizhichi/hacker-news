@@ -1,6 +1,5 @@
 'use client'
 
-import type { MediaPlayerInstance } from '@vidstack/react'
 import { useStore } from '@tanstack/react-store'
 import {
   MediaPlayer,
@@ -9,69 +8,58 @@ import {
   useMediaPlayer,
   useMediaState,
 } from '@vidstack/react'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { PlayerLayout } from '@/components/player/layout'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { cn } from '@/lib/utils'
-import { getPlayerStore, registerPlayerInstance, setIsPlaying } from '@/stores/player-store'
+import { getPlayerStore, pause, play, setIsPlaying, setIsSourceChanging } from '@/stores/player-store'
 
 function PlayerContent() {
   const player = useMediaPlayer()
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
+  const isPlaying = useStore(playerStore, state => state.isPlaying)
   const canPlay = useMediaState('canPlay')
-  const paused = useMediaState('paused')
-  const previousEpisodeIdRef = useRef(currentEpisode?.id)
-  const isSourceChanging = useRef(false)
 
   useEffect(() => {
-    if (player) {
-      registerPlayerInstance(player)
+    if (canPlay) {
+      setIsSourceChanging(false)
     }
-  }, [player])
+  }, [canPlay])
 
   useEffect(() => {
     if (!player)
       return
 
-    const handleSourceChange = () => {
-      isSourceChanging.current = true
-    }
     const handleCanPlay = () => {
-      isSourceChanging.current = false
+      setIsSourceChanging(false)
     }
     const handlePlay = () => {
-      isSourceChanging.current = false
+      setIsSourceChanging(false)
       setIsPlaying(true)
     }
     const handlePause = () => {
-      if (!isSourceChanging.current) {
+      if (!playerStore.state.isSourceChanging) {
         setIsPlaying(false)
       }
     }
-    const handleEnded = () => setIsPlaying(false)
+    const handleEnded = () => {
+      setIsSourceChanging(false)
+      setIsPlaying(false)
+    }
 
-    player.addEventListener('source-change', handleSourceChange)
     player.addEventListener('can-play', handleCanPlay)
     player.addEventListener('play', handlePlay)
     player.addEventListener('pause', handlePause)
     player.addEventListener('ended', handleEnded)
 
     return () => {
-      player.removeEventListener('source-change', handleSourceChange)
       player.removeEventListener('can-play', handleCanPlay)
       player.removeEventListener('play', handlePlay)
       player.removeEventListener('pause', handlePause)
       player.removeEventListener('ended', handleEnded)
     }
-  }, [player])
-
-  useEffect(() => {
-    if (currentEpisode?.id !== previousEpisodeIdRef.current) {
-      isSourceChanging.current = true
-      previousEpisodeIdRef.current = currentEpisode?.id
-    }
-  }, [currentEpisode?.id])
+  }, [player, playerStore])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -86,30 +74,24 @@ function PlayerContent() {
         return
       }
       event.preventDefault()
-      if (player && currentEpisode && canPlay) {
-        if (paused) {
-          player.play().catch((error) => {
-            console.error('Failed to play:', error)
-            setIsPlaying(false)
-          })
+      if (currentEpisode) {
+        if (isPlaying) {
+          pause()
         }
         else {
-          player.pause().catch((error) => {
-            console.error('Failed to pause:', error)
-          })
+          play()
         }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [player, currentEpisode, paused, canPlay])
+  }, [currentEpisode, isPlaying])
 
   return null
 }
 
 export function Player() {
-  const playerRef = useRef<MediaPlayerInstance>(null)
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
   const isPlaying = useStore(playerStore, state => state.isPlaying)
@@ -144,23 +126,16 @@ export function Player() {
       )}
     >
       <MediaPlayer
-        ref={playerRef}
-        src={currentEpisode?.audio.src || ''}
-        autoPlay={isPlaying}
+        src={currentEpisode?.audio.src}
         paused={!isPlaying}
         viewType="audio"
         streamType="on-demand"
         logLevel="warn"
         playsInline
         title={currentEpisode?.title || ''}
-        onAutoPlayFail={(detail) => {
-          console.error('Failed to autoplay:', detail.error)
-          setIsPlaying(false)
-        }}
-        onPlayFail={(error, event) => {
-          if (event.autoPlay)
-            return
+        onPlayFail={(error) => {
           console.error('Failed to play:', error)
+          setIsSourceChanging(false)
           setIsPlaying(false)
         }}
       >
