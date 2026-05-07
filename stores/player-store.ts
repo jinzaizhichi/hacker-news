@@ -53,11 +53,16 @@ export function setIsPlaying(isPlaying: boolean) {
 export function play() {
   const store = getPlayerStore()
   store.setState(state => ({ ...state, isPlaying: true }))
-  playerInstance?.play()
+  playerInstance?.play().catch((error) => {
+    console.error('Failed to play:', error)
+    setIsPlaying(false)
+  })
 }
 
 export function pause() {
   const store = getPlayerStore()
   store.setState(state => ({ ...state, isPlaying: false }))
-  playerInstance?.pause()
+  playerInstance?.pause().catch((error) => {
+    console.error('Failed to pause:', error)
+  })
 }

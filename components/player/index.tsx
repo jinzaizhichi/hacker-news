@@ -19,11 +19,10 @@ function PlayerContent() {
   const player = useMediaPlayer()
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
-  const isPlaying = useStore(playerStore, state => state.isPlaying)
   const canPlay = useMediaState('canPlay')
   const paused = useMediaState('paused')
-  const previousEpisodeRef = useRef(currentEpisode)
-  const isEpisodeChanging = useRef(false)
+  const previousEpisodeIdRef = useRef(currentEpisode?.id)
+  const isSourceChanging = useRef(false)
 
   useEffect(() => {
     if (player) {
@@ -35,23 +34,32 @@ function PlayerContent() {
     if (!player)
       return
 
+    const handleSourceChange = () => {
+      isSourceChanging.current = true
+    }
+    const handleCanPlay = () => {
+      isSourceChanging.current = false
+    }
     const handlePlay = () => {
-      if (!isEpisodeChanging.current) {
-        setIsPlaying(true)
-      }
+      isSourceChanging.current = false
+      setIsPlaying(true)
     }
     const handlePause = () => {
-      if (!isEpisodeChanging.current) {
+      if (!isSourceChanging.current) {
         setIsPlaying(false)
       }
     }
     const handleEnded = () => setIsPlaying(false)
 
+    player.addEventListener('source-change', handleSourceChange)
+    player.addEventListener('can-play', handleCanPlay)
     player.addEventListener('play', handlePlay)
     player.addEventListener('pause', handlePause)
     player.addEventListener('ended', handleEnded)
 
     return () => {
+      player.removeEventListener('source-change', handleSourceChange)
+      player.removeEventListener('can-play', handleCanPlay)
       player.removeEventListener('play', handlePlay)
       player.removeEventListener('pause', handlePause)
       player.removeEventListener('ended', handleEnded)
@@ -59,39 +67,11 @@ function PlayerContent() {
   }, [player])
 
   useEffect(() => {
-    if (currentEpisode?.id !== previousEpisodeRef.current?.id) {
-      isEpisodeChanging.current = true
-      previousEpisodeRef.current = currentEpisode
+    if (currentEpisode?.id !== previousEpisodeIdRef.current) {
+      isSourceChanging.current = true
+      previousEpisodeIdRef.current = currentEpisode?.id
     }
-  }, [currentEpisode])
-
-  useEffect(() => {
-    if (!player || !canPlay)
-      return
-    if (isEpisodeChanging.current) {
-      isEpisodeChanging.current = false
-    }
-    if (isPlaying && player.paused) {
-      player.play().catch((error) => {
-        console.error('Failed to play:', error)
-        setIsPlaying(false)
-      })
-    }
-  }, [player, canPlay, isPlaying])
-
-  useEffect(() => {
-    if (!player || !currentEpisode || isEpisodeChanging.current)
-      return
-    if (isPlaying && player.paused) {
-      player.play().catch((error) => {
-        console.error('Failed to play:', error)
-        setIsPlaying(false)
-      })
-    }
-    else if (!isPlaying && !player.paused) {
-      player.pause()
-    }
-  }, [player, currentEpisode, isPlaying])
+  }, [currentEpisode?.id])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -108,10 +88,15 @@ function PlayerContent() {
       event.preventDefault()
       if (player && currentEpisode && canPlay) {
         if (paused) {
-          player.play()
+          player.play().catch((error) => {
+            console.error('Failed to play:', error)
+            setIsPlaying(false)
+          })
         }
         else {
-          player.pause()
+          player.pause().catch((error) => {
+            console.error('Failed to pause:', error)
+          })
         }
       }
     }
@@ -127,6 +112,7 @@ export function Player() {
   const playerRef = useRef<MediaPlayerInstance>(null)
   const playerStore = getPlayerStore()
   const currentEpisode = useStore(playerStore, state => state.currentEpisode)
+  const isPlaying = useStore(playerStore, state => state.isPlaying)
   const { isFullscreen: isEpisodeFullscreen } = useEpisodeFullscreen()
   const hasPlayer = currentEpisode !== null
   const shouldShowPlayer = hasPlayer && !isEpisodeFullscreen
@@ -160,11 +146,23 @@ export function Player() {
       <MediaPlayer
         ref={playerRef}
         src={currentEpisode?.audio.src || ''}
+        autoPlay={isPlaying}
+        paused={!isPlaying}
         viewType="audio"
         streamType="on-demand"
         logLevel="warn"
         playsInline
         title={currentEpisode?.title || ''}
+        onAutoPlayFail={(detail) => {
+          console.error('Failed to autoplay:', detail.error)
+          setIsPlaying(false)
+        }}
+        onPlayFail={(error, event) => {
+          if (event.autoPlay)
+            return
+          console.error('Failed to play:', error)
+          setIsPlaying(false)
+        }}
       >
         <MediaProvider />
         <PlayerContent />
