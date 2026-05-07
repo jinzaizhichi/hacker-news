@@ -3,7 +3,7 @@ import type { Podcast, Site } from '@/types/podcast'
 const defaultTitle = 'Agili 的 Hacker Podcast'
 const defaultDescription
   = '一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。'
-const defaultBaseUrl = import.meta.env.NEXT_PUBLIC_BASE_URL ?? 'https://hacker-podcast.agi.li'
+const defaultBaseUrl = import.meta.env?.NEXT_PUBLIC_BASE_URL ?? 'https://hacker-podcast.agi.li'
 
 export const keepDays = 30
 
