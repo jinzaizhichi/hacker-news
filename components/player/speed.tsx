@@ -16,7 +16,10 @@ export function Speed() {
   }, [options, remote, speed])
 
   return (
-    <div
+    <button
+      type="button"
+      aria-label="切换播放速度"
+      title="切换播放速度"
       className={`
         cursor-pointer rounded-md border px-2 py-1 text-xs transition-colors
         hover:bg-gray-100
@@ -25,6 +28,6 @@ export function Speed() {
       onClick={() => setSpeed(current => (current + 1) % options.length)}
     >
       {speed === 3 ? '1.0x' : options[speed]?.label}
-    </div>
+    </button>
   )
 }

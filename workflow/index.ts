@@ -93,15 +93,13 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
     }
 
     const allStories = await step.do('collect all story summaries', retryConfig, async () => {
-      const summaries: string[] = []
-      for (const story of stories) {
-        const storyKey = `tmp:${event.instanceId}:story:${story.id}`
-        const summary = await this.env.HACKER_PODCAST_KV.get(storyKey)
-        if (summary) {
-          summaries.push(summary)
-        }
-      }
-      return summaries
+      const summaries = await Promise.all(
+        stories.map((story) => {
+          const storyKey = `tmp:${event.instanceId}:story:${story.id}`
+          return this.env.HACKER_PODCAST_KV.get(storyKey)
+        }),
+      )
+      return summaries.filter((summary): summary is string => Boolean(summary))
     })
 
     const podcastContent = await step.do('create podcast content', retryConfig, async () => {
@@ -180,23 +178,19 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
         await this.env.HACKER_PODCAST_R2.put(audioKey, audio)
 
-        this.env.HACKER_PODCAST_KV.put(`tmp:${event.instanceId}:audio:${index}`, audioUrl, { expirationTtl: 3600 })
+        await this.env.HACKER_PODCAST_KV.put(`tmp:${event.instanceId}:audio:${index}`, audioUrl, { expirationTtl: 3600 })
         return audioUrl
       })
     }
 
     const audioFiles = await step.do('collect all audio files', retryConfig, async () => {
-      const audioUrls: string[] = []
-      for (const [index] of conversations.entries()) {
-        const audioUrl = await this.env.HACKER_PODCAST_KV.get(`tmp:${event.instanceId}:audio:${index}`)
-        if (audioUrl) {
-          audioUrls.push(audioUrl)
-        }
-      }
-      return audioUrls
+      const audioUrls = await Promise.all(
+        conversations.map((_, index) => this.env.HACKER_PODCAST_KV.get(`tmp:${event.instanceId}:audio:${index}`)),
+      )
+      return audioUrls.filter((audioUrl): audioUrl is string => Boolean(audioUrl))
     })
 
-    await step.do('concat audio files', retryConfig, async () => {
+    const audioSize = await step.do('concat audio files', retryConfig, async () => {
       if (!this.env.BROWSER) {
         console.warn('browser is not configured, skip concat audio files')
         return
@@ -207,7 +201,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
       const podcastAudioUrl = `${this.env.HACKER_PODCAST_R2_BUCKET_URL}/${podcastKey}?t=${Date.now()}`
       console.info('podcast audio url', podcastAudioUrl)
-      return podcastAudioUrl
+      return blob.size
     })
 
     console.info('save podcast to r2 success')
@@ -221,6 +215,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         blogContent,
         introContent,
         audio: podcastKey,
+        audioSize,
         updatedAt: Date.now(),
       }))
 
@@ -246,17 +241,19 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
       await Promise.all(deletePromises).catch(console.error)
 
-      for (const index of audioFiles.keys()) {
-        try {
-          await Promise.any([
-            this.env.HACKER_PODCAST_R2.delete(`tmp/${podcastKey}-${index}.mp3`),
-            new Promise(resolve => setTimeout(resolve, 200)),
-          ])
-        }
-        catch (error) {
-          console.error('delete temp files failed', error)
-        }
-      }
+      await Promise.all(
+        Array.from(audioFiles.keys()).map(async (index) => {
+          try {
+            await Promise.any([
+              this.env.HACKER_PODCAST_R2.delete(`tmp/${podcastKey}-${index}.mp3`),
+              new Promise(resolve => setTimeout(resolve, 200)),
+            ])
+          }
+          catch (error) {
+            console.error('delete temp files failed', error)
+          }
+        }),
+      )
 
       return 'temporary data cleaned up'
     })

@@ -1,9 +1,10 @@
-import process from 'node:process'
 import { env } from 'cloudflare:workers'
 import markdownit from 'markdown-it'
 import { NextResponse } from 'next/server'
 import { Podcast } from 'podcast'
 import { podcast } from '@/config'
+import { buildAudioUrl } from '@/lib/episodes'
+import { getBaseUrl } from '@/lib/seo'
 import { getPastDays } from '@/lib/utils'
 
 const md = markdownit()
@@ -11,7 +12,7 @@ const md = markdownit()
 export const revalidate = 3600
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? ''
+  const baseUrl = getBaseUrl()
 
   // 如果没有缓存，生成新的响应
   const feed = new Podcast({
@@ -45,12 +46,19 @@ export async function GET() {
     }),
   )).filter(Boolean)
 
-  const audioInfos = await Promise.all(
-    posts.map(post => env.HACKER_PODCAST_R2.head(post.audio)),
+  const audioSizes = await Promise.all(
+    posts.map(async (post) => {
+      if (post.audioSize !== undefined) {
+        return post.audioSize
+      }
+
+      const audioInfo = await env.HACKER_PODCAST_R2.head(post.audio)
+      return audioInfo?.size
+    }),
   )
 
   posts.forEach((post, index) => {
-    const audioInfo = audioInfos[index]
+    const audioSize = audioSizes[index]
 
     const links = post.stories
       .map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}" title="${s.title || ''}">${s.title || ''}</a></li>`)
@@ -59,7 +67,7 @@ export async function GET() {
     const blogContentHtml = md.render(post.blogContent || '')
     const finalContent = `
       <div>${blogContentHtml}<hr/>${linkContent}</div>
-      ${env.NEXT_TRACKING_IMAGE ? `<img src="${env.NEXT_TRACKING_IMAGE}/${post.date}" alt="${post.title}" width="1" height="1" loading="lazy" aria-hidden="true" style="opacity: 0;pointer-events: none;" />` : ''}
+      ${env.NEXT_TRACKING_IMAGE ? `<img src="${env.NEXT_TRACKING_IMAGE}/${post.date}" alt="" width="1" height="1" loading="lazy" aria-hidden="true" style="opacity: 0;pointer-events: none;" />` : ''}
     `
 
     feed.addItem({
@@ -68,11 +76,11 @@ export async function GET() {
       content: finalContent,
       url: `${baseUrl}/episode/${post.date}`,
       guid: `/episode/${post.date}`,
-      date: new Date(post.updatedAt || post.date),
+      date: new Date(post.updatedAt ?? post.date),
       enclosure: {
-        url: `${env.NEXT_STATIC_HOST}/${post.audio}?t=${post.updatedAt}`,
+        url: buildAudioUrl(env.NEXT_STATIC_HOST, post.audio, post.updatedAt),
         type: 'audio/mpeg',
-        size: audioInfo?.size,
+        size: audioSize,
       },
     })
   })

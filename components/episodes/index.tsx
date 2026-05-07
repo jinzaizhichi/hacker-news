@@ -2,7 +2,6 @@
 
 import type { Episode } from '@/types/podcast'
 import { useEffect, useId } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Waveform } from '@/components/common/waveform'
 import { EpisodeItem } from '@/components/episodes/episode-item'
 import { EpisodesPagination } from '@/components/episodes/pagination'
@@ -21,7 +20,6 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
     pageStore.setState(() => ({ currentPage }))
   }, [currentPage])
 
-  const { t } = useTranslation()
   const headingId = useId()
   const listHeadingId = useId()
   const pageSize = site.pageSize
@@ -44,16 +42,16 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
             `}
             aria-hidden="true"
           />
-          <h1
+          <h2
             id={headingId}
             className={`
-              px-4 py-6 text-xl font-bold
+              px-4 py-6 text-xl font-bold text-pretty
               md:absolute md:inset-0 md:top-10 md:px-10 md:py-0 md:text-2xl
               lg:px-20
             `}
           >
-            {t('episodes.title')}
-          </h1>
+            节目列表
+          </h2>
         </div>
       </header>
 
@@ -63,15 +61,15 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
         lg:px-20
       `}
       >
-        <h2
+        <h3
           id={listHeadingId}
           className={`
-            text-lg font-semibold text-foreground
+            text-lg font-semibold text-pretty text-foreground
             md:text-xl
           `}
         >
-          {t('episodes.listHeading')}
-        </h2>
+          最近更新
+        </h3>
       </div>
 
       {!hasEpisodes
@@ -84,7 +82,7 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
               `}
               role="status"
             >
-              {t('episodes.noEpisodes')}
+              暂无节目
             </p>
           )
         : (

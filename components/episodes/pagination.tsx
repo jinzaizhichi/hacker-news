@@ -1,9 +1,9 @@
 'use client'
 
+import type { MouseEvent } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Pagination,
   PaginationContent,
@@ -20,10 +20,7 @@ interface EpisodesPaginationProps {
 }
 
 export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginationProps) {
-  const { t } = useTranslation()
   const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   const pages = useMemo(() => {
     const result: Array<{ type: 'page', value: number } | { type: 'ellipsis', key: string }> = []
@@ -54,21 +51,30 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
     }, 100)
   }
 
+  const getPageHref = (page: number) => {
+    return page <= 1 ? '/' : `/?page=${page}`
+  }
+
   const setPage = (page: number) => {
     if (page === currentPage)
       return
-    const params = new URLSearchParams(searchParams.toString())
-    if (page <= 1) {
-      params.delete('page')
-    }
-    else {
-      params.set('page', String(page))
-    }
-    const url = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    const url = getPageHref(page)
     router.push(url, { scroll: true })
     const pageStore = getPageStore()
     pageStore.setState(() => ({ currentPage: page }))
     scrollToTop()
+  }
+
+  const handlePageClick = (event: MouseEvent<HTMLAnchorElement>, page: number, disabled = false) => {
+    if (disabled) {
+      event.preventDefault()
+      return
+    }
+    if (event.button !== 0 || event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) {
+      return
+    }
+    event.preventDefault()
+    setPage(page)
   }
 
   if (totalPages <= 1) {
@@ -86,16 +92,17 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
         <PaginationContent>
           <PaginationItem>
             <PaginationLink
+              href={getPageHref(Math.max(1, currentPage - 1))}
               className={cn(
                 'cursor-pointer',
-                currentPage === 1 && 'pointer-events-none opacity-50',
+                currentPage === 1 && 'opacity-50',
               )}
-              aria-label={t('pagination.previous')}
+              aria-label="上一页"
               aria-disabled={currentPage === 1}
               tabIndex={currentPage === 1 ? -1 : undefined}
-              onClick={() => setPage(Math.max(1, currentPage - 1))}
+              onClick={event => handlePageClick(event, Math.max(1, currentPage - 1), currentPage === 1)}
             >
-              <ChevronLeftIcon className="size-4" />
+              <ChevronLeftIcon className="size-4" aria-hidden="true" />
             </PaginationLink>
           </PaginationItem>
 
@@ -112,6 +119,7 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
             return (
               <PaginationItem key={page}>
                 <PaginationLink
+                  href={getPageHref(page)}
                   isActive={page === currentPage}
                   className={cn(
                     'cursor-pointer',
@@ -120,7 +128,7 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
                       hover:bg-theme-hover hover:text-white
                     `,
                   )}
-                  onClick={() => setPage(page)}
+                  onClick={event => handlePageClick(event, page)}
                 >
                   {page}
                 </PaginationLink>
@@ -130,16 +138,17 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
 
           <PaginationItem>
             <PaginationLink
+              href={getPageHref(Math.min(totalPages, currentPage + 1))}
               className={cn(
                 'cursor-pointer',
-                currentPage === totalPages && 'pointer-events-none opacity-50',
+                currentPage === totalPages && 'opacity-50',
               )}
-              aria-label={t('pagination.next')}
+              aria-label="下一页"
               aria-disabled={currentPage === totalPages}
               tabIndex={currentPage === totalPages ? -1 : undefined}
-              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+              onClick={event => handlePageClick(event, Math.min(totalPages, currentPage + 1), currentPage === totalPages)}
             >
-              <ChevronRightIcon className="size-4" />
+              <ChevronRightIcon className="size-4" aria-hidden="true" />
             </PaginationLink>
           </PaginationItem>
         </PaginationContent>

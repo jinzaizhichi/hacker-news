@@ -2,34 +2,28 @@
 
 import { Command } from 'cmdk'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/components/theme/use-theme'
+import { useEffect, useRef } from 'react'
+import { externalLinks, podcast } from '@/config'
 import { useIsClient } from '@/hooks/use-is-client'
 import '@/styles/cmdk.css'
 
-export function CommandMenu() {
-  const [open, setOpen] = useState(false)
+const platformIcons: Record<string, string> = {
+  youtube: '▶️',
+  apple: '🎙️',
+  spotify: '🎧',
+  xiaoyuzhou: '🌌',
+  rss: '🟧',
+}
+
+interface CommandMenuProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
-  const { theme, setTheme } = useTheme()
-  const { t } = useTranslation()
   const isClient = useIsClient()
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault()
-        setOpen(prev => !prev)
-      }
-      if (event.key === 'Escape') {
-        setOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
 
   useEffect(() => {
     if (open) {
@@ -43,89 +37,91 @@ export function CommandMenu() {
     return null
   }
 
-  const resolveTheme = () => {
-    if (theme === 'system') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-    }
-    return theme
+  const closeCommandMenu = () => {
+    onOpenChange(false)
   }
 
-  const toggleTheme = () => {
-    const nextTheme = resolveTheme() === 'dark' ? 'light' : 'dark'
-    setTheme(nextTheme)
+  const navigateTo = (href: string) => {
+    router.push(href, { scroll: true })
+    closeCommandMenu()
   }
 
-  const navigateHome = () => {
-    router.push('/', { scroll: true })
-    setOpen(false)
-  }
-
-  // const currentLocale = (i18n.language as Locale) || 'zh'
-  const currentTheme = resolveTheme()
-
-  if (!open) {
-    return null
+  const openLink = (href: string) => {
+    window.open(href, '_blank', 'noopener,noreferrer')
+    closeCommandMenu()
   }
 
   return (
-    <div
-      className="command-menu-overlay"
-      onClick={() => setOpen(false)}
+    <Command.Dialog
+      className="raycast"
+      open={open}
+      onOpenChange={onOpenChange}
+      label="命令"
+      overlayClassName="command-menu-overlay"
+      contentClassName="command-menu-content"
     >
-      <div
-        className="command-menu-content"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="raycast">
-          <Command>
-            <div>
-              <Command.Input
-                ref={inputRef}
-                placeholder={t('cmdk.searchPlaceholder')}
-              />
-            </div>
-            <Command.List>
-              <Command.Empty>{t('cmdk.noResults')}</Command.Empty>
+      <div>
+        <Command.Input
+          ref={inputRef}
+          aria-label="搜索命令，例如：首页、Spotify、GitHub…"
+          name="command-search"
+          autoComplete="off"
+          placeholder="搜索命令，例如：首页、Spotify、GitHub…"
+        />
+      </div>
+      <Command.List>
+        <Command.Empty>未找到结果</Command.Empty>
 
-              <Command.Group heading={t('cmdk.suggestions')}>
-                <Command.Item onSelect={toggleTheme}>
-                  <span>🌓</span>
-                  {t('cmdk.toggle')}
-                  {' '}
-                  {currentTheme === 'dark' ? t('cmdk.light') : t('cmdk.dark')}
-                  {' '}
-                  {t('cmdk.mode')}
-                  <span className="raycast-meta">⌘K</span>
-                </Command.Item>
-              </Command.Group>
+        <Command.Group heading="导航">
+          <Command.Item onSelect={() => navigateTo('/')}>
+            <span aria-hidden="true">🏠</span>
+            首页
+            <span className="raycast-meta">↵</span>
+          </Command.Item>
+        </Command.Group>
 
-              <Command.Separator />
+        <Command.Separator />
 
-              <Command.Group heading={t('cmdk.commands')}>
-                <Command.Item onSelect={navigateHome}>
-                  <span>🏠</span>
-                  {t('common.home')}
-                  <span className="raycast-meta">↵</span>
-                </Command.Item>
-              </Command.Group>
-            </Command.List>
+        <Command.Group heading="收听平台">
+          {podcast.platforms.map(platform => (
+            <Command.Item
+              key={platform.id}
+              onSelect={() => openLink(platform.link)}
+            >
+              <span aria-hidden="true">{platformIcons[platform.id] ?? '🔗'}</span>
+              {platform.name}
+              <span className="raycast-meta">打开</span>
+            </Command.Item>
+          ))}
+        </Command.Group>
 
-            <div className="raycast-footer">
-              <div className="raycast-footer-left">
-                <span>{t('cmdk.openApplication')}</span>
-                <kbd>↵</kbd>
-              </div>
-              <div className="raycast-footer-right">
-                <span>{t('cmdk.actions')}</span>
-                <kbd>⌘</kbd>
-                <kbd>K</kbd>
-              </div>
-            </div>
-          </Command>
+        <Command.Separator />
+
+        <Command.Group heading="外部链接">
+          <Command.Item onSelect={() => openLink(externalLinks.github)}>
+            <span aria-hidden="true">⌘</span>
+            GitHub 仓库
+            <span className="raycast-meta">打开</span>
+          </Command.Item>
+          <Command.Item onSelect={() => openLink(externalLinks.rss)}>
+            <span aria-hidden="true">📡</span>
+            RSS 订阅
+            <span className="raycast-meta">打开</span>
+          </Command.Item>
+        </Command.Group>
+      </Command.List>
+
+      <div className="raycast-footer">
+        <div className="raycast-footer-left">
+          <span>打开</span>
+          <kbd>↵</kbd>
+        </div>
+        <div className="raycast-footer-right">
+          <span>操作</span>
+          <kbd>⌘</kbd>
+          <kbd>K</kbd>
         </div>
       </div>
-    </div>
+    </Command.Dialog>
   )
 }

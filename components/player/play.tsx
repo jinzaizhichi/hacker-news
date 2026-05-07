@@ -3,7 +3,6 @@
 import type { TooltipPlacement } from '@vidstack/react'
 import { PlayButton, Tooltip, useMediaState } from '@vidstack/react'
 import { PauseIcon, PlayIcon } from '@vidstack/react/icons'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface MediaButtonProps {
@@ -12,7 +11,6 @@ interface MediaButtonProps {
 }
 
 export function Play({ tooltipPlacement, className }: MediaButtonProps) {
-  const { t } = useTranslation()
   const isPaused = useMediaState('paused')
 
   return (
@@ -48,7 +46,7 @@ export function Play({ tooltipPlacement, className }: MediaButtonProps) {
         `}
         placement={tooltipPlacement}
       >
-        {isPaused ? t('player.play') : t('player.pause')}
+        {isPaused ? '播放' : '暂停'}
       </Tooltip.Content>
     </Tooltip.Root>
   )

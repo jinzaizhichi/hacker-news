@@ -1,7 +1,6 @@
 'use client'
 
 import { Maximize2, Minimize2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { cn } from '@/lib/utils'
@@ -11,9 +10,8 @@ interface EpisodeFullscreenToggleProps {
 }
 
 export function EpisodeFullscreenToggle({ className }: EpisodeFullscreenToggleProps) {
-  const { t } = useTranslation()
   const { isFullscreen, toggleFullscreen } = useEpisodeFullscreen()
-  const label = isFullscreen ? t('episodes.exitFullscreen') : t('episodes.enterFullscreen')
+  const label = isFullscreen ? '退出全屏阅读' : '进入全屏阅读'
 
   return (
     <Button

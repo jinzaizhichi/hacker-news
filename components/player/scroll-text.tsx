@@ -93,6 +93,8 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     const handlePRM = () => {
       prefersReducedMotionRef.current = mq.matches
+      if (mq.matches)
+        baseX.set(0)
     }
     mq.addEventListener('change', handlePRM)
     handlePRM()
@@ -103,7 +105,7 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
       document.removeEventListener('visibilitychange', handleVisibility)
       mq.removeEventListener('change', handlePRM)
     }
-  }, [children, unitWidth, updateNumCopies])
+  }, [baseX, children, unitWidth, updateNumCopies])
 
   const x = useTransform([baseX, unitWidth], ([v, bw]) => {
     const width = Number(bw) || 1
@@ -112,7 +114,7 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
   })
 
   useAnimationFrame((_, delta) => {
-    if (!isInViewRef.current || !isPageVisibleRef.current || !isPlaying)
+    if (!isInViewRef.current || !isPageVisibleRef.current || !isPlaying || prefersReducedMotionRef.current)
       return
     const dt = delta / 1000
 
@@ -120,8 +122,7 @@ export function ScrollTextRow({ children, baseVelocity = 5, direction = 1, isPla
     if (bw <= 0)
       return
     const pixelsPerSecond = (bw * baseVelocity) / 100
-    const speedMultiplier = prefersReducedMotionRef.current ? 1 : 1
-    const moveBy = directionRef.current * pixelsPerSecond * speedMultiplier * dt
+    const moveBy = directionRef.current * pixelsPerSecond * dt
     baseX.set(baseX.get() + moveBy)
   })
 

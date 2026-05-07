@@ -7,14 +7,12 @@ import { useStore } from '@tanstack/react-store'
 import { ChevronLeft, Pause, Play } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useId, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Waveform } from '@/components/common/waveform'
 import { EpisodeFullscreenToggle } from '@/components/episodes/fullscreen-toggle'
-import { ImageLightbox, ImageWithLightbox } from '@/components/image-lightbox'
+import { ImageZoom } from '@/components/image-zoom'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
-import { useLightbox } from '@/hooks/use-lightbox'
 import { extractImagesFromMarkdown } from '@/lib/markdown'
 import { cn } from '@/lib/utils'
 import { getPageStore } from '@/stores/page-store'
@@ -34,8 +32,6 @@ interface EpisodeBackLinkProps {
 }
 
 export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
-  const lightbox = useLightbox()
-  const { t } = useTranslation()
   const content = episode.content ?? episode.description ?? ''
 
   const images = useMemo(() => extractImagesFromMarkdown(content), [content])
@@ -51,7 +47,7 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
     }
   }, [initialPage])
 
-  const externalLinkTitle = t('common.externalLinkTitle')
+  const externalLinkTitle = '在新标签页打开外部链接'
 
   const markdownComponents: Partial<Components> = {
     a: ({ href, children }: { href?: string, children?: React.ReactNode }) => (
@@ -64,41 +60,30 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
           hover:text-theme-hover
         `}
         title={externalLinkTitle}
-        aria-label={externalLinkTitle}
       >
         {children}
       </a>
     ),
-    img: ({ src, alt }: { src?: string, alt?: string }) => {
-      if (!src)
+    img: ({ src, alt }) => {
+      if (typeof src !== 'string')
         return null
       const index = images.findIndex(img => img.src === src)
       return (
-        <ImageWithLightbox
+        <ImageZoom
           src={src}
           alt={alt}
           index={index >= 0 ? index : 0}
-          onOpen={lightbox.open}
         />
       )
     },
   }
 
   return (
-    <>
-      <EpisodeDetailContent
-        episode={episode}
-        initialPage={initialPage}
-        markdownComponents={markdownComponents}
-      />
-      <ImageLightbox
-        images={images}
-        open={lightbox.isOpen}
-        index={lightbox.currentIndex}
-        onClose={lightbox.close}
-        onViewChange={lightbox.setIndex}
-      />
-    </>
+    <EpisodeDetailContent
+      episode={episode}
+      initialPage={initialPage}
+      markdownComponents={markdownComponents}
+    />
   )
 }
 
@@ -107,9 +92,14 @@ interface EpisodeDetailContentProps extends EpisodeDetailProps {
 }
 
 function EpisodeDetailContent({ episode, markdownComponents, initialPage }: EpisodeDetailContentProps) {
-  const { t, i18n } = useTranslation()
   const publishedDate = new Date(episode.published)
   const isoPublishedDate = publishedDate.toISOString()
+  const publishedDateLabel = new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(publishedDate)
   const headlineId = useId()
   const pageStore = getPageStore()
   const currentPage = useStore(pageStore, state => state.currentPage)
@@ -135,7 +125,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
   const resolvedPage = initialPage ?? currentPage
   const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
   const articlePath = `/episode/${episode.id}`
-  const backLinkTitle = t('episodes.backLinkTitle')
+  const backLinkTitle = '返回节目列表'
   const detailHeaderClass = cn(
     `
       -mx-4 flex items-center gap-4 border-b border-border/60 px-4 py-6
@@ -177,7 +167,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
           <EpisodeBackLink
             href={href}
             ariaLabel={backLinkTitle}
-            label={t('episodes.back')}
+            label="返回"
             className="justify-center text-sm"
           />
         </div>
@@ -194,7 +184,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
             <EpisodeBackLink
               href={href}
               ariaLabel={backLinkTitle}
-              label={t('episodes.back')}
+              label="返回"
               className={`
                 px-10 text-base
                 lg:px-20
@@ -215,7 +205,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
         aria-labelledby={headlineId}
       >
         <meta itemProp="url" content={articlePath} />
-        <meta itemProp="inLanguage" content={i18n.language} />
+        <meta itemProp="inLanguage" content="zh" />
         <header className={detailHeaderClass}>
           <button
             type="button"
@@ -226,18 +216,20 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
                 justify-center rounded-full bg-theme
               `,
               `
-                shadow-lg shadow-theme/20 transition-all
+                shadow-lg shadow-theme/20
+                transition-[background-color,box-shadow,transform]
                 hover:scale-105 hover:bg-theme-hover hover:shadow-xl
                 hover:shadow-theme/30
+                motion-reduce:transition-none motion-reduce:hover:scale-100
               `,
               `
                 cursor-pointer
-                focus:ring-2 focus:ring-theme focus:ring-offset-2
-                focus:outline-none
+                focus-visible:ring-2 focus-visible:ring-theme
+                focus-visible:ring-offset-2 focus-visible:outline-none
                 md:h-18 md:w-18
               `,
             )}
-            aria-label={isCurrentEpisodePlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
+            aria-label={isCurrentEpisodePlaying ? '暂停播放' : '播放节目'}
           >
             {isCurrentEpisodePlaying
               ? (
@@ -261,7 +253,8 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
               <h1
                 id={headlineId}
                 className={`
-                  mt-2 text-2xl font-bold break-words text-foreground
+                  mt-2 text-2xl font-bold text-pretty break-words
+                  text-foreground
                   md:text-4xl
                 `}
                 itemProp="headline"
@@ -276,11 +269,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
                 dateTime={isoPublishedDate}
                 itemProp="datePublished"
               >
-                {publishedDate.toLocaleDateString(i18n.language === 'zh' ? 'zh-CN' : 'en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {publishedDateLabel}
               </time>
             </div>
             <EpisodeFullscreenToggle className="flex-shrink-0 self-center" />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useStore } from '@tanstack/react-store'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import { getPlayerStore } from '@/stores/player-store'
 
 const bars = {
@@ -38,12 +38,32 @@ function generateWaveHeights(time: number) {
   })
 }
 
+function subscribePrefersReducedMotion(listener: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+  mq.addEventListener('change', listener)
+
+  return () => mq.removeEventListener('change', listener)
+}
+
+function getPrefersReducedMotionSnapshot() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function getPrefersReducedMotionServerSnapshot() {
+  return false
+}
+
 export function Waveform(props: React.SVGProps<SVGSVGElement>) {
   const id = useId()
   const playerStore = getPlayerStore()
   const isPlaying = useStore(playerStore, state => state.isPlaying)
   const [animatedHeights, setAnimatedHeights] = useState<number[]>(() =>
     generateStaticHeights(),
+  )
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribePrefersReducedMotion,
+    getPrefersReducedMotionSnapshot,
+    getPrefersReducedMotionServerSnapshot,
   )
   const timeRef = useRef(0)
   const staticHeightsRef = useRef(generateStaticHeights())
@@ -56,7 +76,7 @@ export function Waveform(props: React.SVGProps<SVGSVGElement>) {
   }, [isPlaying])
 
   useEffect(() => {
-    if (!isPlaying)
+    if (!isPlaying || prefersReducedMotion)
       return
 
     let animationFrame = 0
@@ -72,9 +92,9 @@ export function Waveform(props: React.SVGProps<SVGSVGElement>) {
 
     animationFrame = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationFrame)
-  }, [isPlaying])
+  }, [isPlaying, prefersReducedMotion])
 
-  const barHeights = isPlaying ? animatedHeights : staticHeightsRef.current
+  const barHeights = isPlaying && !prefersReducedMotion ? animatedHeights : staticHeightsRef.current
 
   return (
     <svg {...props} aria-hidden="true">

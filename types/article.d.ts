@@ -6,5 +6,6 @@ interface Article {
   blogContent: string
   introContent: string
   audio: string
+  audioSize?: number
   updatedAt: number
 }

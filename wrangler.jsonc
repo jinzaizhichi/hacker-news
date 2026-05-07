@@ -29,13 +29,15 @@
   "kv_namespaces": [
     {
       "binding": "HACKER_PODCAST_KV",
-      "id": "bfc65509c1634589a29b90f956ab0d1a"
+      "id": "bfc65509c1634589a29b90f956ab0d1a",
+      "remote": true
     }
   ],
   "r2_buckets": [
     {
       "binding": "HACKER_PODCAST_R2",
-      "bucket_name": "hacker-podcast"
+      "bucket_name": "hacker-podcast",
+      "remote": true
     }
   ],
   "migrations": [

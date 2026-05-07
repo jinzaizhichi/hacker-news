@@ -1,13 +1,15 @@
 'use client'
 
+import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
 import { PodcastAside } from '@/components/podcast/aside'
 import { PodcastInfo } from '@/components/podcast/info'
 
 interface PodcastLayoutProps {
   children: React.ReactNode
+  podcastInfo: PodcastInfoData
 }
 
-export function PodcastLayout({ children }: PodcastLayoutProps) {
+export function PodcastLayout({ children, podcastInfo }: PodcastLayoutProps) {
   return (
     <div className={`
       flex min-h-screen flex-col
@@ -30,7 +32,7 @@ export function PodcastLayout({ children }: PodcastLayoutProps) {
         lg:w-96
       `}
       >
-        <PodcastInfo />
+        <PodcastInfo podcastInfo={podcastInfo} />
       </section>
 
       <main

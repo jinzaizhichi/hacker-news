@@ -2,10 +2,8 @@
 
 import { MuteButton, Tooltip, useMediaState, VolumeSlider } from '@vidstack/react'
 import { Volume2, VolumeIcon, VolumeOff } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 
 export function Mute() {
-  const { t } = useTranslation()
   const volume = useMediaState('volume')
   const isMuted = useMediaState('muted')
 
@@ -40,7 +38,7 @@ export function Mute() {
         data-[visible]:slide-in-from-bottom-4
       `}
       >
-        {isMuted ? t('player.unmute') : t('player.mute')}
+        {isMuted ? '开启声音' : '静音'}
       </Tooltip.Content>
     </Tooltip.Root>
   )
@@ -88,7 +86,9 @@ export function Volume() {
       <VolumeSlider.Thumb className={`
         absolute top-1/2 left-[var(--slider-fill)] z-20 h-4 w-4 -translate-x-1/2
         -translate-y-1/2 rounded-full border border-gray-300 bg-white opacity-0
-        shadow-md ring-white/40 transition-all duration-200 will-change-[left]
+        shadow-md ring-white/40
+        transition-[background-color,box-shadow,opacity,transform] duration-200
+        will-change-[transform,opacity]
         group-data-[active]:opacity-100
         group-data-[dragging]:bg-gray-100 group-data-[dragging]:ring-4
       `}

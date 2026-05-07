@@ -2,11 +2,8 @@
 
 import { SeekButton, Tooltip } from '@vidstack/react'
 import { SeekBackward15Icon, SeekForward15Icon } from '@vidstack/react/icons'
-import { useTranslation } from 'react-i18next'
 
 export function SeekForward() {
-  const { t } = useTranslation()
-
   return (
     <Tooltip.Root>
       <Tooltip.Trigger asChild>
@@ -32,15 +29,13 @@ export function SeekForward() {
         data-[visible]:slide-in-from-bottom-4
       `}
       >
-        {t('player.seekForward')}
+        快进 15 秒
       </Tooltip.Content>
     </Tooltip.Root>
   )
 }
 
 export function SeekBackward() {
-  const { t } = useTranslation()
-
   return (
     <Tooltip.Root>
       <Tooltip.Trigger asChild>
@@ -66,7 +61,7 @@ export function SeekBackward() {
         data-[visible]:slide-in-from-bottom-4
       `}
       >
-        {t('player.seekBackward')}
+        快退 15 秒
       </Tooltip.Content>
     </Tooltip.Root>
   )

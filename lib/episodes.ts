@@ -1,6 +1,6 @@
 import type { Episode } from '@/types/podcast'
 
-function buildAudioUrl(staticHost: string, audioPath: string, updatedAt?: number) {
+export function buildAudioUrl(staticHost: string, audioPath: string, updatedAt?: number) {
   const normalizedHost = staticHost?.replace(/\/$/, '')
   if (/^https?:\/\//.test(audioPath)) {
     return updatedAt ? `${audioPath}?t=${updatedAt}` : audioPath

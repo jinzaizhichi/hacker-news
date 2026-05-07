@@ -2,12 +2,10 @@
 
 import type { ComponentType, ReactNode, SVGProps } from 'react'
 import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
-import { useStore } from '@tanstack/react-store'
 import { Podcast, Rss, Youtube } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useId, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Waveform } from '@/components/common/waveform'
@@ -16,7 +14,6 @@ import { SpotifyIcon } from '@/components/icons/spotify'
 import { XYZIcon } from '@/components/icons/xyz'
 import { podcast, site } from '@/config'
 import { cn } from '@/lib/utils'
-import { getPodcastStore } from '@/stores/podcast-store'
 
 interface PlatformConfig {
   icon: ComponentType<SVGProps<SVGSVGElement>>
@@ -46,37 +43,26 @@ const platformIcons: Record<string, PlatformConfig> = {
   },
 }
 
-interface PodcastInfoContentProps {
+interface PodcastInfoProps {
   podcastInfo: PodcastInfoData
 }
 
-export function PodcastInfo() {
-  const podcastStore = getPodcastStore()
-  const podcastInfo = useStore(podcastStore, state => state.podcastInfo)
-
-  if (!podcastInfo) {
-    return null
-  }
-
-  return <PodcastInfoContent podcastInfo={podcastInfo} />
-}
-
-function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
-  const { t } = useTranslation()
+export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const titleId = useId()
   const aboutSectionId = useId()
   const listenSectionId = useId()
   const descriptionId = useId()
+  const descriptionContentId = useId()
   const { title, description, cover } = podcastInfo
-  const coverAlt = t('podcastInfo.coverAlt', { title })
-  const homeLinkTitle = t('podcastInfo.homeLinkTitle', { title })
-  const externalLinkTitle = t('common.externalLinkTitle')
+  const coverAlt = `${title} 封面`
+  const homeLinkTitle = `返回首页：${title}`
+  const externalLinkTitle = '在新标签页打开外部链接'
   const shouldTruncate = description.length > site.defaultDescriptionLength
   const displayDescription = isExpanded
     ? description
     : shouldTruncate
-      ? `${description.slice(0, site.defaultDescriptionLength)}...`
+      ? `${description.slice(0, site.defaultDescriptionLength)}…`
       : description
   const markdownComponents = useMemo(() => ({
     p: ({ children }: { children?: ReactNode }) => (
@@ -92,7 +78,6 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
           hover:text-theme-hover
         `}
         title={externalLinkTitle}
-        aria-label={externalLinkTitle}
       >
         {children}
       </a>
@@ -145,6 +130,7 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
             alt={coverAlt}
             width={640}
             height={640}
+            priority
             referrerPolicy="no-referrer"
             itemProp="image"
           />
@@ -152,16 +138,22 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
         <figcaption className="sr-only">{title}</figcaption>
       </figure>
 
-      <h2
-        id={titleId}
-        className={`
-          text-center text-2xl font-bold
-          md:text-left md:text-xl
-        `}
-        itemProp="name"
+      <div className={`
+        flex flex-col items-center gap-4
+        md:items-start
+      `}
       >
-        {title}
-      </h2>
+        <h2
+          id={titleId}
+          className={`
+            text-center text-2xl font-bold text-pretty break-words
+            md:text-left md:text-xl
+          `}
+          itemProp="name"
+        >
+          {title}
+        </h2>
+      </div>
 
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-5" aria-labelledby={aboutSectionId}>
@@ -178,7 +170,7 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
               className="h-2.5 w-2.5"
               aria-hidden="true"
             />
-            <span>{t('podcastInfo.about')}</span>
+            <span>关于</span>
           </div>
 
           <div className="flex flex-col gap-2" id={descriptionId} itemProp="description">
@@ -197,9 +189,11 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
               md:flex md:flex-col md:gap-2
             `}
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-                {displayDescription}
-              </ReactMarkdown>
+              <div id={descriptionContentId}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                  {displayDescription}
+                </ReactMarkdown>
+              </div>
               {shouldTruncate && (
                 <button
                   type="button"
@@ -210,9 +204,9 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                     hover:text-theme-hover
                   `}
                   aria-expanded={isExpanded}
-                  aria-controls={descriptionId}
+                  aria-controls={descriptionContentId}
                 >
-                  {isExpanded ? t('podcastInfo.showLess') : t('podcastInfo.showMore')}
+                  {isExpanded ? '收起' : '展开更多'}
                 </button>
               )}
             </div>
@@ -235,7 +229,7 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                     className="h-2.5 w-2.5"
                     aria-hidden="true"
                   />
-                  <span>{t('podcastInfo.listen')}</span>
+                  <span>播放</span>
                 </div>
 
                 <ul className={`
@@ -248,7 +242,7 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                     if (!config)
                       return null
                     const Icon = config.icon
-                    const platformLinkTitle = t('podcastInfo.platformLinkTitle', { platform: platform.name })
+                    const platformLinkTitle = `在 ${platform.name} 中打开播客`
                     return (
                       <li key={platform.id} className="list-none">
                         <a
@@ -257,8 +251,8 @@ function PodcastInfoContent({ podcastInfo }: PodcastInfoContentProps) {
                           rel="noopener noreferrer"
                           className={`
                             flex cursor-pointer items-center gap-2
-                            transition-opacity
-                            hover:opacity-80
+                            transition-colors
+                            hover:text-theme-hover
                           `}
                           aria-label={platformLinkTitle}
                           title={platformLinkTitle}

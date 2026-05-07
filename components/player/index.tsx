@@ -134,7 +134,10 @@ export function Player() {
   return (
     <div
       className={cn(
-        'episode-player fixed right-0 bottom-0 left-0 z-50',
+        `
+          episode-player fixed right-0 bottom-0 left-0 z-50
+          pb-[env(safe-area-inset-bottom)]
+        `,
         isEpisodeFullscreen
           ? `
             md:left-0

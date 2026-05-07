@@ -1,11 +1,9 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import type { Episode } from '@/types/podcast'
 import { useStore } from '@tanstack/react-store'
 import { Pause, Play } from 'lucide-react'
 import Link from 'next/link'
-import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
@@ -17,7 +15,6 @@ interface EpisodeItemProps {
 }
 
 export function EpisodeItem({ episode }: EpisodeItemProps) {
-  const { t, i18n } = useTranslation()
   const pageStore = getPageStore()
   const currentPage = useStore(pageStore, state => state.currentPage)
   const playerStore = getPlayerStore()
@@ -40,17 +37,18 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
   }
 
   const publishedDate = new Date(episode.published)
-  const dateFormatter = publishedDate.toLocaleDateString(
-    i18n.language === 'zh' ? 'zh-CN' : 'en-US',
-    { year: 'numeric', month: 'long', day: 'numeric' },
-  )
+  const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(publishedDate)
   const isoPublishedDate = publishedDate.toISOString()
 
   const linkHref = currentPage > 1 ? `/episode/${episode.id}?page=${currentPage}` : `/episode/${episode.id}`
-  const episodeLinkTitle = t('episodes.openEpisodeTitle', { title: episode.title })
-  const episodeDescriptionTitle = t('episodes.readEpisodeDescription', { title: episode.title })
-  const showNotesTitle = t('episodes.showNotesLinkTitle', { title: episode.title })
-  const externalLinkTitle = t('common.externalLinkTitle')
+  const episodeLinkTitle = `查看《${episode.title}》详情`
+  const showNotesTitle = `打开《${episode.title}》的节目详情页`
+  const externalLinkTitle = '在新标签页打开外部链接'
 
   return (
     <li className="list-none">
@@ -80,7 +78,8 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           {dateFormatter}
         </time>
         <h3 className={`
-          text-xl leading-tight font-bold text-foreground
+          text-xl leading-tight font-bold text-pretty break-words
+          text-foreground
           md:text-2xl
         `}
         >
@@ -98,44 +97,35 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           </Link>
         </h3>
         {episode.description && (
-          <Link
-            href={linkHref}
+          <div
             className={cn(
-              `
-                line-clamp-2 cursor-pointer leading-relaxed text-foreground/80
-                transition-colors
-                hover:text-theme
-              `,
+              `line-clamp-2 leading-relaxed break-words text-foreground/80`,
               `
                 text-sm
                 md:text-base
               `,
             )}
-            title={episodeDescriptionTitle}
-            aria-label={episodeDescriptionTitle}
+            itemProp="description"
           >
-            <div itemProp="description">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  a: ({ href, children }: { href?: string, children?: ReactNode }) => (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                      title={externalLinkTitle}
-                      aria-label={externalLinkTitle}
-                    >
-                      {children}
-                    </a>
-                  ),
-                }}
-              >
-                {episode.description}
-              </ReactMarkdown>
-            </div>
-          </Link>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                    title={externalLinkTitle}
+                  >
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {episode.description}
+            </ReactMarkdown>
+          </div>
         )}
         <div
           className={cn(
@@ -158,7 +148,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
               hover:text-theme-hover
               md:gap-2
             `}
-            aria-label={isCurrentlyPlaying ? t('episodes.pauseEpisode') : t('episodes.playEpisode')}
+            aria-label={isCurrentlyPlaying ? '暂停播放' : '播放节目'}
           >
             {isCurrentlyPlaying
               ? (
@@ -175,7 +165,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
                   `}
                   />
                 )}
-            <span>{isCurrentlyPlaying ? t('episodes.pause') : t('episodes.listen')}</span>
+            <span>{isCurrentlyPlaying ? '暂停' : '播放'}</span>
           </button>
           <span className="text-muted-foreground">/</span>
           <Link
@@ -187,7 +177,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
             title={showNotesTitle}
             aria-label={showNotesTitle}
           >
-            {t('episodes.showNotes')}
+            查看详情
           </Link>
         </div>
       </article>

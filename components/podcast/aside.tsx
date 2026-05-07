@@ -1,14 +1,12 @@
 'use client'
 
-import { Github } from 'lucide-react'
+import { Command, Github } from 'lucide-react'
 import { Fragment } from 'react'
-import { useTranslation } from 'react-i18next'
 import { ThemeToggle } from '@/components/theme/toggle'
 import { externalLinks, podcast } from '@/config'
+import { setCommandMenuOpen } from '@/stores/ui-store'
 
 export function PodcastAside() {
-  const { t } = useTranslation()
-
   return (
     <aside className={`
       flex h-full flex-col items-center justify-between px-4 py-8
@@ -19,7 +17,7 @@ export function PodcastAside() {
         [writing-mode:vertical-rl]
       `}
       >
-        <span className="font-mono text-muted-foreground">{t('aside.hostedBy')}</span>
+        <span className="font-mono text-muted-foreground">主 播</span>
         <span className="flex gap-6 font-bold">
           {podcast.hosts.map((host, index) => (
             <Fragment key={host.name}>
@@ -32,9 +30,12 @@ export function PodcastAside() {
                 href={host.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer"
-                title={t('aside.hostLinkTitle', { name: host.name })}
-                aria-label={t('aside.hostLinkTitle', { name: host.name })}
+                className={`
+                  cursor-pointer transition-colors
+                  hover:text-theme
+                `}
+                title={`访问 ${host.name} 的主页`}
+                aria-label={`访问 ${host.name} 的主页`}
               >
                 {host.name}
               </a>
@@ -43,13 +44,28 @@ export function PodcastAside() {
         </span>
       </section>
       <section className="flex flex-col items-center gap-5">
+        <button
+          type="button"
+          onClick={() => setCommandMenuOpen(true)}
+          className={`
+            cursor-pointer transition-colors
+            hover:text-theme
+          `}
+          title="打开命令菜单"
+          aria-label="打开命令菜单"
+        >
+          <Command className="size-6" aria-hidden="true" />
+        </button>
         <a
           href={externalLinks.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="cursor-pointer"
-          title={t('aside.githubLinkTitle')}
-          aria-label={t('aside.githubLinkTitle')}
+          className={`
+            cursor-pointer transition-colors
+            hover:text-theme
+          `}
+          title="打开 GitHub 仓库"
+          aria-label="打开 GitHub 仓库"
         >
           <Github className="size-6" />
         </a>

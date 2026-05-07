@@ -7,17 +7,16 @@
   z-index: 50;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   animation: fadeIn 200ms ease;
 }
 
 /* Command Menu Content */
 .command-menu-content {
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
   z-index: 51;
-  animation: dialogIn 200ms ease;
+  transform: translate(-50%, -50%);
 }
 
 /* CSS Variables - Using the provided color system */
@@ -125,7 +124,7 @@
   --bg: var(--gray1);
 }
 .raycast {
-  [cmdk-root] {
+  &[cmdk-root] {
     max-width: 720px;
     width: 85vw;
     min-width: 500px;
@@ -140,14 +139,15 @@
     position: relative;
     outline: none;
     overflow: hidden;
+    animation: dialogIn 200ms ease;
   }
 
-  .dark [cmdk-root] {
+  .dark &[cmdk-root] {
     background: var(--gray2);
     border: 0;
   }
 
-  .dark [cmdk-root]:after {
+  .dark &[cmdk-root]:after {
     content: '';
     background: linear-gradient(
       to right,
@@ -169,7 +169,7 @@
     background-size: 200% auto;
   }
 
-  .dark [cmdk-root]:before {
+  .dark &[cmdk-root]:before {
     content: '';
     z-index: -1;
     position: absolute;
@@ -718,7 +718,7 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .raycast [cmdk-root] {
+  .raycast[cmdk-root] {
     max-width: 90vw;
     width: 90vw;
     min-width: 480px;
@@ -726,7 +726,7 @@
 }
 
 @media (max-width: 768px) {
-  .raycast [cmdk-root] {
+  .raycast[cmdk-root] {
     max-width: 95vw;
     min-width: 400px;
     width: 95vw;
@@ -738,7 +738,7 @@
 }
 
 @media (max-width: 640px) {
-  .raycast [cmdk-root] {
+  .raycast[cmdk-root] {
     max-width: 100vw;
     min-width: 320px;
     width: 100vw;
@@ -751,7 +751,7 @@
 }
 
 @media (max-width: 480px) {
-  .raycast [cmdk-root] {
+  .raycast[cmdk-root] {
     max-width: 100vw;
     min-width: 280px;
     width: 100vw;

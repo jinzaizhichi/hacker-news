@@ -30,6 +30,10 @@ async function getContentFromJina(url: string, format: 'html' | 'markdown', sele
 }
 
 async function getContentFromFirecrawl(url: string, format: 'html' | 'markdown', selector?: { include?: string, exclude?: string }, FIRECRAWL_KEY?: string) {
+  if (!FIRECRAWL_KEY) {
+    return ''
+  }
+
   const firecrawlHeaders: HeadersInit = {
     Authorization: `Bearer ${FIRECRAWL_KEY}`,
   }
@@ -62,48 +66,63 @@ async function getContentFromFirecrawl(url: string, format: 'html' | 'markdown',
   }
 }
 
-export async function getHackerNewsTopStories(today: string, { JINA_KEY, FIRECRAWL_KEY }: { JINA_KEY?: string, FIRECRAWL_KEY?: string }) {
-  const url = `https://news.ycombinator.com/front?day=${today}`
+async function getContent(url: string, format: 'html' | 'markdown', selector: { include?: string, exclude?: string }, { JINA_KEY, FIRECRAWL_KEY }: { JINA_KEY?: string, FIRECRAWL_KEY?: string }) {
+  if (FIRECRAWL_KEY) {
+    const content = await getContentFromFirecrawl(url, format, selector, FIRECRAWL_KEY)
+    if (content) {
+      return content
+    }
+  }
 
-  const html = await getContentFromJina(url, 'html', {}, JINA_KEY)
-    .catch((error) => {
-      console.error('getHackerNewsTopStories from Jina failed', error)
-      return getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY)
-    })
+  return getContentFromJina(url, format, selector, JINA_KEY)
+}
 
+function parseHackerNewsStories(html: string) {
   const $ = cheerio.load(html)
   const items = $('.athing.submission')
 
-  const stories: Story[] = items.map((i, el) => ({
-    id: $(el).attr('id'),
-    title: $(el).find('.titleline > a').text(),
-    url: $(el).find('.titleline > a').attr('href'),
-    hackerNewsUrl: `https://news.ycombinator.com/item?id=${$(el).attr('id')}`,
-  })).get()
+  const stories: Story[] = []
+  items.each((_, el) => {
+    const id = $(el).attr('id')
+    const url = $(el).find('.titleline > a').attr('href')
+    if (!id || !url) {
+      return
+    }
 
-  return stories.filter(story => story.id && story.url)
+    stories.push({
+      id,
+      title: $(el).find('.titleline > a').text(),
+      url,
+      hackerNewsUrl: `https://news.ycombinator.com/item?id=${id}`,
+    })
+  })
+
+  return stories
+}
+
+export async function getHackerNewsTopStories(today: string, { JINA_KEY, FIRECRAWL_KEY }: { JINA_KEY?: string, FIRECRAWL_KEY?: string }) {
+  const url = `https://news.ycombinator.com/front?day=${today}`
+
+  if (FIRECRAWL_KEY) {
+    const firecrawlHtml = await getContentFromFirecrawl(url, 'html', {}, FIRECRAWL_KEY)
+    if (firecrawlHtml) {
+      const firecrawlStories = parseHackerNewsStories(firecrawlHtml)
+      if (firecrawlStories.length > 0) {
+        return firecrawlStories
+      }
+
+      console.error('getHackerNewsTopStories from Firecrawl parsed no stories')
+    }
+  }
+
+  const html = await getContentFromJina(url, 'html', {}, JINA_KEY)
+  return parseHackerNewsStories(html)
 }
 
 export async function getHackerNewsStory(story: Story, maxTokens: number, { JINA_KEY, FIRECRAWL_KEY }: { JINA_KEY?: string, FIRECRAWL_KEY?: string }) {
-  const headers: HeadersInit = {
-    'X-Retain-Images': 'none',
-  }
-
-  if (JINA_KEY) {
-    headers.Authorization = `Bearer ${JINA_KEY}`
-  }
-
   const [article, comments] = await Promise.all([
-    getContentFromJina(story.url!, 'markdown', {}, JINA_KEY)
-      .catch((error) => {
-        console.error('getHackerNewsStory from Jina failed', error)
-        return getContentFromFirecrawl(story.url!, 'markdown', {}, FIRECRAWL_KEY)
-      }),
-    getContentFromJina(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, JINA_KEY)
-      .catch((error) => {
-        console.error('getHackerNewsStory from Jina failed', error)
-        return getContentFromFirecrawl(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, FIRECRAWL_KEY)
-      }),
+    getContent(story.url!, 'markdown', {}, { JINA_KEY, FIRECRAWL_KEY }),
+    getContent(`https://news.ycombinator.com/item?id=${story.id}`, 'markdown', { include: '.comment-tree', exclude: '.navs' }, { JINA_KEY, FIRECRAWL_KEY }),
   ])
   return [
     story.title
