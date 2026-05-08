@@ -1,6 +1,6 @@
 'use client'
 
-import { Maximize2, Minimize2 } from 'lucide-react'
+import { RiFullscreenExitLine, RiFullscreenLine } from '@remixicon/react'
 import { Button } from '@/components/ui/button'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { cn } from '@/lib/utils'
@@ -23,9 +23,9 @@ export function EpisodeFullscreenToggle({ className }: EpisodeFullscreenTogglePr
       title={label}
       className={cn(
         `
-          h-10 w-10 rounded-full border border-border/80 text-muted-foreground
+          size-10 rounded-full border border-border/80 text-muted-foreground
           hover:border-theme hover:text-theme
-          md:h-12 md:w-12
+          md:size-12
         `,
         isFullscreen && `
           border-theme text-theme
@@ -36,14 +36,14 @@ export function EpisodeFullscreenToggle({ className }: EpisodeFullscreenTogglePr
     >
       {isFullscreen
         ? (
-            <Minimize2 className={`
+            <RiFullscreenExitLine className={`
               size-4
               md:size-5
             `}
             />
           )
         : (
-            <Maximize2 className={`
+            <RiFullscreenLine className={`
               size-4
               md:size-5
             `}

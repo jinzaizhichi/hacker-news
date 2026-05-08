@@ -1,11 +1,12 @@
 'use client'
 
 import type { Episode } from '@/types/podcast'
+import { RiPauseFill, RiPlayFill } from '@remixicon/react'
 import { useStore } from '@tanstack/react-store'
-import { Pause, Play } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { formatZhCnUtcDate, toIsoDateString } from '@/lib/date'
 import { cn } from '@/lib/utils'
 import { getPageStore } from '@/stores/page-store'
 import { getPlayerStore, pause, play, setCurrentEpisode } from '@/stores/player-store'
@@ -36,14 +37,8 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
     }
   }
 
-  const publishedDate = new Date(episode.published)
-  const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  }).format(publishedDate)
-  const isoPublishedDate = publishedDate.toISOString()
+  const dateFormatter = formatZhCnUtcDate(episode.published)
+  const isoPublishedDate = toIsoDateString(episode.published)
 
   const linkHref = currentPage > 1 ? `/episode/${episode.id}?page=${currentPage}` : `/episode/${episode.id}`
   const episodeLinkTitle = `查看《${episode.title}》详情`
@@ -78,8 +73,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           {dateFormatter}
         </time>
         <h3 className={`
-          text-xl leading-tight font-bold text-pretty break-words
-          text-foreground
+          text-xl/tight font-bold text-pretty wrap-break-word text-foreground
           md:text-2xl
         `}
         >
@@ -99,7 +93,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
         {episode.description && (
           <div
             className={cn(
-              `line-clamp-2 leading-relaxed break-words text-foreground/80`,
+              `line-clamp-2 leading-relaxed wrap-break-word text-foreground/80`,
               `
                 text-sm
                 md:text-base
@@ -152,14 +146,14 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           >
             {isCurrentlyPlaying
               ? (
-                  <Pause className={`
+                  <RiPauseFill className={`
                     size-3.5
                     md:size-4
                   `}
                   />
                 )
               : (
-                  <Play className={`
+                  <RiPlayFill className={`
                     size-3.5
                     md:size-4
                   `}

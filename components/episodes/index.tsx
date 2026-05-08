@@ -29,9 +29,9 @@ export function Episodes({ episodes, currentPage, totalEpisodes }: EpisodesProps
   return (
     <section className="flex w-full flex-col" aria-labelledby={headingId}>
       <header className={`
-        md:backdrop-blur-0 md:bg-background
         sticky top-0 z-10 border-b border-border bg-background/95
         backdrop-blur-lg
+        md:bg-background md:backdrop-blur-none
       `}
       >
         <div className="relative flex items-center">

@@ -35,15 +35,15 @@ export function useEpisodeFullscreen({ manageBodyLock = false, resetOnMount = fa
     }
 
     if (isFullscreen) {
-      document.body.classList.add('episode-fullscreen-locked')
+      document.body.classList.add('overflow-hidden')
       document.addEventListener('keydown', handleKeyDown)
     }
     else {
-      document.body.classList.remove('episode-fullscreen-locked')
+      document.body.classList.remove('overflow-hidden')
     }
 
     return () => {
-      document.body.classList.remove('episode-fullscreen-locked')
+      document.body.classList.remove('overflow-hidden')
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [isFullscreen, manageBodyLock])

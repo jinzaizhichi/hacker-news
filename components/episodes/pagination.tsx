@@ -1,7 +1,7 @@
 'use client'
 
 import type { MouseEvent } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import {
@@ -102,7 +102,7 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
               tabIndex={currentPage === 1 ? -1 : undefined}
               onClick={event => handlePageClick(event, Math.max(1, currentPage - 1), currentPage === 1)}
             >
-              <ChevronLeftIcon className="size-4" aria-hidden="true" />
+              <RiArrowLeftSLine className="size-4" aria-hidden="true" />
             </PaginationLink>
           </PaginationItem>
 
@@ -148,7 +148,7 @@ export function EpisodesPagination({ currentPage, totalPages }: EpisodesPaginati
               tabIndex={currentPage === totalPages ? -1 : undefined}
               onClick={event => handlePageClick(event, Math.min(totalPages, currentPage + 1), currentPage === totalPages)}
             >
-              <ChevronRightIcon className="size-4" aria-hidden="true" />
+              <RiArrowRightSLine className="size-4" aria-hidden="true" />
             </PaginationLink>
           </PaginationItem>
         </PaginationContent>

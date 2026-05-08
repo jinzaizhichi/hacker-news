@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'react-medium-image-zoom/dist/styles.css';
+@import '@vidstack/react/player/styles/base.css';
+@import '@vidstack/react/player/styles/default/theme.css';
+@import '@vidstack/react/player/styles/default/layouts/audio.css';
 @import '../styles/view-transition.css';
+@import '../styles/episode.css' layer(components);
 
 @custom-variant dark (&:is(.dark *));
 

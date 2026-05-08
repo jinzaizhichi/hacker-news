@@ -102,22 +102,19 @@ export function Player() {
   return (
     <div
       className={cn(
-        `
-          episode-player fixed right-0 bottom-0 left-0 z-50
-          pb-[env(safe-area-inset-bottom)]
-        `,
+        `fixed inset-x-0 bottom-0 z-50 pb-[env(safe-area-inset-bottom)]`,
         isEpisodeFullscreen
           ? `
             md:left-0
             lg:left-0
           `
           : `
-            md:left-[24rem]
-            lg:left-[28rem]
+            md:left-96
+            lg:left-112
           `,
         `
-          border-t bg-background/95 backdrop-blur
-          supports-[backdrop-filter]:bg-background/60
+          border-t bg-background/95 backdrop-blur-sm
+          supports-backdrop-filter:bg-background/60
         `,
         'transition-opacity duration-300',
         shouldShowPlayer

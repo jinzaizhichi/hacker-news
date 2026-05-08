@@ -1,8 +1,9 @@
 'use client'
 
+import type { RemixiconComponentType } from '@remixicon/react'
 import type { ComponentType, ReactNode, SVGProps } from 'react'
 import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
-import { Podcast, Rss, Youtube } from 'lucide-react'
+import { RiAppleFill, RiRssLine, RiYoutubeFill } from '@remixicon/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useId, useMemo, useState } from 'react'
@@ -16,21 +17,21 @@ import { podcast, site } from '@/config'
 import { cn } from '@/lib/utils'
 
 interface PlatformConfig {
-  icon: ComponentType<SVGProps<SVGSVGElement>>
+  icon: ComponentType<SVGProps<SVGSVGElement>> | RemixiconComponentType
   colorClass: string
 }
 
 const platformIcons: Record<string, PlatformConfig> = {
   youtube: {
-    icon: Youtube,
+    icon: RiYoutubeFill,
     colorClass: 'text-red-500 hover:text-red-600',
   },
   apple: {
-    icon: Podcast,
+    icon: RiAppleFill,
     colorClass: 'text-purple-500 hover:text-purple-600',
   },
   rss: {
-    icon: Rss,
+    icon: RiRssLine,
     colorClass: 'text-orange-500 hover:text-orange-600',
   },
   xiaoyuzhou: {
@@ -101,6 +102,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
       itemType="https://schema.org/PodcastSeries"
     >
       <meta itemProp="url" content={podcast.base.link} />
+      <meta itemProp="image" content={cover} />
       <Waveform
         className={`
           absolute inset-x-0 top-0 w-full
@@ -125,14 +127,12 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
           `}
         >
           <Image
-            className="h-full w-full rounded-2xl object-cover"
+            className="size-full rounded-2xl object-cover"
             src={cover}
             alt={coverAlt}
             width={640}
             height={640}
             priority
-            referrerPolicy="no-referrer"
-            itemProp="image"
           />
         </Link>
         <figcaption className="sr-only">{title}</figcaption>
@@ -146,7 +146,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
         <h2
           id={titleId}
           className={`
-            text-center text-2xl font-bold text-pretty break-words
+            text-center text-2xl font-bold text-pretty wrap-break-word
             md:text-left md:text-xl
           `}
           itemProp="name"
@@ -167,7 +167,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
           >
             <TinyWaveFormIcon
               colors={['fill-violet-300', 'fill-pink-300']}
-              className="h-2.5 w-2.5"
+              className="size-2.5"
               aria-hidden="true"
             />
             <span>关于</span>
@@ -226,7 +226,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
                 >
                   <TinyWaveFormIcon
                     colors={['fill-indigo-300', 'fill-blue-300']}
-                    className="h-2.5 w-2.5"
+                    className="size-2.5"
                     aria-hidden="true"
                   />
                   <span>播放</span>
@@ -260,8 +260,8 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
                         >
                           <Icon
                             className={cn(`
-                              h-8 w-8
-                              md:h-6 md:w-6
+                              size-8
+                              md:size-6
                             `, config.colorClass)}
                             aria-hidden="true"
                           />
@@ -291,7 +291,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
       >
         <div className="absolute inset-0 flex items-center">
           <div className={`
-            h-px w-full bg-gradient-to-r from-transparent via-border
+            h-px w-full bg-linear-to-r from-transparent via-border
             to-transparent
           `}
           />

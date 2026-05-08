@@ -3,8 +3,8 @@
 import type { Components } from 'react-markdown'
 
 import type { Episode } from '@/types/podcast'
+import { RiArrowLeftSLine, RiPauseFill, RiPlayFill } from '@remixicon/react'
 import { useStore } from '@tanstack/react-store'
-import { ChevronLeft, Pause, Play } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useId, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -13,11 +13,11 @@ import { Waveform } from '@/components/common/waveform'
 import { EpisodeFullscreenToggle } from '@/components/episodes/fullscreen-toggle'
 import { ImageZoom } from '@/components/image-zoom'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
+import { formatZhCnUtcDate, toIsoDateString } from '@/lib/date'
 import { extractImagesFromMarkdown } from '@/lib/markdown'
 import { cn } from '@/lib/utils'
 import { getPageStore } from '@/stores/page-store'
 import { getPlayerStore, pause, play, setCurrentEpisode } from '@/stores/player-store'
-import '@/styles/episode.css'
 
 interface EpisodeDetailProps {
   episode: Episode
@@ -92,14 +92,8 @@ interface EpisodeDetailContentProps extends EpisodeDetailProps {
 }
 
 function EpisodeDetailContent({ episode, markdownComponents, initialPage }: EpisodeDetailContentProps) {
-  const publishedDate = new Date(episode.published)
-  const isoPublishedDate = publishedDate.toISOString()
-  const publishedDateLabel = new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  }).format(publishedDate)
+  const isoPublishedDate = toIsoDateString(episode.published)
+  const publishedDateLabel = formatZhCnUtcDate(episode.published)
   const headlineId = useId()
   const pageStore = getPageStore()
   const currentPage = useStore(pageStore, state => state.currentPage)
@@ -138,8 +132,8 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
         md:top-auto md:pt-0
       `
       : `
-        sticky top-14 z-20 bg-background/95 backdrop-blur
-        supports-[backdrop-filter]:bg-background/80
+        sticky top-14 z-20 bg-background/95 backdrop-blur-sm
+        supports-backdrop-filter:bg-background/80
         md:top-24
       `,
   )
@@ -148,16 +142,22 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
     <section
       className={cn(
         'flex w-full flex-col',
-        isFullscreen && 'episode-fullscreen',
+        isFullscreen && `
+          fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-background
+        `,
       )}
       aria-labelledby={headlineId}
       data-fullscreen={isFullscreen}
     >
-      <header className={`
-        episode-page-header sticky top-0 z-10 border-b border-border
-        bg-background/95 backdrop-blur-md
-        md:backdrop-blur-0 md:bg-background
-      `}
+      <header
+        className={cn(
+          `
+            sticky top-0 z-10 border-b border-border bg-background/95
+            backdrop-blur-md
+            md:bg-background md:backdrop-blur-none
+          `,
+          isFullscreen && 'hidden',
+        )}
       >
         <div className={`
           flex h-14 w-full items-center justify-center px-4
@@ -176,7 +176,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
           md:flex
         `}
         >
-          <Waveform className="absolute inset-0 h-full w-full" aria-hidden="true" />
+          <Waveform className="absolute inset-0 size-full" aria-hidden="true" />
           <nav
             aria-label={backLinkTitle}
             className="absolute inset-0 flex items-center"
@@ -212,37 +212,38 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
             onClick={handlePlayPause}
             className={cn(
               `
-                group mt-2 flex h-14 w-14 flex-shrink-0 items-center
-                justify-center rounded-full bg-theme
+                group mt-2 flex size-14 shrink-0 items-center justify-center
+                rounded-full bg-theme
               `,
               `
                 shadow-lg shadow-theme/20
                 transition-[background-color,box-shadow,transform]
                 hover:scale-105 hover:bg-theme-hover hover:shadow-xl
                 hover:shadow-theme/30
-                motion-reduce:transition-none motion-reduce:hover:scale-100
+                motion-reduce:transition-none
+                motion-reduce:hover:scale-100
               `,
               `
                 cursor-pointer
                 focus-visible:ring-2 focus-visible:ring-theme
                 focus-visible:ring-offset-2 focus-visible:outline-none
-                md:h-18 md:w-18
+                md:size-18
               `,
             )}
             aria-label={isCurrentEpisodePlaying ? '暂停播放' : '播放节目'}
           >
             {isCurrentEpisodePlaying
               ? (
-                  <Pause className={`
-                    h-6 w-6 fill-white text-white
-                    md:h-8 md:w-8
+                  <RiPauseFill className={`
+                    size-6 fill-white text-white
+                    md:size-8
                   `}
                   />
                 )
               : (
-                  <Play className={`
-                    h-6 w-6 fill-white text-white
-                    md:h-8 md:w-8
+                  <RiPlayFill className={`
+                    size-6 fill-white text-white
+                    md:size-8
                   `}
                   />
                 )}
@@ -253,7 +254,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
               <h1
                 id={headlineId}
                 className={`
-                  mt-2 text-2xl font-bold text-pretty break-words
+                  mt-2 text-2xl font-bold text-pretty wrap-break-word
                   text-foreground
                   md:text-4xl
                 `}
@@ -263,7 +264,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
               </h1>
               <time
                 className={`
-                  order-first font-mono text-xs leading-7 text-muted-foreground
+                  order-first font-mono text-xs/7 text-muted-foreground
                   md:text-sm
                 `}
                 dateTime={isoPublishedDate}
@@ -272,7 +273,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
                 {publishedDateLabel}
               </time>
             </div>
-            <EpisodeFullscreenToggle className="flex-shrink-0 self-center" />
+            <EpisodeFullscreenToggle className="shrink-0 self-center" />
           </div>
         </header>
 
@@ -309,7 +310,7 @@ function EpisodeBackLink({ href, ariaLabel, label, className }: EpisodeBackLinkP
       title={ariaLabel}
       aria-label={ariaLabel}
     >
-      <ChevronLeft className="size-4" />
+      <RiArrowLeftSLine className="size-4" />
       <span className="font-bold">{label}</span>
     </Link>
   )
