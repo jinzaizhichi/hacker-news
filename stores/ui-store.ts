@@ -6,7 +6,7 @@ interface UIStoreState {
 
 let uiStore: Store<UIStoreState> | null = null
 
-function createStore() {
+function createStore(): Store<UIStoreState> {
   return new Store<UIStoreState>({
     isEpisodeFullscreen: false,
   })
@@ -23,7 +23,7 @@ export function getUIStore(): Store<UIStoreState> {
   return initUIStore()
 }
 
-export function setEpisodeFullscreen(isFullscreen: boolean) {
+export function setEpisodeFullscreen(isFullscreen: boolean): void {
   const store = getUIStore()
   store.setState(state => ({
     ...state,
@@ -31,7 +31,7 @@ export function setEpisodeFullscreen(isFullscreen: boolean) {
   }))
 }
 
-export function toggleEpisodeFullscreen() {
+export function toggleEpisodeFullscreen(): void {
   const store = getUIStore()
   store.setState(state => ({
     ...state,

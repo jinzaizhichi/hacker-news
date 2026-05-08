@@ -4,7 +4,7 @@ import type { RemixiconComponentType } from '@remixicon/react'
 import type { ComponentType, ReactNode, SVGProps } from 'react'
 import type { PodcastInfo as PodcastInfoData } from '@/types/podcast'
 import { RiAppleFill, RiRssLine, RiYoutubeFill } from '@remixicon/react'
-import Image from 'next/image'
+import { Image } from '@unpic/react'
 import Link from 'next/link'
 import { useId, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -44,6 +44,15 @@ const platformIcons: Record<string, PlatformConfig> = {
   },
 }
 
+const coverImageOperations = {
+  wsrv: {
+    a: 'entropy',
+    fit: 'cover',
+    q: 88,
+    we: true,
+  },
+} as const
+
 interface PodcastInfoProps {
   podcastInfo: PodcastInfoData
 }
@@ -57,14 +66,14 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
   const descriptionContentId = useId()
   const { title, description, cover } = podcastInfo
   const coverAlt = `${title} 封面`
+  const coverSrc = new URL(cover, podcast.base.link).toString()
   const homeLinkTitle = `返回首页：${title}`
   const externalLinkTitle = '在新标签页打开外部链接'
   const shouldTruncate = description.length > site.defaultDescriptionLength
-  const displayDescription = isExpanded
-    ? description
-    : shouldTruncate
-      ? `${description.slice(0, site.defaultDescriptionLength)}…`
-      : description
+  let displayDescription = description
+  if (shouldTruncate && !isExpanded) {
+    displayDescription = `${description.slice(0, site.defaultDescriptionLength)}…`
+  }
   const markdownComponents = useMemo(() => ({
     p: ({ children }: { children?: ReactNode }) => (
       <p className="leading-relaxed">{children}</p>
@@ -128,10 +137,14 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
         >
           <Image
             className="size-full rounded-2xl object-cover"
-            src={cover}
+            src={coverSrc}
             alt={coverAlt}
+            layout="constrained"
             width={640}
             height={640}
+            fallback="wsrv"
+            operations={coverImageOperations}
+            objectFit="cover"
             priority
           />
         </Link>

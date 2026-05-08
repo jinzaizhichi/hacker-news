@@ -5,10 +5,10 @@ const zhCnUtcDateFormatter = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'UTC',
 })
 
-export function toIsoDateString(value: string | number | Date) {
+export function toIsoDateString(value: string | number | Date): string {
   return new Date(value).toISOString()
 }
 
-export function formatZhCnUtcDate(value: string | number | Date) {
+export function formatZhCnUtcDate(value: string | number | Date): string {
   return zhCnUtcDateFormatter.format(new Date(value))
 }

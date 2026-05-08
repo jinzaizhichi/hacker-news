@@ -4,19 +4,19 @@ import type { Components } from 'react-markdown'
 
 import type { Episode } from '@/types/podcast'
 import { RiArrowLeftSLine, RiPauseFill, RiPlayFill } from '@remixicon/react'
-import { useStore } from '@tanstack/react-store'
-import Link from 'next/link'
+import { useSelector } from '@tanstack/react-store'
+import { useRouter } from 'next/navigation'
 import { useEffect, useId, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { ImageZoom } from '@/components/common/image-zoom'
 import { Waveform } from '@/components/common/waveform'
 import { EpisodeFullscreenToggle } from '@/components/episodes/fullscreen-toggle'
-import { ImageZoom } from '@/components/image-zoom'
 import { useEpisodeFullscreen } from '@/hooks/use-episode-fullscreen'
 import { formatZhCnUtcDate, toIsoDateString } from '@/lib/date'
 import { extractImagesFromMarkdown } from '@/lib/markdown'
 import { cn } from '@/lib/utils'
-import { getPageStore } from '@/stores/page-store'
+import { completePageNavigation } from '@/stores/page-store'
 import { getPlayerStore, pause, play, setCurrentEpisode } from '@/stores/player-store'
 
 interface EpisodeDetailProps {
@@ -24,8 +24,7 @@ interface EpisodeDetailProps {
   initialPage?: number
 }
 
-interface EpisodeBackLinkProps {
-  href: string
+interface EpisodeBackButtonProps {
   ariaLabel: string
   label: string
   className?: string
@@ -42,8 +41,7 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
 
   useEffect(() => {
     if (typeof initialPage === 'number') {
-      const pageStore = getPageStore()
-      pageStore.setState(() => ({ currentPage: initialPage }))
+      completePageNavigation(initialPage)
     }
   }, [initialPage])
 
@@ -81,7 +79,6 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
   return (
     <EpisodeDetailContent
       episode={episode}
-      initialPage={initialPage}
       markdownComponents={markdownComponents}
     />
   )
@@ -91,15 +88,13 @@ interface EpisodeDetailContentProps extends EpisodeDetailProps {
   markdownComponents: Partial<Components>
 }
 
-function EpisodeDetailContent({ episode, markdownComponents, initialPage }: EpisodeDetailContentProps) {
+function EpisodeDetailContent({ episode, markdownComponents }: EpisodeDetailContentProps) {
   const isoPublishedDate = toIsoDateString(episode.published)
   const publishedDateLabel = formatZhCnUtcDate(episode.published)
   const headlineId = useId()
-  const pageStore = getPageStore()
-  const currentPage = useStore(pageStore, state => state.currentPage)
   const playerStore = getPlayerStore()
-  const currentEpisode = useStore(playerStore, state => state.currentEpisode)
-  const isPlaying = useStore(playerStore, state => state.isPlaying)
+  const currentEpisode = useSelector(playerStore, state => state.currentEpisode)
+  const isPlaying = useSelector(playerStore, state => state.isPlaying)
   const { isFullscreen } = useEpisodeFullscreen({ manageBodyLock: true, resetOnMount: true })
 
   const isCurrentEpisodePlaying = currentEpisode?.id === episode.id && isPlaying
@@ -116,8 +111,6 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
     }
   }
 
-  const resolvedPage = initialPage ?? currentPage
-  const href = resolvedPage > 1 ? `/?page=${resolvedPage}` : '/'
   const articlePath = `/episode/${episode.id}`
   const backLinkTitle = '返回节目列表'
   const detailHeaderClass = cn(
@@ -164,8 +157,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
           md:hidden
         `}
         >
-          <EpisodeBackLink
-            href={href}
+          <EpisodeBackButton
             ariaLabel={backLinkTitle}
             label="返回"
             className="justify-center text-sm"
@@ -181,8 +173,7 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
             aria-label={backLinkTitle}
             className="absolute inset-0 flex items-center"
           >
-            <EpisodeBackLink
-              href={href}
+            <EpisodeBackButton
               ariaLabel={backLinkTitle}
               label="返回"
               className={`
@@ -296,13 +287,26 @@ function EpisodeDetailContent({ episode, markdownComponents, initialPage }: Epis
   )
 }
 
-function EpisodeBackLink({ href, ariaLabel, label, className }: EpisodeBackLinkProps) {
+function EpisodeBackButton({ ariaLabel, label, className }: EpisodeBackButtonProps) {
+  const router = useRouter()
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+      return
+    }
+
+    router.push('/')
+  }
+
   return (
-    <Link
-      href={href}
+    <button
+      type="button"
+      onClick={handleBack}
       className={cn(
         `
-          flex w-full items-center gap-2 text-foreground transition-colors
+          flex w-full cursor-pointer items-center gap-2 border-0 bg-transparent
+          p-0 text-left text-foreground transition-colors
           hover:text-muted-foreground
         `,
         className,
@@ -312,6 +316,6 @@ function EpisodeBackLink({ href, ariaLabel, label, className }: EpisodeBackLinkP
     >
       <RiArrowLeftSLine className="size-4" />
       <span className="font-bold">{label}</span>
-    </Link>
+    </button>
   )
 }

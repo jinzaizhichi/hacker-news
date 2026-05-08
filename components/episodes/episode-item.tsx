@@ -2,13 +2,12 @@
 
 import type { Episode } from '@/types/podcast'
 import { RiPauseFill, RiPlayFill } from '@remixicon/react'
-import { useStore } from '@tanstack/react-store'
+import { useSelector } from '@tanstack/react-store'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { formatZhCnUtcDate, toIsoDateString } from '@/lib/date'
 import { cn } from '@/lib/utils'
-import { getPageStore } from '@/stores/page-store'
 import { getPlayerStore, pause, play, setCurrentEpisode } from '@/stores/player-store'
 
 interface EpisodeItemProps {
@@ -16,11 +15,9 @@ interface EpisodeItemProps {
 }
 
 export function EpisodeItem({ episode }: EpisodeItemProps) {
-  const pageStore = getPageStore()
-  const currentPage = useStore(pageStore, state => state.currentPage)
   const playerStore = getPlayerStore()
-  const currentEpisode = useStore(playerStore, state => state.currentEpisode)
-  const isPlaying = useStore(playerStore, state => state.isPlaying)
+  const currentEpisode = useSelector(playerStore, state => state.currentEpisode)
+  const isPlaying = useSelector(playerStore, state => state.isPlaying)
 
   const isCurrentEpisode = currentEpisode?.id === episode.id
   const isCurrentlyPlaying = isCurrentEpisode && isPlaying
@@ -40,7 +37,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
   const dateFormatter = formatZhCnUtcDate(episode.published)
   const isoPublishedDate = toIsoDateString(episode.published)
 
-  const linkHref = currentPage > 1 ? `/episode/${episode.id}?page=${currentPage}` : `/episode/${episode.id}`
+  const linkHref = `/episode/${episode.id}`
   const episodeLinkTitle = `查看《${episode.title}》详情`
   const showNotesTitle = `打开《${episode.title}》的节目详情页`
   const externalLinkTitle = '在新标签页打开外部链接'
