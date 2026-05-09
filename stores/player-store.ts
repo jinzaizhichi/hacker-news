@@ -46,7 +46,7 @@ export function setCurrentEpisode(episode: Episode): void {
 export function setDefaultEpisode(episode: Episode): void {
   const store = getPlayerStore()
   store.setState((state) => {
-    const canSetDefault = !state.currentEpisode || (state.selectionSource === 'default' && !state.isPlaying)
+    const canSetDefault = !state.currentEpisode
     if (!canSetDefault) {
       return state
     }
