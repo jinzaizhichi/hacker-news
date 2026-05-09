@@ -78,7 +78,7 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
             href={linkHref}
             className={`
               cursor-pointer transition-colors
-              hover:text-theme
+              hover:text-theme-text
             `}
             itemProp="url"
             title={episodeLinkTitle}
@@ -121,8 +121,8 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
         <div
           className={cn(
             `
-              mt-2 flex flex-wrap items-center font-medium text-theme
-              hover:text-theme-hover
+              mt-2 flex flex-wrap items-center font-medium text-theme-text
+              hover:text-theme-text-hover
             `,
             `
               gap-3 text-xs
@@ -134,9 +134,9 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
             type="button"
             onClick={handlePlayPause}
             className={`
-              flex cursor-pointer items-center gap-1.5 font-medium text-theme
-              transition-colors
-              hover:text-theme-hover
+              flex cursor-pointer items-center gap-1.5 font-medium
+              text-theme-text transition-colors
+              hover:text-theme-text-hover
               md:gap-2
             `}
             aria-label={isCurrentlyPlaying ? '暂停播放' : '播放节目'}
@@ -162,8 +162,8 @@ export function EpisodeItem({ episode }: EpisodeItemProps) {
           <Link
             href={linkHref}
             className={`
-              cursor-pointer font-medium text-theme
-              hover:text-theme-hover
+              cursor-pointer font-medium text-theme-text
+              hover:text-theme-text-hover
             `}
             title={showNotesTitle}
             aria-label={showNotesTitle}

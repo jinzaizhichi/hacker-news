@@ -38,7 +38,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       onClick={toggleTheme}
       className={`
         cursor-pointer transition-colors
-        hover:text-theme
+        hover:text-theme-text
       `}
       aria-label="切换主题"
     >

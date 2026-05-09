@@ -24,12 +24,12 @@ export function EpisodeFullscreenToggle({ className }: EpisodeFullscreenTogglePr
       className={cn(
         `
           size-10 rounded-full border border-border/80 text-muted-foreground
-          hover:border-theme hover:text-theme
+          hover:border-theme hover:text-theme-text
           md:size-12
         `,
         isFullscreen && `
-          border-theme text-theme
-          hover:text-theme-hover
+          border-theme text-theme-text
+          hover:text-theme-text-hover
         `,
         className,
       )}

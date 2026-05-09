@@ -31,7 +31,7 @@ export function PodcastAside() {
                 rel="noopener noreferrer"
                 className={`
                   cursor-pointer transition-colors
-                  hover:text-theme
+                  hover:text-theme-text
                 `}
                 title={`访问 ${host.name} 的主页`}
                 aria-label={`访问 ${host.name} 的主页`}
@@ -49,7 +49,7 @@ export function PodcastAside() {
           rel="noopener noreferrer"
           className={`
             cursor-pointer transition-colors
-            hover:text-theme
+            hover:text-theme-text
           `}
           title="打开 GitHub 仓库"
           aria-label="打开 GitHub 仓库"

@@ -84,8 +84,8 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
         target="_blank"
         rel="noopener noreferrer"
         className={`
-          font-medium text-theme underline transition-colors
-          hover:text-theme-hover
+          font-medium text-theme-text underline transition-colors
+          hover:text-theme-text-hover
         `}
         title={externalLinkTitle}
       >
@@ -212,9 +212,9 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
                   type="button"
                   onClick={() => setIsExpanded(!isExpanded)}
                   className={`
-                    cursor-pointer self-start font-medium text-theme
+                    cursor-pointer self-start font-medium text-theme-text
                     transition-colors
-                    hover:text-theme-hover
+                    hover:text-theme-text-hover
                   `}
                   aria-expanded={isExpanded}
                   aria-controls={descriptionContentId}
@@ -265,7 +265,7 @@ export function PodcastInfo({ podcastInfo }: PodcastInfoProps) {
                           className={`
                             flex cursor-pointer items-center gap-2
                             transition-colors
-                            hover:text-theme-hover
+                            hover:text-theme-text-hover
                           `}
                           aria-label={platformLinkTitle}
                           title={platformLinkTitle}

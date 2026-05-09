@@ -54,8 +54,8 @@ export function EpisodeDetail({ episode, initialPage }: EpisodeDetailProps) {
         target="_blank"
         rel="noopener noreferrer"
         className={`
-          font-medium text-theme underline transition-colors
-          hover:text-theme-hover
+          font-medium text-theme-text underline transition-colors
+          hover:text-theme-text-hover
         `}
         title={externalLinkTitle}
       >
