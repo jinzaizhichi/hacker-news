@@ -16,8 +16,8 @@ export const podcast: Podcast = {
   },
   hosts: [
     {
-      name: 'Gemini',
-      link: 'https://gemini.google',
+      name: 'DeepSeek',
+      link: 'https://www.deepseek.com/',
     },
     {
       name: 'MiniMax',
