@@ -1,4 +1,4 @@
-/* eslint-disable react-dom/no-dangerously-set-innerhtml */
+/* eslint-disable react/dom-no-dangerously-set-innerhtml */
 
 interface StructuredDataProps {
   data: Record<string, unknown>
